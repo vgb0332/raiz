@@ -1,0 +1,51 @@
+/* navigation header - start */
+.navbar {
+    font-family: 'Jeju Hallasan';
+    margin-bottom: 0;
+    background-color: #000;
+    border: 0;
+    font-size: 15px !important;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+.navbar li a, .navbar .navbar-brand {
+    color: #ffffff !important;
+}
+
+.navbar .navbar-brand {
+    padding: 10px 20px;
+}
+.navbar .navbar-brand img{
+    height: 30px;
+}
+.navbar-nav li a:hover {
+    color: #46d78f !important;
+    font-size: 16px !important;
+}
+.navbar-nav li.active a {
+    color: #fff !important;
+    background-color: #29292c !important;
+}
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+.open .dropdown-toggle {
+    color: #fff;
+    background-color: #555 !important;
+}
+.dropdown-menu li a {
+    color: #000 !important;
+}
+.dropdown-menu li a:hover {
+    background-color: red !important;
+}
+
+.raiz-color {
+  color: #27b874;
+}
+
+
+.green{
+
+}
+/* navigation header - end   */
