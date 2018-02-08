@@ -12,7 +12,7 @@ function polygon_init() {
     container = $(".raiz-window-body");
   	scene = new THREE.Scene();
   	scene.background = new THREE.Color( 0x000000 );
-  	camera = new THREE.PerspectiveCamera( 90, 1, 1, 1000 );
+  	camera = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
   	camera.position.set( 0, 0, 500 );
     // camera.lookAt(scene.position);
 
@@ -104,13 +104,15 @@ function addShape( shape, extrudeSettings, color, x, y, z, rx, ry, rz, s ) {
 
   var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
   var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: color } ) );
-  mesh.position.set( x - 500 , y - 370, z  );
-  mesh.rotation.set( rx, ry, rz );
+  // mesh.position.set( x - 500 , y - 600, z  );
+  // mesh.rotation.set( rx, ry, rz );
   mesh.scale.set( s, s, s );
   console.log('mesh position: ' , mesh.position);
   var geometry = mesh.geometry;
   geometry.computeBoundingBox();
   var center = geometry.boundingBox.getCenter();
+  mesh.position.set( x - center.x , y - center.y, z  );
+  mesh.rotation.set( rx, ry, rz );
   console.log(center);
   scene.add(mesh);
 

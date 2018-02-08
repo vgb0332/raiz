@@ -55,15 +55,15 @@ function setPoly(type, polygon, data){
   for( var i = 0; i < testPoints.length; i ++ ) {
     // testPoints[ i ].multiplyScalar( 0.00025 );
 
-    testPoints[i].x = testPoints[i].x - 494000;
-    testPoints[i].y = testPoints[i].y - 1129000;
+    testPoints[i].x = testPoints[i].x;
+    testPoints[i].y = testPoints[i].y;
     console.log(testPoints[i]);
   }
 
   var testShape = new THREE.Shape(testPoints);
-  var extrudeSettings = { curveSegments : 20, amount: 0.1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 1 };
+  var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 10 };
   addShape( testShape,  extrudeSettings, 0x46d78f, 0, 0, 0, 0, 0, 0, 1 );
-  var test
+  
   animate();
 
   if(type === 'toji'){
