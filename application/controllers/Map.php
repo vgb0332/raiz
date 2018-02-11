@@ -22,7 +22,7 @@ class Map extends CI_Controller {
       $this->load->view('map/raiz_side_tab');
       $this->load->view('map/raiz_controller');
       $this->load->view('map/map_controller');
-      $this->load->view('map/raiz_window');
+      // $this->load->view('map/raiz_window');
       $this->load->view('map/map_footer');
       $this->load->view('map/bottom_dependency');
     }

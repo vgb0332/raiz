@@ -20,5 +20,28 @@ var categoryOverlay = new daum.maps.CustomOverlay({});
             => building : 건물
             => toji_sil : 토지 실거래
   ** 각 타입에 맞는 폴리곤도 지정해주세요
+  ** Default: 'toji'
 */
 var ajax_type = 'toji';
+
+var raiz_window = function(title){
+  var $container = $(document.createElement('div')).addClass("raiz-window-container");
+  $container.append(`
+                      <div class="raiz-window-top">
+                        <div class="column controller">
+                          <span class="ti-minus point-cursor"></span>
+                          <span class="ti-layers point-cursor"></span>
+                          <span class="ti-close point-cursor"></span>
+                        </div>
+                        <div class="column header">${title}</div>
+                      </div>
+                      <div class="raiz-window-body">
+  
+                      </div>
+                      <div class="raiz-window-footer"></div>
+                    `
+                  );
+  lifeToWindow($container);
+  $container.removeAttr('style');
+  return $container;
+}

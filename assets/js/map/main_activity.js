@@ -12,7 +12,7 @@ $(document).ready(function(){
      coord2RegionCode(mouseEvent.latLng, function(address, status) {
          if (status === daum.maps.services.Status.OK) {
            console.log(address);
-           ajax_type = 'toji';
+           ajax_type = 'mark';
            customAjax($SITE_URL+'get/singlePolygon',
                      {
                        bjdongCd : address[0]['code'],
