@@ -170,9 +170,33 @@ body {
 
 .side-tab-header{
   width: 100%;
-  height: 200px;
+  height: 50px;
   background-color: #333;
+  color: white;
 }
+
+.side-tab-header span{
+  font-size: 20px;
+  letter-spacing: -1px;
+  line-height: 2.3;
+  margin-left: 20px;
+}
+
+.raiz-side-tab-return{
+  float: right;
+  cursor: pointer;
+}
+
+.raiz-side-tab-list *{
+  width: 100%;
+  color : #333 !important;
+  background-color: #effaee;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -1px;
+  margin: 0;
+}
+
 
 /* map footer */
 .map-footer{

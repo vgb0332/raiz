@@ -26,13 +26,27 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
-  public function statscPop() {
+  public function statscSgg() {
     /*
       it takes POST variable - bjdongCd, lat, lng
     */
     $this->load->model('Statistics');
 
-    echo $this->Statistics->getStcsPop();
+    echo $this->Statistics->getStcsSgg();
   }
-  
+
+  public function statscDong() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('dongcode');
+    echo $this->Statistics->getStcsDong($code);
+  }
+
+  public function statscAggr() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('aggrcode');
+    echo $this->Statistics->getStcsAggr($code);
+  }
+
+
+
 }

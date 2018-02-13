@@ -5,11 +5,23 @@
 // });
 $(".raiz-side-tab-container").show();
 
+$(".raiz-side-tab-return").on('mouseover', function(){
+  $(this).effect('shake', {
+    distance: 1
+  });
+});
+
+$(".raiz-side-tab-return").on('click', function(){
+  console.log('뒤로')
+  $(".raiz-side-tab-container").hide("slide", {direction : "left"}, 200);
+});
+
 $(".raiz-search-button").on('click', function(){
   console.log('검색');
+  $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-search-tab").hide(function(){
 
-      $(".raiz-search-tab").show();
+      $(".raiz-search-tab:hidden").show();
 
   });
 
@@ -17,18 +29,20 @@ $(".raiz-search-button").on('click', function(){
 
 $(".raiz-sil-button").on('click', function(){
   console.log('실거래');
+  $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-sil-tab").hide(function(){
 
-    $(".raiz-sil-tab").show();
+    $(".raiz-sil-tab:hidden").show();
 
   });
 });
 
 $(".raiz-junwal-button").on('click', function(){
   console.log('전월');
+  $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-junwal-tab").hide(function(){
 
-    $(".raiz-junwal-tab").show();
+    $(".raiz-junwal-tab:hidden").show();
 
   });
 });

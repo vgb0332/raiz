@@ -27,13 +27,14 @@ function drawPoly(data){
               polyPath.push(new daum.maps.LatLng(x, y));
 
           });
-
           polygon.setPath(polyPath);
-          setPoly(ajax_type, polygon, data);
+          setPoly(ajax_type, polygon, data, index);
+          // // Ghun testing!
+          console.log(polygon);
+          // stcs_arr.push([polygon,data[index]['sigunguCd']])
       });
-
   });
-
+  // console.log(stcs_arr);
 }
 
 /*
@@ -64,7 +65,7 @@ function setWindow(polygon, data){
 */
 
 
-function setPoly(type, polygon, data){
+function setPoly(type, polygon, data, indexing){
 
   if(type === 'mark'){
     polygon.setMap(map);
@@ -82,7 +83,6 @@ function setPoly(type, polygon, data){
       console.log('polygon click activated! : ' , polygon );
       setWindow(polygon, data);
     });
-
   }
 
 
@@ -98,6 +98,62 @@ function setPoly(type, polygon, data){
 
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
       // console.log('polygon mouseover activated! : ' , polygon );
+    });
+  }
+
+  if(type === 'stcs'){
+    // polygon.setOptions( toji_polygon_option );
+    polygon.setMap(map);
+    polygon.Bb[0] = data[indexing]['sigunguCd'];
+    // console.log(polygon);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+    });
+
+    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+      // console.log('polygon mouseover activated! : ' , polygon );
+    });
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      console.log(polygon.Bb[0]);
+      getStcsdong(polygon.Bb[0])
+      $('.stcs-polygon').remove();
+    });
+  }
+
+  if(type === 'stcsDong'){
+    // polygon.setOptions( toji_polygon_option );
+    polygon.setMap(map);
+    polygon.Bb[0] = data[indexing]['ADM_CD'];
+    // console.log(polygon);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+    });
+
+    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+      // console.log('polygon mouseover activated! : ' , polygon );
+    });
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      getStcsaggr(polygon.Bb[0])
+      $('.stcs-polygon').remove();
+    });
+  }
+  if(type === 'stcsAggr'){
+    // polygon.setOptions( toji_polygon_option );
+    polygon.setMap(map);
+    // console.log(polygon);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+    });
+
+    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+      // console.log('polygon mouseover activated! : ' , polygon );
+    });
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+
+      $('.stcs-polygon').remove();
     });
   }
 }

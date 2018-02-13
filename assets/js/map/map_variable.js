@@ -23,6 +23,7 @@ var categoryOverlay = new daum.maps.CustomOverlay({});
   ** Default: 'toji'
 */
 var ajax_type = 'toji';
+var stcs_arr = [];
 
 var raiz_window = function(title){
   var $container = $(document.createElement('div')).addClass("raiz-window-container");
