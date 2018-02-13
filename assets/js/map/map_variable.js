@@ -26,20 +26,35 @@ var ajax_type = 'toji';
 
 var raiz_window = function(title){
   var $container = $(document.createElement('div')).addClass("raiz-window-container");
-  $container.append(`
-                      <div class="raiz-window-top">
-                        <div class="column controller">
-                          <span class="ti-minus point-cursor"></span>
-                          <span class="ti-layers point-cursor"></span>
-                          <span class="ti-close point-cursor"></span>
-                        </div>
-                        <div class="column header">${title}</div>
-                      </div>
-                      <div class="raiz-window-body">
-  
-                      </div>
-                      <div class="raiz-window-footer"></div>
-                    `
+  // $container.append(`
+  //                     <div class="raiz-window-top">
+  //                       <div class="column controller">
+  //                         <span class="ti-minus point-cursor"></span>
+  //                         <span class="ti-layers point-cursor"></span>
+  //                         <span class="ti-close point-cursor"></span>
+  //                       </div>
+  //                       <div class="column header">${title}</div>
+  //                     </div>
+  //                     <div class="raiz-window-body">
+  //
+  //                     </div>
+  //                     <div class="raiz-window-footer"></div>
+  //                   `
+  //                 );
+  $container.append("<div class='raiz-window-top'>"
+                    +  "<div class='column controller'>"
+                    +     "<span class='ti-minus point-cursor'></span>"
+                    +      "<span class='ti-layers point-cursor'></span>"
+                    +      "<span class='ti-close point-cursor'></span>"
+                    +   "</div>"
+                    +   "<div class='column header'>" + title + "</div>"
+                    +  "</div>"
+                    +  "<div class='raiz-window-body'>"
+                    // +     "<div class='col-sm-1'></div>"
+                    // +     "<div class='body-content col-sm-10'></div>"
+                    // +     "<div class='col-sm-1'></div>"
+                    +  "</div>"
+                    +  "<div class='raiz-window-footer'></div>"
                   );
   lifeToWindow($container);
   $container.removeAttr('style');

@@ -1,5 +1,5 @@
 .toji-polygon{
-    fill : #27b874;;
+    fill : #27b874;
     stroke : rgb(7, 129, 52);
     stroke-width: 3px;
     stroke-opacity : 0.6;
@@ -10,6 +10,9 @@
 
 .toji-polygon:hover{
     fill-opacity: 0.6;
+    -ms-animation: 20s toji-hover linear forwards infinite;
+    -moz-animation: 20s toji-hover linear forwards infinite;
+    -o-animation: 20s toji-hover linear forwards infinite;
     -webkit-animation: 20s toji-hover linear forwards infinite;
     animation: 20s toji-hover linear forwards infinite;
 }

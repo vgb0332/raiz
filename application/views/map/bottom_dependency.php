@@ -1,8 +1,10 @@
 
 <!-- MDB -->
 <link href="<?php echo base_url();?>assets/vendor/mdb/mdb.min.css" rel="stylesheet">
-<script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script>
+<!-- <script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script> -->
 
+<!-- DOM4 -->
+<script src="<?php echo base_url();?>assets/vendor/dom4/dom4.min.js"></script>
 <!-- SVG JS -->
 
 <!-- OWN CSS FILES(FOR OVERRIDDING, ALWAYS AFTER VENDOR CSS, JS FILES PLEASE) -->
@@ -20,5 +22,6 @@
 <script src="<?php echo base_url();?>assets/js/map/daum_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/map_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/main_activity.js"></script>
-<script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script>
+<!-- <script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script> -->
+<script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/statistics.js"></script>

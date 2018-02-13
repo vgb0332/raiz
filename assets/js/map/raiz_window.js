@@ -38,10 +38,9 @@ function lifeToWindow(Rwindow){
     minWidth: 100,
     minHeight: 100,
     resize: function(event, ui){
-      camera.aspect = 1;
-      camera.updateProjectionMatrix();
-      console.log('resizing?')
-      renderer.setSize( $(this).width(), $(this).height() );
+      // camera.aspect = 1;
+      // camera.updateProjectionMatrix();
+      // renderer.setSize( $(this).width(), $(this).height() );
     },
     stop: function(event, ui){
       $(this).removeClass('full-screen');
@@ -76,22 +75,23 @@ function lifeToWindow(Rwindow){
       }
     },
     stop: function(event, ui){
-      $(this).removeClass("opac");
-      $(this).removeClass("full-screen");
-      prevWidth = $(this).width();
-      prevHeight = $(this).height();
-      prevOffset = $(this).offset();
-
-      camera.aspect = 1;
-      camera.updateProjectionMatrix();
-      console.log('resizing?')
-      renderer.setSize( $(this).width(), $(this).height() );
+      // console.log('event2');
+      // $(this).removeClass("opac");
+      // $(this).removeClass("full-screen");
+      // prevWidth = $(this).width();
+      // prevHeight = $(this).height();
+      // prevOffset = $(this).offset();
+      // console.log('wtf?');
+      // camera.aspect = 1;
+      // camera.updateProjectionMatrix();
+      // console.log('resizing?')
+      // renderer.setSize( $(this).width(), $(this).height() );
     }
   })
   .draggable( 'disable' );
 
   Rwindow.find(".raiz-window-top, .header").on("mousedown", function(e){
-    if(event.target !== event.currentTarget) {
+    if(e.target !== e.currentTarget) {
       Rwindow.draggable( 'disable' );
       return false;
     }
@@ -126,21 +126,40 @@ function lifeToWindow(Rwindow){
     ,function(){
 
       var target = Rwindow.find(".header").text();
-      var tab = $(`
-        <div class="footer-tab-container">
-          <div>${target}</div>
-          <span class="ti-close"></span>
-        </div>
-        `);
+      // var tab = $(`
+      //   <div class="footer-tab-container">
+      //     <div>${target}</div>
+      //     <span class="ti-close"></span>
+      //   </div>
+      //   `);
+      console.log(target);
+      var tab = $(
+        " <div class='footer-tab-container'>"
+        +  "<div class='tab-name'>" + target + "</div>"
+        +  "<span class='ti-close'></span>"
+        + "</div>"
+        );
+      console.log(tab);
+
       $(".map-footer").append(tab);
+      tab.find('div').tooltip({
+        'animation': true,
+        'title' : target,
+        'placement' : 'top'
+      });
       tab.show('highlight', { color: "#27b874" }, 50);
-      tab.find('div').click(function(){
-        $(".raiz-window-container").not(this).css('z-index', '15');
-        Rwindow.css('z-index', '20');
+      tab.find('.tab-name').click(function(){
+        $(".raiz-window-container").not(this).css('z-index' , '15');
+        $(".raiz-window-container .raiz-window-top").css('background-color', '#636161');
+        Rwindow.css('z-index' , '20');
+        Rwindow.find('.raiz-window-top').css('background-color' , '#2d2d2d');
         Rwindow.show('normal');
         tab.remove();
       });
-      tab.find('span').click(function(){
+      // tab.find('div').hover(function(){
+      //   $(this).tooltip();
+      // });
+      tab.find('.ti-close').click(function(){
         Rwindow.remove();
         tab.hide('slide', {direction:'left'}, function(){ tab.remove() });
       })
@@ -172,7 +191,16 @@ function lifeToWindow(Rwindow){
   });
   Rwindow.find(".ti-close").on("click", function(e){
     e.stopPropagation();
-    $(this).parent().parent().parent()
-    .detach();
+
+    Rwindow.fadeOut('normal', function(){
+      Rwindow.detach();
+      $(".raiz-window-container").css('z-index' , '15');
+      $(".raiz-window-container .raiz-window-top").css('background-color', '#636161');
+      var nextRwindow = $(".raiz-window-container").last();
+      console.log(nextRwindow);
+      nextRwindow.css('z-index' , '20');
+      nextRwindow.find('.raiz-window-top').css('background-color' , '#2d2d2d');
+    })
+
   });
 }

@@ -1,7 +1,7 @@
 "use strict"
 
 
-if ( ! Detector.webgl ) alert('webGL needed');
+// if ( ! Detector.webgl ) alert('webGL needed');
 var container, stats;
 var camera, scene, renderer, raycaster;
 var group;
@@ -11,9 +11,8 @@ var mouse = new THREE.Vector2(), INTERSECTED;
 
 // polygon_init(Rwindow);
 // animate();
-function polygon_init(Rwindow) {
+function THREE_init(Rwindow) {
     container = Rwindow;
-    console.log(container.width(), container.height());
   	scene = new THREE.Scene();
   	scene.background = new THREE.Color( 0xffffff );
   	camera = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
@@ -29,7 +28,7 @@ function polygon_init(Rwindow) {
 
   	renderer = new THREE.WebGLRenderer( { antialias: true } );
   	renderer.setPixelRatio( window.devicePixelRatio );
-  	renderer.setSize( container.width() - 10, container.height() - 10 );
+  	renderer.setSize( 500, 500 );
   	container.append( renderer.domElement );
   	stats = new Stats();
   	container.append( stats.dom );
@@ -111,7 +110,7 @@ function onWindowResize(e) {
   console.log(e);
 	camera.aspect = 1;
 	camera.updateProjectionMatrix();
-	renderer.setSize( Rwindo, 500 );
+	renderer.setSize( Rwindow, 500 );
 }
 
 function animate() {

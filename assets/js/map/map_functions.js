@@ -53,18 +53,7 @@ function setWindow(polygon, data){
   var Rwindow = raiz_window(header);
   $(document.body).append(Rwindow);
   // insert3D(Rwindow, polygon);
-  polygon_init(Rwindow);
-  var polyPoints = [];
-
-  $.each(polygon.Id[0], function(index, target){
-      polyPoints.push(new THREE.Vector2(target.ib, target.jb));
-  });
-
-  var poly3D = new THREE.Shape(polyPoints);
-  var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 3 };
-  addShape( poly3D,  extrudeSettings, 0x46d78f, 0, 0, 0, 0, 0, 0, 1 );
-  animate();
-
+  THREE_init(polygon, data, Rwindow);
   Rwindow.show('normal');
 }
 
