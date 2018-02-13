@@ -1,7 +1,7 @@
 
 <!-- MDB -->
 <link href="<?php echo base_url();?>assets/vendor/mdb/mdb.min.css" rel="stylesheet">
-<!-- <script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script> -->
+<script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script>
 
 <!-- DOM4 -->
 <script src="<?php echo base_url();?>assets/vendor/dom4/dom4.min.js"></script>

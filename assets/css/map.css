@@ -151,7 +151,7 @@ body {
 }
 /* raiz side tab */
 
-.raiz-side-tab{
+.raiz-side-tab-container{
   position: fixed;
   width: 350px;
   height: calc(100% - 120px);
@@ -159,11 +159,19 @@ body {
   z-index: 11;
   top: 90px;
   left: 0;
+  box-shadow: 0 15px 15px rgba(0,0,0,0.3);
+  z-index : 49;
   display: none;
   -webkit-transition: width 0.35s ease;
   -moz-transition: width 0.35s ease;
   -o-transition: width 0.35s ease;
   transition: width 0.35s ease;
+}
+
+.side-tab-header{
+  width: 100%;
+  height: 200px;
+  background-color: #333;
 }
 
 /* map footer */
@@ -176,7 +184,7 @@ body {
   height: 30px;
   position: absolute;
   background-color: #1a1a1a;
-  z-index: 10;
+  z-index: 50;
 }
 
 .footer-tab-container .tab-name{

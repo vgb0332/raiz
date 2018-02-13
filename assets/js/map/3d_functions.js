@@ -1,3 +1,4 @@
+const initial_camera_ratio = 6/7;
 
 function THREE_init(polygon, data, Rwindow){
   var container = Rwindow.find('.raiz-window-body');
@@ -5,10 +6,11 @@ function THREE_init(polygon, data, Rwindow){
   scene.background = new THREE.Color( 0x000000 );
   var camera = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
   camera.position.set( 0, 0, 500 );
-  raycaster = new THREE.Raycaster();
+
   scene.add( camera );
   var light = new THREE.PointLight( 0xffffff, 0.8 );
   camera.add( light );
+
   var group = new THREE.Group();
   scene.add( group );
 
@@ -21,13 +23,12 @@ function THREE_init(polygon, data, Rwindow){
   var controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.addEventListener( 'change', function(){
     renderer.render(scene, camera);
-    console.log(camera.position);
   } ); // remove when using animation loop
   // enable animation loop when using damping or autorotation
-  //controls.enableDamping = true;
-  //controls.dampingFactor = 0.25;
+  // controls.enableDamping = true;
+  // controls.dampingFactor = 0.25;
   controls.enableZoom = true;
-  scene.add( new THREE.AxesHelper( 20 ) );
+  controls.enablePan = false;
 
   Rwindow.resize(function(){
     camera.aspect = 1;
@@ -67,30 +68,76 @@ function THREE_init(polygon, data, Rwindow){
   var center = geometry.boundingBox.getCenter();
   var size = geometry.boundingBox.getSize();
 
-  var len = size.x > size.y ? size.x : size.y;
-  var new_z = 5 * len / 7;
+  var longLen = size.x > size.y ? size.x : size.y;
+  var new_z = initial_camera_ratio * longLen;
   camera.position.z = new_z;
+
   mesh.position.set( x - center.x , y - center.y, z  );
   mesh.rotation.set( rx, ry, rz );
+
   var group = new THREE.Group();
   scene.add(group);
   group.add(mesh);
 
   domEvents.addEventListener(mesh, 'click', function(event){
     console.log('you clicked on the mesh');
-    for(var i = 0; i < 10000000; ++i){
-      group.rotation.y += 0.005;
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    }
+    var initial_x = 0;
+    var initial_y = 0;
+    var initial_z = new_z;
+    var target_y = initial_z * Math.tan(degToRad(-90));
+    var flagX = false, flagY = false, flagZ = false;
 
+    var delta_x = camera.position.x - initial_x;
+    var delta_y = camera.position.y - target_y;
+    var delta_z = camera.position.z - initial_z;
+    var frames = 100;
+    console.log(delta_x, delta_y, delta_z);
+    console.log(target_y);
+    controls.enabled = false;
+    var renderOnClick = function(){
+      console.log('function called', flagX, flagY, flagZ);
+      if(flagX == true && flagY == true && flagZ == true){
+        controls.enabled = true;
+        return false;
+      }
+      requestAnimationFrame(renderOnClick);
+      // controls.update();
+      if(Math.trunc(camera.position.x) === Math.trunc(initial_x)){
+        flagX = true;
+      }
+      else if(!flagX){
+        camera.position.x -= ( delta_x / frames );
+      }
+
+      if(Math.trunc(camera.position.y) === Math.trunc(target_y)){
+        flagY = true;
+      }
+      else if(!flagY){
+        camera.position.y -= ( delta_y / frames );
+      }
+
+      if(Math.trunc(camera.position.z) === Math.trunc(initial_z)){
+        flagZ = true;
+      }
+      else if(!flagZ){
+        camera.position.z -= ( delta_z / frames );
+      }
+      console.log(camera.position.x, camera.position.y, camera.position.z);
+      camera.lookAt(scene.position);
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    requestAnimationFrame(function(){
+      requestAnimationFrame(renderOnClick);
+      renderOnClick();
+    });
 
   }, false);
   domEvents.addEventListener(mesh, 'mouseover', function(event){
     console.log(mesh);
     Rwindow.css('cursor', 'pointer');
     console.log('you mouse on the mesh');
-    mesh.material.color.setHex(0xffffff);
+    mesh.material.color.setHex(0xd9fceb);
     renderer.render(scene, camera);
 
   }, false);
@@ -115,4 +162,8 @@ function animate(){
 
 function onWindowResize(){
   console.log('resziing?');
+}
+
+function degToRad(angle){
+  return 3.14 * angle / 360;
 }
