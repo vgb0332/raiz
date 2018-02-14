@@ -31,10 +31,8 @@ function drawPoly(data){
           setPoly(ajax_type, polygon, data, index);
           // // Ghun testing!
           console.log(polygon);
-          // stcs_arr.push([polygon,data[index]['sigunguCd']])
       });
   });
-  // console.log(stcs_arr);
 }
 
 /*
@@ -115,7 +113,6 @@ function setPoly(type, polygon, data, indexing){
       // console.log('polygon mouseover activated! : ' , polygon );
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-      console.log(polygon.Bb[0]);
       getStcsdong(polygon.Bb[0])
       $('.stcs-polygon').remove();
     });
@@ -143,18 +140,43 @@ function setPoly(type, polygon, data, indexing){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
     // console.log(polygon);
+    polygon.Bb[0] = [
+      data[indexing]['SHAPE_AREA'],
+      data[indexing]['TOTAL_POP'],
+      data[indexing]['MEDIUM_AGE'],
+      data[indexing]['TOT_REG_CD']
+    ];
+    var customOverlay = new daum.maps.CustomOverlay({})
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
     });
 
+    makeGlobalvalue(polygon,'stcsAggr');
+
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
       // console.log('polygon mouseover activated! : ' , polygon );
+      customOverlay.setContent('<div class="stcs_ol">면적 : ' + polygon.Bb[0][0] + ' m<sup>2</sup></br>총 인구 : ' + polygon.Bb[0][1] + ' 명</br>평균 연령 : ' + polygon.Bb[0][2] + ' 세</div>');
+      customOverlay.setPosition(mouseEvent.latLng);
+      customOverlay.setMap(map);
+    });
+    daum.maps.event.addListener(polygon, 'mousemove', function(mouseEvent) {
+      customOverlay.setPosition(mouseEvent.latLng);
+    });
+    daum.maps.event.addListener(polygon, 'mouseout', function() {
+      customOverlay.setMap(null);
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-
-      $('.stcs-polygon').remove();
+      console.log(aggr_poly);
+      // $('.stcs-polygon').remove();
+      // $('.stcs_ol').remove();
     });
+  }
+}
+
+function makeGlobalvalue(data,type){
+  if (type === 'stcsAggr') {
+    aggr_poly.push(data);
   }
 }
 

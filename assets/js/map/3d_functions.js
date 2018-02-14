@@ -3,13 +3,61 @@ const initial_camera_ratio = 6/7;
 function THREE_init(polygon, data, Rwindow){
   var container = Rwindow.find('.raiz-window-body');
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color( 0x000000 );
+  // scene.background = new THREE.Color( 0x000000 );
+
   var camera = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
   camera.position.set( 0, 0, 500 );
 
   scene.add( camera );
   var light = new THREE.PointLight( 0xffffff, 0.8 );
   camera.add( light );
+
+        var cameraCube = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
+        var sceneCube = new THREE.Scene();
+        // Textures
+				var r = "assets/img/3dtest/";
+				var urls = [ r + "posx.jpg", r + "negx.jpg",
+							 r + "posy.jpg", r + "negy.jpg",
+							 r + "posz.jpg", r + "negz.jpg" ];
+				textureCube = new THREE.CubeTextureLoader().load( urls );
+				textureCube.format = THREE.RGBFormat;
+				textureCube.mapping = THREE.CubeReflectionMapping;
+				var textureLoader = new THREE.TextureLoader();
+				textureEquirec = textureLoader.load( "assets/img/3dtest/2294472375_24a3b8ef46_o.jpg" );
+				textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec.magFilter = THREE.LinearFilter;
+				textureEquirec.minFilter = THREE.LinearMipMapLinearFilter;
+				// textureSphere = textureLoader.load( "textures/metal.jpg" );
+				// textureSphere.mapping = THREE.SphericalReflectionMapping;
+        // Materials
+				var equirectShader = THREE.ShaderLib[ "equirect" ];
+				var equirectMaterial = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial.uniforms[ "tEquirect" ].value = textureEquirec;
+				var cubeShader = THREE.ShaderLib[ "cube" ];
+				var cubeMaterial = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader.fragmentShader,
+					vertexShader: cubeShader.vertexShader,
+					uniforms: cubeShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				cubeMaterial.uniforms[ "tCube" ].value = textureCube;
+				// Skybox
+				cubeMesh = new THREE.Mesh( new THREE.BoxBufferGeometry( 100, 100, 100 ), cubeMaterial );
+				sceneCube.add( cubeMesh );
+
+        var geometry = new THREE.SphereBufferGeometry( 400.0, 48, 24 );
+				sphereMaterial = new THREE.MeshLambertMaterial( { envMap: textureCube } );
+				sphereMesh = new THREE.Mesh( geometry, sphereMaterial );
+				scene.add( sphereMesh );
+
+
 
   var group = new THREE.Group();
   scene.add( group );
@@ -20,9 +68,22 @@ function THREE_init(polygon, data, Rwindow){
   container.append( renderer.domElement );
   var stat = new Stats();
   container.append( stat.dom );
+
+        renderer.autoClear = false;
+        renderer.setFaceCulling( THREE.CullFaceNone );
+
   var controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.addEventListener( 'change', function(){
     renderer.render(scene, camera);
+    console.log(controls.getAzimuthalAngle() * 180 / Math.PI);
+    var angle = 60 + controls.getAzimuthalAngle() * 180 / Math.PI;
+    Rwindow.find(".raiz-compass-pointer").css({
+      '-webkit-transform' : 'rotate(' + angle + 'deg)',
+      '-moz-transform'    : 'rotate(' + angle + 'deg)',
+      '-ms-transform'     : 'rotate(' + angle + 'deg)',
+      '-o-transform'      : 'rotate(' + angle + 'deg)',
+      'transform'         : 'rotate(' + angle + 'deg)'
+    });
   } ); // remove when using animation loop
   // enable animation loop when using damping or autorotation
   // controls.enableDamping = true;
@@ -77,6 +138,23 @@ function THREE_init(polygon, data, Rwindow){
 
   var group = new THREE.Group();
   scene.add(group);
+
+
+  // var gridHelper = new THREE.GridHelper( 400, 40, 0xffffff, 0xffffff );
+	// gridHelper.position.y = 0;
+	// gridHelper.position.x = 0;
+	// scene.add( gridHelper );
+  //
+  // var polarGridHelper = new THREE.PolarGridHelper( 200, 16, 8, 64, 0x0000ff, 0x808080 );
+	// polarGridHelper.position.y = 0;
+	// polarGridHelper.position.x = 0;
+	// scene.add( polarGridHelper );
+
+  var axesHelper = new THREE.AxesHelper( longLen );
+  axesHelper.position.y = 0;
+	axesHelper.position.x = 0;
+  scene.add( axesHelper );
+
   group.add(mesh);
 
   domEvents.addEventListener(mesh, 'click', function(event){
@@ -91,8 +169,7 @@ function THREE_init(polygon, data, Rwindow){
     var delta_y = camera.position.y - target_y;
     var delta_z = camera.position.z - initial_z;
     var frames = 100;
-    console.log(delta_x, delta_y, delta_z);
-    console.log(target_y);
+
     controls.enabled = false;
     var renderOnClick = function(){
       console.log('function called', flagX, flagY, flagZ);
@@ -122,7 +199,7 @@ function THREE_init(polygon, data, Rwindow){
       else if(!flagZ){
         camera.position.z -= ( delta_z / frames );
       }
-      console.log(camera.position.x, camera.position.y, camera.position.z);
+
       camera.lookAt(scene.position);
       controls.update();
       renderer.render(scene, camera);
@@ -149,8 +226,10 @@ function THREE_init(polygon, data, Rwindow){
       renderer.render(scene, camera);
   }, false);
 
-  animate();
+  // animate();
   renderer.render(scene, camera);
+
+        renderer.render( sceneCube, cameraCube );
 
 }
 

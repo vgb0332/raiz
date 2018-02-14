@@ -23,7 +23,8 @@ var categoryOverlay = new daum.maps.CustomOverlay({});
   ** Default: 'toji'
 */
 var ajax_type = 'toji';
-var stcs_arr = [];
+var currHjstcs = '';
+var aggr_poly = [];
 
 var raiz_window = function(title){
   var $container = $(document.createElement('div')).addClass("raiz-window-container");
@@ -51,9 +52,13 @@ var raiz_window = function(title){
                     +   "<div class='column header'>" + title + "</div>"
                     +  "</div>"
                     +  "<div class='raiz-window-body'>"
-                    // +     "<div class='col-sm-1'></div>"
-                    // +     "<div class='body-content col-sm-10'></div>"
-                    // +     "<div class='col-sm-1'></div>"
+                    +     "<div class='raiz-compass'>"
+                    +       "<span>" + "N" + "</span>"
+                    +       "<span>" + "E" + "</span>"
+                    +       "<span>" + "S" + "</span>"
+                    +       "<span>" + "W" + "</span>"
+                    +       "<div class='raiz-compass-pointer'></div>"
+                    +     "</div>"
                     +  "</div>"
                     +  "<div class='raiz-window-footer'></div>"
                   );

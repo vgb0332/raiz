@@ -1,7 +1,11 @@
 
 <!-- MDB -->
 <link href="<?php echo base_url();?>assets/vendor/mdb/mdb.min.css" rel="stylesheet">
-<script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script>
+<?php if($browser !== 'Internet Explorer'){ ?>
+  <script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script>
+<?php
+ }
+ ?>
 
 <!-- DOM4 -->
 <script src="<?php echo base_url();?>assets/vendor/dom4/dom4.min.js"></script>
@@ -12,6 +16,9 @@
 <link href="<?php echo base_url();?>assets/css/map.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/css/polygon.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/css/themify-icons.css" rel="stylesheet">
+
+<!-- GHUNCSS -->
+<link href="<?php echo base_url();?>assets/css/ghun.css" rel="stylesheet">
 
 <!-- OWN JS FILES -->
 <script src="<?php echo base_url();?>assets/js/common/global_variable.js"></script>

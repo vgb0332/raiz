@@ -30,8 +30,19 @@ Class Statistics extends CI_Model {
   function getStcsAggr($code){
       $query = $this->db->query(
                 "SELECT ADM_CD, TOT_REG_CD, SHAPE_AREA, TOTAL_POP, MEDIUM_AGE, polygon
-                FROM raiz2.AggregZone 
+                FROM raiz2.AggregZone
                 where ADM_CD = $code
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsOldind($code){
+      $query = $this->db->query(
+                "SELECT tot_oa_cd, item, value
+                FROM raiz2.2016OldIndices
+                WHERE tot_oa_cd LIKE '$code%'
                 ");
 
     $result = $query->result_array();

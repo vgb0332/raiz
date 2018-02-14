@@ -24,7 +24,9 @@ class Map extends CI_Controller {
       $this->load->view('map/map_controller');
       // $this->load->view('map/raiz_window');
       $this->load->view('map/map_footer');
-      $this->load->view('map/bottom_dependency');
+      // check for browser since IE won't take some js libraries TT
+
+      $this->load->view('map/bottom_dependency', array('browser' => $this->agent->browser()));
     }
 	}
 }
