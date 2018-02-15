@@ -78,7 +78,7 @@
       <div class="stat-body">
           <ul class="raiz-side-tab-list">
               <li>
-                  <button class="btn">인구 밀도 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
+                  <button class="btn" onclick="getStcsPopdens();">인구 밀도 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
               </li>
               <li>
                   <button class="btn">유년 부양비 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>

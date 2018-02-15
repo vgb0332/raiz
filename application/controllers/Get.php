@@ -47,12 +47,17 @@ class Get extends CI_Controller {
     echo $this->Statistics->getStcsAggr($code);
   }
 
-public function stcsOldind() {
-  $this->load->model('Statistics');
-  $code = $this->input->post('currHjstcs');
-  echo $this->Statistics->getStcsOldind($code);
-}
+  public function stcsOldind() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsOldind($code);
+  }
 
+  public function stcsPopdens() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsPopdens($code);
+  }
 
 
 }

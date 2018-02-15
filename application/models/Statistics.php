@@ -49,4 +49,15 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
+  function getStcsPopdens($code){
+      $query = $this->db->query(
+                "SELECT tot_oa_cd, item, value
+                FROM raiz2.2016PopDensity
+                WHERE tot_oa_cd LIKE '$code%'
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
 }

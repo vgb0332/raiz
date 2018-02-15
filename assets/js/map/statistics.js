@@ -24,6 +24,12 @@ function getStcsOldind() {
             setOldindPoly);
 }
 
+function getStcsPopdens() {
+  ajax_type = 'stcsPopdens';
+  customAjax($SITE_URL+'get/stcsPopdens',{currHjstcs:currHjstcs},
+            setOldindPoly);
+}
+
 function setOldindPoly(data) {
   console.log(data);
   for (var i = 0; i < data.length; i++) {
