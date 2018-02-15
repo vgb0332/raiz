@@ -32,3 +32,13 @@
 <!-- <script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script> -->
 <script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/statistics.js"></script>
+
+<!-- MOBILE CHECK -->
+<!-- is_mobile variable can be checked in common/global_variable.js default is false -->
+<?php
+if($is_mobile){
+?>
+  <script type="text/javascript">  is_mobile = true; </script>
+<?php
+}
+?>

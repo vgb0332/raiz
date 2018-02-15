@@ -6,8 +6,11 @@ $(document).ready(function(){
    *    - For PC, "right click" on daum map triggers the land polygon
    *    - For Mobile, "double click" on daum map triggers the land polygon
    */
-
-   daum.maps.event.addListener(map, 'rightclick', function(mouseEvent){
+   var trigger_by = 'rightclick';
+   if(is_mobile){
+     trigger_by = 'dblclick';
+   }
+   daum.maps.event.addListener(map, trigger_by, function(mouseEvent){
 
      coord2RegionCode(mouseEvent.latLng, function(address, status) {
          if (status === daum.maps.services.Status.OK) {

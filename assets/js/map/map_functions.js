@@ -53,6 +53,7 @@ function setWindow(polygon, data){
   $(document.body).append(Rwindow);
   // insert3D(Rwindow, polygon);
   THREE_init(polygon, data, Rwindow);
+  Rwindow.find('.raiz-window-body').append(toji_possession(data));
   Rwindow.show('normal');
 }
 

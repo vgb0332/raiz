@@ -3,7 +3,7 @@ const initial_camera_ratio = 6/7;
 function THREE_init(polygon, data, Rwindow){
   var container = Rwindow.find('.raiz-window-body');
   var scene = new THREE.Scene();
-  // scene.background = new THREE.Color( 0x000000 );
+  scene.background = new THREE.Color( 0xffffff );
 
   var camera = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
   camera.position.set( 0, 0, 500 );
@@ -11,53 +11,6 @@ function THREE_init(polygon, data, Rwindow){
   scene.add( camera );
   var light = new THREE.PointLight( 0xffffff, 0.8 );
   camera.add( light );
-
-        var cameraCube = new THREE.PerspectiveCamera( 90, 1, 1, 2000 );
-        var sceneCube = new THREE.Scene();
-        // Textures
-				var r = "assets/img/3dtest/";
-				var urls = [ r + "posx.jpg", r + "negx.jpg",
-							 r + "posy.jpg", r + "negy.jpg",
-							 r + "posz.jpg", r + "negz.jpg" ];
-				textureCube = new THREE.CubeTextureLoader().load( urls );
-				textureCube.format = THREE.RGBFormat;
-				textureCube.mapping = THREE.CubeReflectionMapping;
-				var textureLoader = new THREE.TextureLoader();
-				textureEquirec = textureLoader.load( "assets/img/3dtest/2294472375_24a3b8ef46_o.jpg" );
-				textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
-				textureEquirec.magFilter = THREE.LinearFilter;
-				textureEquirec.minFilter = THREE.LinearMipMapLinearFilter;
-				// textureSphere = textureLoader.load( "textures/metal.jpg" );
-				// textureSphere.mapping = THREE.SphericalReflectionMapping;
-        // Materials
-				var equirectShader = THREE.ShaderLib[ "equirect" ];
-				var equirectMaterial = new THREE.ShaderMaterial( {
-					fragmentShader: equirectShader.fragmentShader,
-					vertexShader: equirectShader.vertexShader,
-					uniforms: equirectShader.uniforms,
-					depthWrite: false,
-					side: THREE.BackSide
-				} );
-				equirectMaterial.uniforms[ "tEquirect" ].value = textureEquirec;
-				var cubeShader = THREE.ShaderLib[ "cube" ];
-				var cubeMaterial = new THREE.ShaderMaterial( {
-					fragmentShader: cubeShader.fragmentShader,
-					vertexShader: cubeShader.vertexShader,
-					uniforms: cubeShader.uniforms,
-					depthWrite: false,
-					side: THREE.BackSide
-				} );
-				cubeMaterial.uniforms[ "tCube" ].value = textureCube;
-				// Skybox
-				cubeMesh = new THREE.Mesh( new THREE.BoxBufferGeometry( 100, 100, 100 ), cubeMaterial );
-				sceneCube.add( cubeMesh );
-
-        var geometry = new THREE.SphereBufferGeometry( 400.0, 48, 24 );
-				sphereMaterial = new THREE.MeshLambertMaterial( { envMap: textureCube } );
-				sphereMesh = new THREE.Mesh( geometry, sphereMaterial );
-				scene.add( sphereMesh );
-
-
 
   var group = new THREE.Group();
   scene.add( group );
@@ -75,7 +28,6 @@ function THREE_init(polygon, data, Rwindow){
   var controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.addEventListener( 'change', function(){
     renderer.render(scene, camera);
-    console.log(controls.getAzimuthalAngle() * 180 / Math.PI);
     var angle = 60 + controls.getAzimuthalAngle() * 180 / Math.PI;
     Rwindow.find(".raiz-compass-pointer").css({
       '-webkit-transform' : 'rotate(' + angle + 'deg)',
@@ -117,7 +69,7 @@ function THREE_init(polygon, data, Rwindow){
 
   var poly3D = new THREE.Shape(polyPoints);
   var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 3 };
-  var color = 0x46d78f;
+  var color = 0x725428;
   var x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s = 1;
   var geometry = new THREE.ExtrudeGeometry( poly3D, extrudeSettings );
   var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: color } ) );
@@ -135,10 +87,12 @@ function THREE_init(polygon, data, Rwindow){
 
   mesh.position.set( x - center.x , y - center.y, z  );
   mesh.rotation.set( rx, ry, rz );
+  mesh.material.transparent = true;
+
+
 
   var group = new THREE.Group();
   scene.add(group);
-
 
   // var gridHelper = new THREE.GridHelper( 400, 40, 0xffffff, 0xffffff );
 	// gridHelper.position.y = 0;
@@ -157,8 +111,9 @@ function THREE_init(polygon, data, Rwindow){
 
   group.add(mesh);
 
-  domEvents.addEventListener(mesh, 'click', function(event){
-    console.log('you clicked on the mesh');
+  var meshClick = function(event){
+    console.log('you clicked on the mesh', mesh);
+    Rwindow.find('.toji-possession').fadeIn();
     var initial_x = 0;
     var initial_y = 0;
     var initial_z = new_z;
@@ -172,7 +127,6 @@ function THREE_init(polygon, data, Rwindow){
 
     controls.enabled = false;
     var renderOnClick = function(){
-      console.log('function called', flagX, flagY, flagZ);
       if(flagX == true && flagY == true && flagZ == true){
         controls.enabled = true;
         return false;
@@ -208,39 +162,41 @@ function THREE_init(polygon, data, Rwindow){
       requestAnimationFrame(renderOnClick);
       renderOnClick();
     });
+  };
 
-  }, false);
-  domEvents.addEventListener(mesh, 'mouseover', function(event){
-    console.log(mesh);
+  var meshMouseOver = function(event){
     Rwindow.css('cursor', 'pointer');
     console.log('you mouse on the mesh');
-    mesh.material.color.setHex(0xd9fceb);
+    // mesh.material.color.setHex(0xd9fceb);
+    mesh.material.opacity = 0.7;
     renderer.render(scene, camera);
+  };
 
-  }, false);
+  var meshMouseOut = function(event){
+    Rwindow.css('cursor', 'default');
+    console.log('you mouse out the mesh');
+    // mesh.material.color.setHex(0x46d78f);
+    mesh.material.opacity = 1;
+    renderer.render(scene, camera);
+  };
 
-  domEvents.addEventListener(mesh, 'mouseout', function(event){
-      Rwindow.css('cursor', 'default');
-      console.log('you mouse out the mesh');
-      mesh.material.color.setHex(0x46d78f);
-      renderer.render(scene, camera);
-  }, false);
+  if(!is_mobile){
+    domEvents.addEventListener(mesh, 'click', meshClick, false);
+    domEvents.addEventListener(mesh, 'mouseover', meshMouseOver, false);
+    domEvents.addEventListener(mesh, 'mouseout', meshMouseOut, false);
+  }
+  else{
+    domEvents.addEventListener(mesh, 'mouseover', meshClick, false);
+  }
+
 
   // animate();
   renderer.render(scene, camera);
-
-        renderer.render( sceneCube, cameraCube );
-
 }
 
 function animate(){
   requestAnimationFrame( animate );
   // render();
-}
-
-
-function onWindowResize(){
-  console.log('resziing?');
 }
 
 function degToRad(angle){

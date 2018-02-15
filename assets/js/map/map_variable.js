@@ -66,3 +66,58 @@ var raiz_window = function(title){
   $container.removeAttr('style');
   return $container;
 }
+
+var toji_possession = function(data){
+  var $container = $(document.createElement('div')).addClass("toji-possession").css('display', 'none');
+  $container.append(
+                      "<div class='toji-possession-header'>"
+                    +   '토지특성정보  ' + "<span class='ti-angle-down'></span>"
+                    + "</div>"
+                    + "<div class='toji-possession-body' style='display:none;'>"
+                    + "</div>"
+                    + "<div class='toji-possession-footer' style='display:none;'>"
+                    + "</div>"
+  );
+  console.log(data);
+
+  // var data_index = [
+  //   '공유인수', '공시지가', '지목',
+  //   '토지면적', '소유구분', '국가기관구분',
+  //   '소유권변동원인', '소유권변동일자'
+  // ];
+  //
+  // var data_attr = [
+  //   'cnrsPsnCo', 'pblntfPclnd', 'lndcgrCodeNm',
+  //   'lndpclAr', 'posesnSeCodeNm', 'nationInsttSeCodeNm',
+  //   'ownshipChgCauseCodeNm', 'ownshipChgDe'
+  // ];
+  var data_index = [
+    '용도지역명', '토지이용상황', '지형높이', '지형형상', '도로접면', '데이터기준일자'
+  ];
+
+  var data_attr =[
+    'prposArea1Nm', 'ladUseSittnNm', 'tpgrphHgCodeNm',
+    'tpgrphFrmCodeNm', 'roadSideCodeNm', 'lastUpdtDt'
+  ];
+  var index_len = data_index.length;
+  var content = $(document.createElement('div')).addClass('toji-possession-table');
+  for(var i = 0; i < index_len; ++i){
+    content.append(
+        "<div>" + data_index[i] + "</div>"
+      + "<div>" + ( (data[0][data_attr[i]] === undefined) ? '-' : data[0][data_attr[i]] ) + "</div>"
+    );
+  }
+
+  $container.find('.toji-possession-body').append(content);
+
+  $container.find('.toji-possession-header').on('click', function(){
+    if($container.find('.toji-possession-body').is(":visible")){
+      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+    }
+    else{
+      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+    }
+    $container.find('.toji-possession-body').toggle('fast', 'linear');
+  });
+  return $container;
+};
