@@ -29,8 +29,8 @@ Class Statistics extends CI_Model {
 
   function getStcsAggr($code){
       $query = $this->db->query(
-                "SELECT ADM_CD, TOT_REG_CD, SHAPE_AREA, TOTAL_POP, MEDIUM_AGE, polygon
-                FROM raiz2.AggregZone
+                "SELECT ADM_CD, TOT_REG_CD, SHAPE_AREA, TOTAL_POP, MEDIUM_AGE, ST_AsText(polygon) as polygon, ST_AsText(ST_Centroid(polygon)) as center
+                FROM raiz2.AggregZone3
                 where ADM_CD = $code
                 ");
 

@@ -13,7 +13,7 @@ function customAjax(url,data,callback) {
      data:data,
      success: function(data) {
         // console.log(data); // predefined logic if any
-        // console.log(JSON.parse(data));
+        console.log(JSON.parse(data));
         if(typeof callback == 'function') {
            callback(JSON.parse(data));
         }

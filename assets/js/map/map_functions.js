@@ -5,7 +5,7 @@
   param: data, points
 
 */
-
+var qwe = '';
 function drawPoly(data){
   console.log(data);
   var testPolygon;
@@ -184,9 +184,17 @@ function makeGlobalvalue(data,type){
 function parseShape(shape){
   /*    shape : 'polygon( (poly1) , (poly2) , ...)'   */
   // console.log(shape);
+  if (shape[0] === 'P') {
+    // console.log('hi');
+    shape = shape.replace(/,/g, ', ');
+    shape = shape.toLowerCase();
+  }
+
+  // console.log(shape);
   var shapes = shape.replace('polygon(', '').replace('))' , ')').split('), ');
   $.each(shapes, function(index, value){
     shapes[index] = value.replace('(', '').replace(')', '');
   });
+  qwe = shapes;
   return shapes;
 }
