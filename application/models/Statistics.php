@@ -5,11 +5,22 @@ Class Statistics extends CI_Model {
     parent::__construct();
   }
 
-  function getStcsSgg(){
+
+  function getStcsSido(){
+    $query = $this->db->query(
+              "SELECT sidoCd , sidoNm , ST_AsText(polygon) as polygon , ST_AsText(ST_Centroid(polygon)) as center
+              FROM raiz2.sensusHJsido2
+              ");
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+
+  function getStcsSgg($code){
       $query = $this->db->query(
                 "SELECT sigunguCd , sigunguNm , polygon
                 FROM raiz2.sensusHJsgg
-                WHERE sigunguCd LIKE '11%';
+                WHERE sigunguCd LIKE '$code%';
                 ");
 
     $result = $query->result_array();

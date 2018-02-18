@@ -150,10 +150,30 @@ function setPoly(type, polygon, data, indexing){
     buildingPolygons.push(polygon);
   }
 
-  if(type === 'stcs'){
+  if(type === 'stcsSido'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
-    polygon.Bb[0] = data[indexing]['sigunguCd'];
+    console.log(data);
+    polygon.Bb[0] = data['sidoCd'];
+    // console.log(polygon);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+    });
+
+    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+      // console.log('polygon mouseover activated! : ' , polygon );
+    });
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      getStcsSgg(polygon.Bb[0])
+      $('.stcs-polygon').remove();
+    });
+  }
+
+  if(type === 'stcsSgg'){
+    // polygon.setOptions( toji_polygon_option );
+    polygon.setMap(map);
+    polygon.Bb[0] = data['sigunguCd'];
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
@@ -172,7 +192,7 @@ function setPoly(type, polygon, data, indexing){
   if(type === 'stcsDong'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
-    polygon.Bb[0] = data[indexing]['ADM_CD'];
+    polygon.Bb[0] = data['ADM_CD'];
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
@@ -192,10 +212,10 @@ function setPoly(type, polygon, data, indexing){
     polygon.setMap(map);
     // console.log(polygon);
     polygon.Bb[0] = [
-      data[indexing]['SHAPE_AREA'],
-      data[indexing]['TOTAL_POP'],
-      data[indexing]['MEDIUM_AGE'],
-      data[indexing]['TOT_REG_CD']
+      data['SHAPE_AREA'],
+      data['TOTAL_POP'],
+      data['MEDIUM_AGE'],
+      data['TOT_REG_CD']
     ];
     var customOverlay = new daum.maps.CustomOverlay({})
     var target = polygon.wc;

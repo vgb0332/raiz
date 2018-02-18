@@ -1,6 +1,6 @@
-function getStcsSgg() {
-  ajax_type = 'stcs';
-  customAjax($SITE_URL+'get/statscSgg',0,
+function getStcsSgg(sggcode) {
+  ajax_type = 'stcsSgg';
+  customAjax($SITE_URL+'get/statscSgg',{sggcode:sggcode},
             drawPoly);
 }
 
@@ -67,10 +67,12 @@ function changePolyFill(key,val,type) {
 
 }
 
-
-function processStcs(arr) {
+function initStcs() {
   console.log('called');
-  for (var i = 0; i < arr.length; i++) {
-    drawPoly(arr[i])
-  }
+  ajax_type = 'stcsSido';
+  $('.stcs-polygon').remove();
+  customAjax($SITE_URL+'get/statscSido',0,
+            drawPoly);
+  map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
+  map.setLevel(12);
 }

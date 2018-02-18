@@ -108,6 +108,7 @@ function lifeToWindow(Rwindow){
     $(".raiz-window-container .raiz-window-top").css('background-color', '#636161');
     Rwindow.css('z-index' , '20');
     Rwindow.find('.raiz-window-top').css('background-color' , '#2d2d2d');
+
   });
 
   Rwindow.find( " .ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ")
@@ -203,5 +204,17 @@ function lifeToWindow(Rwindow){
       nextRwindow.find('.raiz-window-top').css('background-color' , '#2d2d2d');
     })
 
+  });
+
+  Rwindow.find(".raiz-mouse-control").on("click", function(e){
+    Rwindow.find('.raiz-mouse-control-info').toggle('fast', 'linear');
+  });
+
+  Rwindow.find(".raiz-mouse-control").on("mouseover", function(e){
+    $(this).tooltip({
+      'animation': true,
+      'title' : '컨트롤',
+      'placement' : 'left'
+    });
   });
 }
