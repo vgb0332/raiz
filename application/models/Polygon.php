@@ -13,7 +13,8 @@ Class Polygon extends CI_Model {
       $x = $values['lat'];
       $y = $values['lng'];
 
-      $query = $this->db->query(
+      $this->db->cache_off();
+      $query1 = $this->db->query(
                 "SELECT *
                 FROM getLandPolygonText as a, getLandCharacteristics as b
                 WHERE a.sigunguCd = $sigunguCd
@@ -26,9 +27,34 @@ Class Polygon extends CI_Model {
                 AND 	ST_CONTAINS(geomfromtext(polygon), point($x, $y))
                 LIMIT 1
                 ");
+
+        $result1 = $query1->result_array();
+        $query1->free_result();
+
+        if(count($result1) > 0){
+          $pnu = $result1[0]['pnu'];
+          $bun = $result1[0]['bun'];
+          $ji = $result1[0]['ji'];
+
+          $this->db->where('sigunguCd', $sigunguCd);
+          $this->db->where('bjdongCd' , $bjdongCd);
+          $this->db->where('bun', $bun);
+          $this->db->where('ji', $ji);
+          $this->db->where('pnu', $pnu);
+          $result2 = $this->db->get('getBuildingPolygon')->result_array();
+
+        }
+        else{
+          $result2 = [];
+        }
+
+        $result = array(
+          'land' => $result1,
+          'building' => $result2
+        );
     }
 
-    $result = $query->result_array();
+
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 

@@ -13,7 +13,7 @@ var window_on_left = {
 
 var window_on_right = {
   "height" : window_height - top_offset - bottom_offset,
-  "width" : "500vw",
+  "width" : "500px",
   "right" : '0',
   "top" : top_offset
 };
@@ -62,11 +62,12 @@ function lifeToWindow(Rwindow){
         $(this).animate(window_on_left, 20)
         .addClass("opac");
       }
-      else if(event.pageX >= $(window).width()){
-        $(this).animate(window_on_right, 20)
-        .addClass("opac");
-      }
-      else if(event.pageY - top_offset <= 0){
+      // else if(event.pageX >= $(window).width()){
+      //   console.log('on the right');
+      //   $(this).animate(window_on_right, 20)
+      //   .addClass("opac");
+      // }
+      else if(event.pageY - top_offset + 40 <= 0){
         $(this).animate(window_on_top, 20)
         .addClass("opac").addClass('full-screen');
       }

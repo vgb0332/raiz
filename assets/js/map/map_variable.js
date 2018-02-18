@@ -104,7 +104,7 @@ var toji_possession = function(data){
   for(var i = 0; i < index_len; ++i){
     content.append(
         "<div>" + data_index[i] + "</div>"
-      + "<div>" + ( (data[0][data_attr[i]] === undefined) ? '-' : data[0][data_attr[i]] ) + "</div>"
+      + "<div>" + ( (data[data_attr[i]] === undefined) ? '-' : data[data_attr[i]] ) + "</div>"
     );
   }
 

@@ -6,7 +6,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#home">
+      <a class="navbar-brand" href="#" onclick="javascript:window.location.reload();">
         <img src="<?php echo base_url();?>assets/img/Logo.png" alt="RAIZ">
       </a>
     </div>

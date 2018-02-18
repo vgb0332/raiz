@@ -18,6 +18,26 @@
     animation: 20s toji-hover linear forwards infinite;
 }
 
+.building-polygon{
+    fill : #dedede;
+    fill-opacity: 0.5;
+    stroke : #dedede;
+    stroke-width: 3px;
+    stroke-opacity : 0.6;
+    color : black;
+    stroke-linecap: round;
+    display: block;
+}
+
+.building-polygon:hover{
+    fill-opacity: 0.4;
+    -ms-animation: 20s toji-hover linear forwards infinite;
+    -moz-animation: 20s toji-hover linear forwards infinite;
+    -o-animation: 20s toji-hover linear forwards infinite;
+    -webkit-animation: 20s toji-hover linear forwards infinite;
+    animation: 20s toji-hover linear forwards infinite;
+}
+
 @keyframes toji-hover {
   0% {
     stroke-dasharray: 300 300;

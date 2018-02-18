@@ -1,4 +1,16 @@
 "use strict";
+var landPolygons = []; //토지 폴리곤
+var buildingPolygons = []; //건물 폴리곤
+
+function mainActivity(data){
+  console.log(data);
+  var landResult = data['land'];
+  var buildingResult = data['building'];
+  ajax_type = 'toji';
+  drawPoly(landResult);
+  ajax_type = 'building';
+  drawPoly(buildingResult);
+}
 
 /*
   drawSinglePoly(param1, param2, param3, ...)
@@ -7,14 +19,15 @@
 */
 var qwe = '';
 function drawPoly(data){
-  console.log(data);
+
   var testPolygon;
   $.each(data, function(index, target){
-      // console.log(target);
-      var polygon = target['polygon'];
-      var target = parseShape(polygon);
 
-      $.each(target, function(i, iv){
+      var polygon = target['polygon'];
+      var target_polygon = parseShape(polygon);
+      var target_data = target;
+
+      $.each(target_polygon, function(i, iv){
 
           var points = iv.split(', ');
           var polyPath = [];
@@ -28,7 +41,7 @@ function drawPoly(data){
 
           });
           polygon.setPath(polyPath);
-          setPoly(ajax_type, polygon, data, index);
+          setPoly(ajax_type, polygon, target_data, index);
           // // Ghun testing!
           console.log(polygon);
       });
@@ -42,17 +55,18 @@ function drawPoly(data){
 *
 */
 
-function setWindow(polygon, data){
+function setWindow(polygons, data){
+  console.log(data);
   if ( ! Detector.webgl ) alert('webGL needed');
-  var container, stats;
-  var camera, scene, renderer, raycaster;
-  var group, controls;
 
-  var header = data[0]['ldCodeNm'] + ' ' + data[0]['bun'] + '-' + data[0]['ji'];
+  // RAIZ WINDOW SETUP
+  var header = data['ldCodeNm'] + ' ' + data['bun'] + ( (data['ji'] === '') ? '' : ('-' + data['ji']) );
   var Rwindow = raiz_window(header);
   $(document.body).append(Rwindow);
+
   // insert3D(Rwindow, polygon);
-  THREE_init(polygon, data, Rwindow);
+  THREE_init(polygons, data, Rwindow);
+
   Rwindow.find('.raiz-window-body').append(toji_possession(data));
   Rwindow.show('normal');
 }
@@ -63,15 +77,14 @@ function setWindow(polygon, data){
 *
 */
 
-
 function setPoly(type, polygon, data, indexing){
-
-  if(type === 'mark'){
+  console.log(data);
+  if(type === 'toji'){
     polygon.setMap(map);
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('toji-polygon');
+      $("#" + path.id).removeAttr('style').addClass('toji-polygon').attr('name', data['pnu']);
     });
 
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
@@ -80,24 +93,61 @@ function setPoly(type, polygon, data, indexing){
 
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       console.log('polygon click activated! : ' , polygon );
-      setWindow(polygon, data);
+      var target_id = polygon.wc[0].id;
+      var land_target_name = $("#" + target_id).attr('name');
+
+      var polygons = [];
+      polygons.push(polygon);
+      //find all bulilding polygons that correspond to their toji.
+      $.each(buildingPolygons, function(index, polygon){
+
+         $.each(polygon.wc, function(index, polygon_attr){
+
+           var building_target_id = polygon_attr.id;
+           var building_target_name = $("#" + building_target_id).attr('name');
+           if(building_target_name === land_target_name){
+             polygons.push(polygon);
+           }
+
+         });
+
+      });
+
+      setWindow(polygons, data);
     });
+
+    landPolygons.push(polygon);
   }
 
-
-
-  if(type === 'toji'){
-    // polygon.setOptions( toji_polygon_option );
+  if(type ==='building'){
     polygon.setMap(map);
-    // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('toji-polygon');
+      $("#" + path.id)
+      .removeAttr('style').addClass('building-polygon')
+      .attr('name', data['pnu'])
+      .attr('data-buildingID', data['buildingID'])
+      .attr('data-height', data['height']);
     });
 
-    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
-      // console.log('polygon mouseover activated! : ' , polygon );
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      var building_target_name = $("#" + polygon.wc[0].id).attr('name');
+
+      $.each(landPolygons, function(index, polygon){
+
+        $.each(polygon.wc, function(index, polygon_attr){
+
+            var toji_target_id = polygon_attr.id;
+            var toji_target_name = $("#" + toji_target_id).attr('name');
+            if(toji_target_name === building_target_name ){
+              daum.maps.event.trigger(polygon, 'click');
+            }
+        });
+
+      });
     });
+
+    buildingPolygons.push(polygon);
   }
 
   if(type === 'stcs'){

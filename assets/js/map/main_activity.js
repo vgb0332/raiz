@@ -7,9 +7,7 @@ $(document).ready(function(){
    *    - For Mobile, "double click" on daum map triggers the land polygon
    */
    var trigger_by = 'rightclick';
-   if(is_mobile){
-     trigger_by = 'dblclick';
-   }
+   if(is_mobile){ trigger_by = 'dblclick'; }
    daum.maps.event.addListener(map, trigger_by, function(mouseEvent){
 
      coord2RegionCode(mouseEvent.latLng, function(address, status) {
@@ -22,7 +20,7 @@ $(document).ready(function(){
                        lat : mouseEvent.latLng.getLat(),
                        lng : mouseEvent.latLng.getLng()
                      },
-                     drawPoly);
+                     mainActivity);
          }
      });
    });
