@@ -25,7 +25,16 @@
   <script src="<?php echo base_url();?>assets/vendor/three/controls/OrbitControls.js"></script>
   <script src="<?php echo base_url();?>assets/vendor/three/libs/stats.min.js"></script>
   <script src="<?php echo base_url();?>assets/vendor/three/renderers/Projector.js"></script>
+
+  <!-- THREEX JS -->
   <script src="<?php echo base_url();?>assets/vendor/three/threex.domevents.js"></script>
+  <script src="<?php echo base_url();?>assets/vendor/three/threex.atmospherematerial.js"></script>
+  <script src="<?php echo base_url();?>assets/vendor/three/threex.dilategeometry.js"></script>
+  <script src="<?php echo base_url();?>assets/vendor/three/threex.geometricglowmesh.js"></script>
+
+  <!-- TWEEN JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+
   <style media="screen">
       .no-js #loader { display: none;  }
       .js #loader { display: block; position: absolute; left: 100px; top: 0; }

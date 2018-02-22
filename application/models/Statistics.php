@@ -8,8 +8,8 @@ Class Statistics extends CI_Model {
 
   function getStcsSido(){
     $query = $this->db->query(
-              "SELECT sidoCd , sidoNm , ST_AsText(polygon) as polygon , ST_AsText(ST_Centroid(polygon)) as center
-              FROM raiz2.sensusHJsido2
+              "SELECT sidoCd , sidoNm , ST_AsText(polygon) as polygon , ST_AsText(point) as center
+              FROM raiz2.sensusHJsido
               ");
     $result = $query->result_array();
     return json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -18,7 +18,7 @@ Class Statistics extends CI_Model {
 
   function getStcsSgg($code){
       $query = $this->db->query(
-                "SELECT sigunguCd , sigunguNm , polygon
+                "SELECT sigunguCd , sigunguNm , ST_AsText(polygon) as polygon , ST_AsText(ST_Centroid(polygon)) as center
                 FROM raiz2.sensusHJsgg
                 WHERE sigunguCd LIKE '$code%';
                 ");
@@ -29,8 +29,8 @@ Class Statistics extends CI_Model {
 
   function getStcsDong($code){
       $query = $this->db->query(
-                "SELECT a.ADM_CD , a.ADM_NM ,a.polygon FROM raiz2.HJcode as b
-                JOIN raiz2.sensusHJdong as a ON b.emdCd = a.ADM_CD
+                "SELECT a.dongCd , a.dongNm , ST_AsText(a.polygon) as polygon , ST_AsText(ST_Centroid(a.polygon)) as center FROM raiz2.HJcode as b
+                JOIN raiz2.sensusHJdong as a ON b.emdCd = a.dongCd
                 WHERE b.sigunguHJCd = $code
                 ");
 
@@ -40,9 +40,9 @@ Class Statistics extends CI_Model {
 
   function getStcsAggr($code){
       $query = $this->db->query(
-                "SELECT ADM_CD, TOT_REG_CD, SHAPE_AREA, TOTAL_POP, MEDIUM_AGE, ST_AsText(polygon) as polygon, ST_AsText(ST_Centroid(polygon)) as center
-                FROM raiz2.AggregZone3
-                where ADM_CD = $code
+                "SELECT dongCd, TOT_REG_CD, SHAPE_AREA, TOTAL_POP, MEDIUM_AGE, ST_AsText(polygon) as polygon, ST_AsText(ST_Centroid(polygon)) as center
+                FROM raiz2.sensusHJaggzone
+                where dongCd = $code
                 ");
 
     $result = $query->result_array();

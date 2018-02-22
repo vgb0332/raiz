@@ -41,9 +41,9 @@ function drawPoly(data){
 
           });
           polygon.setPath(polyPath);
-          setPoly(ajax_type, polygon, target_data, index);
+          setPoly(ajax_type, polygon, target_data);
           // // Ghun testing!
-          console.log(polygon);
+          // console.log(polygon);
       });
   });
 }
@@ -77,8 +77,8 @@ function setWindow(polygons, data){
 *
 */
 
-function setPoly(type, polygon, data, indexing){
-  console.log(data);
+function setPoly(type, polygon, data){
+  // console.log(data);
   if(type === 'toji'){
     polygon.setMap(map);
     // console.log(polygon);
@@ -153,20 +153,29 @@ function setPoly(type, polygon, data, indexing){
   if(type === 'stcsSido'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
-    console.log(data);
+    // console.log(data);
     polygon.Bb[0] = data['sidoCd'];
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
     });
+    // console.log(data['center']);
+    //console.log(new daum.maps.LatLng());
+    // console.log(parsePoint(data['center']));
+    // customOverlay.setContent('<div class="stcs_ol">면적 : ' + polygon.Bb[0][0] + ' m<sup>2</sup></br>총 인구 : ' + polygon.Bb[0][1] + ' 명</br>평균 연령 : ' + polygon.Bb[0][2] + ' 세</div>');
+    // customOverlay.setPosition(mouseEvent.latLng);
+    // customOverlay.setMap(map);
 
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
       // console.log('polygon mouseover activated! : ' , polygon );
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      // console.log(polygon.Bb[0]);
       getStcsSgg(polygon.Bb[0])
       $('.stcs-polygon').remove();
+      $('.stcs_label').remove();
+
     });
   }
 
@@ -186,13 +195,14 @@ function setPoly(type, polygon, data, indexing){
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       getStcsdong(polygon.Bb[0])
       $('.stcs-polygon').remove();
+      $('.stcs_label').remove();
     });
   }
 
   if(type === 'stcsDong'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
-    polygon.Bb[0] = data['ADM_CD'];
+    polygon.Bb[0] = data['dongCd'];
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
@@ -217,16 +227,15 @@ function setPoly(type, polygon, data, indexing){
       data['MEDIUM_AGE'],
       data['TOT_REG_CD']
     ];
-    var customOverlay = new daum.maps.CustomOverlay({})
+
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
     });
-
-    makeGlobalvalue(polygon,'stcsAggr');
-
+    var customOverlay = new daum.maps.CustomOverlay({});
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
       // console.log('polygon mouseover activated! : ' , polygon );
+
       customOverlay.setContent('<div class="stcs_ol">면적 : ' + polygon.Bb[0][0] + ' m<sup>2</sup></br>총 인구 : ' + polygon.Bb[0][1] + ' 명</br>평균 연령 : ' + polygon.Bb[0][2] + ' 세</div>');
       customOverlay.setPosition(mouseEvent.latLng);
       customOverlay.setMap(map);
@@ -238,16 +247,10 @@ function setPoly(type, polygon, data, indexing){
       customOverlay.setMap(null);
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-      console.log(aggr_poly);
+      // console.log(aggr_poly);
       // $('.stcs-polygon').remove();
       // $('.stcs_ol').remove();
     });
-  }
-}
-
-function makeGlobalvalue(data,type){
-  if (type === 'stcsAggr') {
-    aggr_poly.push(data);
   }
 }
 
@@ -267,4 +270,23 @@ function parseShape(shape){
   });
   qwe = shapes;
   return shapes;
+}
+
+function parsePoint(point){
+  /*    point : 'point( (poly1) , (poly2) , ...)'   */
+  // console.log(point);
+  // if (point[0] === 'P') {
+  //   // console.log('hi');
+  //   point = point.replace(/,/g, ', ');
+  //   point = point.toLowerCase();
+  // }
+  point = point.toLowerCase();
+  // console.log(point);
+  var points = point.replace('point(', '').replace(')' , '').split(' ');
+  // $.each(points, function(index, value){
+  //   points[index] = value.replace('(', '').replace(')', '');
+  // });
+  // qwe = points;
+  // console.log(points[0]+','+points[1]);
+  return points;
 }

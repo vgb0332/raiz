@@ -13,6 +13,17 @@ function THREE_init(polygons, data, Rwindow){
   scene.add( camera );
   var light = new THREE.PointLight( 0xffffff, 0.8 );
   camera.add( light );
+  // var light = new THREE.SpotLight( 0xffffff );
+  // camera.add( light );
+
+  // var spotLight = new THREE.SpotLight( 0xffffff );
+  // spotLight.position.set( 0, 10, 500 );
+  // spotLight.angle = 0.3;
+  // spotLight.distance = 600;
+  // scene.add( spotLight );
+  //
+  // var spotLightHelper = new THREE.SpotLightHelper( spotLight );
+  // scene.add( spotLightHelper );
 
   var group = new THREE.Group();
   scene.add( group );
@@ -26,7 +37,7 @@ function THREE_init(polygons, data, Rwindow){
 
   // load a texture, set wrap mode to repeat
   var toji_texture = new THREE.TextureLoader().load( "./assets/img/grass03.png", function(texture){
-    console.log('loaded');
+    console.log('texture loaded');
     renderer.render( scene, camera );
   } );
   toji_texture.wrapS = THREE.RepeatWrapping;
@@ -43,7 +54,10 @@ function THREE_init(polygons, data, Rwindow){
 
 
   var controls = new THREE.OrbitControls( camera, renderer.domElement );
-  controls.addEventListener( 'change', function(){
+
+  controls.addEventListener( 'change', function(e){
+    Rwindow.addClass('orbiting');
+    console.log(camera.position);
     renderer.render(scene, camera);
     var angle = 60 + controls.getAzimuthalAngle() * 180 / Math.PI;
     Rwindow.find(".raiz-compass-pointer").css({
@@ -53,41 +67,35 @@ function THREE_init(polygons, data, Rwindow){
       '-o-transform'      : 'rotate(' + angle + 'deg)',
       'transform'         : 'rotate(' + angle + 'deg)'
     });
-  } ); // remove when using animation loop
+
+  }, false ); // remove when using animation loop
+
   // enable animation loop when using damping or autorotation
   // controls.enableDamping = true;
   // controls.dampingFactor = 0.25;
   controls.enableZoom = true;
   // controls.enablePan = false;
 
-  Rwindow.resize(function(){
+  Rwindow.resize(function( event ){
     camera.aspect = 1;
     camera.updateProjectionMatrix();
     renderer.setSize( Rwindow.width(), Rwindow.height() );
     renderer.render( scene, camera );
   });
 
-  Rwindow.draggable({
-    stop: function(event, ui){
-      $(this).removeClass("opac");
-      $(this).removeClass("full-screen");
-      camera.aspect = 1;
-      camera.updateProjectionMatrix();
-      renderer.setSize( Rwindow.width(), Rwindow.height() );
-      renderer.render( scene, camera );
-    }
-  });
 
   // POLYGON CREATION PROCESS
-  console.log(polygons);
   var polyPoints = [];
   // $.each(polygon.Id[0], function(index, target){
   //     polyPoints.push(new THREE.Vector2(target.ib, target.jb));
   // });
 
   var group = new THREE.Group();
-  var toji_mesh, building_mesh;
+  // var toji_mesh, building_mesh;
   var Xoffset, Yoffset;
+
+  var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
+  var new_z;
 
   $.each(polygons, function(index, polygon){
     var target_id = polygon.wc[0].id;
@@ -104,8 +112,8 @@ function THREE_init(polygons, data, Rwindow){
       var color = 0x725428;
       var x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s = 1;
       var geometry = new THREE.ExtrudeGeometry( poly3D, extrudeSettings );
-      toji_mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { map: toji_texture } ) );
-      var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
+      var toji_mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { map: toji_texture } ) );
+
       toji_mesh.scale.set( s, s, s );
 
       var geometry = toji_mesh.geometry;
@@ -114,11 +122,13 @@ function THREE_init(polygons, data, Rwindow){
       var size = geometry.boundingBox.getSize();
 
       var longLen = size.x > size.y ? size.x : size.y;
-      var new_z = initial_camera_ratio * longLen;
+      new_z = initial_camera_ratio * longLen;
       camera.position.z = new_z;
       Xoffset = x - center.x;
       Yoffset = y - center.y;
-      toji_mesh.position.set( x - center.x , y - center.y, z  );
+      // toji_mesh.position.set( x - center.x , y - center.y, z  );
+      toji_mesh.translateX(Xoffset);
+      toji_mesh.translateY(Yoffset);
       toji_mesh.rotation.set( rx, ry, rz );
       toji_mesh.material.transparent = true;
 
@@ -129,14 +139,20 @@ function THREE_init(polygons, data, Rwindow){
 
       group.add(toji_mesh);
 
-      // if(!is_mobile){
-      //   domEvents.addEventListener(mesh, 'click', meshClick, false);
-      //   domEvents.addEventListener(mesh, 'mouseover', meshMouseOver, false);
-      //   domEvents.addEventListener(mesh, 'mouseout', meshMouseOut, false);
-      // }
-      // else{
-      //   domEvents.addEventListener(mesh, 'mouseover', meshClick, false);
-      // }
+      if(!is_mobile){
+        domEvents.addEventListener(toji_mesh, 'click', function(){
+          meshClick('toji', Rwindow, toji_mesh);
+        }, false);
+        domEvents.addEventListener(toji_mesh, 'mouseover', function(){
+          meshMouseOver('toji', Rwindow, toji_mesh);
+        }, false);
+        domEvents.addEventListener(toji_mesh, 'mouseout', function(){
+          meshMouseOut('toji', Rwindow, toji_mesh);
+        }, false);
+      }
+      else{
+        // domEvents.addEventListener(mesh, 'mouseover', meshClick, false);
+      }
 
     }
     else if(target.hasClass('building-polygon')){
@@ -147,22 +163,25 @@ function THREE_init(polygons, data, Rwindow){
 
       var height = parseInt(target.attr('data-height'));
       height = (height === 0) ? 2 : height * bulding_height_ratio;
-      console.log(height);
+
       var poly3D = new THREE.Shape(polyPoints);
+
       var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: height };
       var color = 0x189AD3;
       var x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s = 1;
       var geometry = new THREE.ExtrudeGeometry( poly3D, extrudeSettings );
-      building_mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { map: building_texture } ) );
-      var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
+      var building_mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { map: building_texture } ) );
+      building_mesh.castShadow = true;
 
       var geometry = building_mesh.geometry;
       geometry.computeBoundingBox();
       var center = geometry.boundingBox.getCenter();
       var size = geometry.boundingBox.getSize();
-      console.log(Xoffset);
+
       building_mesh.scale.set( s, s, s );
-      building_mesh.position.set( Xoffset , Yoffset, z  );
+      // building_mesh.position.set( Xoffset , Yoffset, z  );
+      building_mesh.translateX(Xoffset);
+      building_mesh.translateY(Yoffset);
       building_mesh.rotation.set( rx, ry, rz );
       building_mesh.translateZ(height + 2);
       building_mesh.material.transparent = true;
@@ -171,10 +190,43 @@ function THREE_init(polygons, data, Rwindow){
 
       if(!is_mobile){
         domEvents.addEventListener(building_mesh, 'click', function(){
-          console.log(height);
+          meshClick('building', Rwindow, building_mesh);
         }, false);
-        // domEvents.addEventListener(mesh, 'mouseover', meshMouseOver, false);
-        // domEvents.addEventListener(mesh, 'mouseout', meshMouseOut, false);
+        domEvents.addEventListener(building_mesh, 'mouseover', function(){
+          // meshMouseOver('building', Rwindow, building_mesh);
+          console.log('mouse on the building mesh');
+          var target = new THREE.Vector3(10, -20, 20); // create on init
+          var tween = animateVector3(building_mesh.position, target, {
+
+              duration: 5000,
+
+              easing : TWEEN.Easing.Quadratic.InOut,
+
+              update: function(d) {
+                  console.log("Updating: " + d);
+              },
+
+              callback : function(){
+                  console.log("Completed");
+              }
+          });
+
+          var tweenUpdate = function(){
+              tween.update();
+              renderer.render(scene, camera);
+              requestAnimationFrame(tweenUpdate);
+          };
+          tween.start();
+
+
+          // requestAnimationFrame(tweenUpdate);
+          tweenUpdate();
+
+        }, false);
+        domEvents.addEventListener(building_mesh, 'mouseout', function(){
+          // meshMouseOut('building', Rwindow, building_mesh);
+          building_mesh.position.z = height + 2;
+        }, false);
       }
       else{
         // domEvents.addEventListener(mesh, 'mouseover', meshClick, false);
@@ -184,87 +236,175 @@ function THREE_init(polygons, data, Rwindow){
 
   scene.add(group);
 
-  // var gridHelper = new THREE.GridHelper( 400, 40, 0xffffff, 0xffffff );
-	// gridHelper.position.y = 0;
-	// gridHelper.position.x = 0;
-	// scene.add( gridHelper );
-  //
-  // var polarGridHelper = new THREE.PolarGridHelper( 200, 16, 8, 64, 0x0000ff, 0x808080 );
-	// polarGridHelper.position.y = 0;
-	// polarGridHelper.position.x = 0;
-	// scene.add( polarGridHelper );
+  Rwindow.find('canvas').dblclick(function(){
+    console.log('dblclick');
+    controls.reset();
+    controls.update();
+    camera.position.set(0, 0, new_z);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
 
-  var meshClick = function(event){
+    renderer.render(scene, camera);
+  });
+
+  var meshClick = function(type, Rwindow, mesh){
     console.log('you clicked on the mesh', mesh);
-    Rwindow.find('.toji-possession').fadeIn();
-    var initial_x = 0;
-    var initial_y = 0;
-    var initial_z = new_z;
-    var target_y = initial_z * Math.tan(degToRad(-90));
-    var flagX = false, flagY = false, flagZ = false;
+    if(Rwindow.hasClass('orbiting')){
+      Rwindow.removeClass('orbiting');
+      return false;
+    }
+    if(type === 'toji'){
+      Rwindow.find('.toji-possession').fadeIn();
+      var initial_x = 0;
+      var initial_y = 0;
+      var initial_z = new_z;
+      var target_y = initial_z * Math.tan(degToRad(-90));
+      var flagX = false, flagY = false, flagZ = false;
+      controls.reset();
+      controls.update();
 
-    var delta_x = camera.position.x - initial_x;
-    var delta_y = camera.position.y - target_y;
-    var delta_z = camera.position.z - initial_z;
-    var frames = 100;
+      var delta_x = camera.position.x - initial_x;
+      var delta_y = camera.position.y - target_y;
+      var delta_z = camera.position.z - initial_z;
+      var frames = 100;
 
-    controls.enabled = false;
-    var renderOnClick = function(){
-      if(flagX == true && flagY == true && flagZ == true){
-        controls.enabled = true;
-        return false;
-      }
-      requestAnimationFrame(renderOnClick);
+      controls.enabled = false;
+      var renderOnClick = function(){
+        if(flagX == true && flagY == true && flagZ == true){
+          controls.enabled = true;
+          return false;
+        }
+        requestAnimationFrame(renderOnClick);
+        // controls.update();
+        if(Math.trunc(camera.position.x) === Math.trunc(initial_x)){
+          flagX = true;
+        }
+        else if(!flagX){
+          camera.position.x -= ( delta_x / frames );
+        }
+
+        if(Math.trunc(camera.position.y) === Math.trunc(target_y)){
+          flagY = true;
+        }
+        else if(!flagY){
+          camera.position.y -= ( delta_y / frames );
+        }
+
+        if(Math.trunc(camera.position.z) === Math.trunc(initial_z)){
+          flagZ = true;
+        }
+        else if(!flagZ){
+          camera.position.z -= ( delta_z / frames );
+        }
+
+        camera.lookAt(scene.position);
+        controls.update();
+        renderer.render(scene, camera);
+      };
+      requestAnimationFrame(function(){
+        requestAnimationFrame(renderOnClick);
+        renderOnClick();
+      });
+    }
+
+    if(type === 'building'){
+      // controls.reset();
       // controls.update();
-      if(Math.trunc(camera.position.x) === Math.trunc(initial_x)){
-        flagX = true;
-      }
-      else if(!flagX){
-        camera.position.x -= ( delta_x / frames );
-      }
 
-      if(Math.trunc(camera.position.y) === Math.trunc(target_y)){
-        flagY = true;
-      }
-      else if(!flagY){
-        camera.position.y -= ( delta_y / frames );
-      }
+      var geometry = mesh.geometry;
+      geometry.computeBoundingBox();
+      var center = geometry.boundingBox.getCenter();
 
-      if(Math.trunc(camera.position.z) === Math.trunc(initial_z)){
-        flagZ = true;
-      }
-      else if(!flagZ){
-        camera.position.z -= ( delta_z / frames );
-      }
+      // camera.position.set( Xoffset + center.x, 50, 100);
+      // camera.aspect = 1;
+      // camera.updateProjectionMatrix();
+      // camera.lookAt(mesh.geometry);
+      // controls.update();
 
-      camera.lookAt(scene.position);
+
+      // controls.target = (mesh);
+      console.log(group);
+      group.children = [];
+      group.add(mesh);
+      console.log(center);
+      mesh.position.set(-center.x, -center.y, 0);
+      camera.position.y = camera.position.z * 3/10;
+      camera.position.z = 0;
+
       controls.update();
       renderer.render(scene, camera);
-    };
-    requestAnimationFrame(function(){
-      requestAnimationFrame(renderOnClick);
-      renderOnClick();
-    });
+    }
+
   };
 
-  var meshMouseOver = function(event){
+  var meshMouseOver = function(type, Rwindow, mesh){
     Rwindow.css('cursor', 'pointer');
-    console.log('you mouse on the mesh');
+    console.log('you mouse on the toji mesh');
     // mesh.material.color.setHex(0xd9fceb);
     mesh.material.opacity = 0.7;
+    if(type === 'building'){
+      console.log('its building');
+      // var glowMesh	= new THREEx.GeometricGlowMesh(mesh);
+      // mesh.add(glowMesh.object3d);
+      var renderOnMouseOver = function(){
+        requestAnimationFrame(renderOnMouseOver);
+        mesh.position.z += 1;
+
+        renderer.render( scene, camera );
+      };
+      requestAnimationFrame(function(){
+        requestAnimationFrame(renderOnMouseOver);
+        renderOnMouseOver();
+      });
+    }
+
     renderer.render(scene, camera);
   };
 
-  var meshMouseOut = function(event){
+  var meshMouseOut = function(type, Rwindow, mesh){
     Rwindow.css('cursor', 'default');
     console.log('you mouse out the mesh');
     // mesh.material.color.setHex(0x46d78f);
     mesh.material.opacity = 1;
+    if(type === 'building'){
+      //remove glow
+      // if(mesh.children.length > 0){
+      //   mesh.children = [];
+      // }
+      mesh.position.z = 2;
+    }
     renderer.render(scene, camera);
   };
 
   // animate();
+  console.log(camera.position);
+  console.log(new_z);
   renderer.render(scene, camera);
+}
+
+/* Animates a Vector3 to the target */
+function animateVector3(vectorToAnimate, target, options){
+    options = options || {};
+    // get targets from options or set to defaults
+    var to = target || THREE.Vector3(),
+        easing = options.easing || TWEEN.Easing.Quadratic.In,
+        duration = options.duration || 2000;
+    // create the tween
+    var tweenVector3 = new TWEEN.Tween(vectorToAnimate)
+        .to({ x: to.x, y: to.y, z: to.z, }, duration)
+        .easing(easing)
+        .onUpdate(function(d) {
+            if(options.update){
+                options.update(d);
+            }
+         })
+        .onComplete(function(){
+          if(options.callback) options.callback();
+        });
+    // start the tween
+    tweenVector3.start();
+    // return the tween in case we want to manipulate it later on
+    return tweenVector3;
 }
 
 function animate(){

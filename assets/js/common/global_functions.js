@@ -7,7 +7,7 @@
                   So the callback function should handle data as JSON.
 */
 function customAjax(url,data,callback) {
-   $.ajax({
+   var ajax_call = $.ajax({
      type: "post",
      url: url,
      data:data,
@@ -19,4 +19,5 @@ function customAjax(url,data,callback) {
         }
      }
   });
+  return ajax_call;
 }

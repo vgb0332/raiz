@@ -77,16 +77,12 @@ function lifeToWindow(Rwindow){
     },
     stop: function(event, ui){
       // console.log('event2');
-      // $(this).removeClass("opac");
-      // $(this).removeClass("full-screen");
-      // prevWidth = $(this).width();
-      // prevHeight = $(this).height();
-      // prevOffset = $(this).offset();
-      // console.log('wtf?');
-      // camera.aspect = 1;
-      // camera.updateProjectionMatrix();
-      // console.log('resizing?')
-      // renderer.setSize( $(this).width(), $(this).height() );
+      $(this).removeClass("opac");
+      $(this).removeClass("full-screen");
+      prevWidth = $(this).width();
+      prevHeight = $(this).height();
+      prevOffset = $(this).offset();
+      $(this).trigger('resize');
     }
   })
   .draggable( 'disable' );
@@ -179,7 +175,9 @@ function lifeToWindow(Rwindow){
         "width" : prevWidth,
         "left" : prevOffset.left,
         "top" : prevOffset.top
-      }, 100)
+      }, 100, function(){
+        $(this).trigger('resize');
+      })
       .removeClass('full-screen');
     }
     else{
@@ -187,9 +185,12 @@ function lifeToWindow(Rwindow){
       prevHeight = $(this).parent().parent().parent().height();
       prevOffset = $(this).parent().parent().parent().offset();
       $(this).parent().parent().parent()
-      .animate(window_on_top, 100)
+      .animate(window_on_top, 100, function(){
+        $(this).trigger('resize');
+      })
       .addClass('full-screen');
     }
+
   });
   Rwindow.find(".ti-close").on("click", function(e){
     e.stopPropagation();

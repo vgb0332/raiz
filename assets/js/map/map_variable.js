@@ -127,7 +127,8 @@ var toji_possession = function(data){
 
   $container.find('.toji-possession-body').append(content);
 
-  $container.find('.toji-possession-header').on('click', function(){
+  $container.find('.toji-possession-header').on('click', function(e){
+  
     if($container.find('.toji-possession-body').is(":visible")){
       $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
     }
