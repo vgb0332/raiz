@@ -55,7 +55,7 @@ function drawPoly(data){
 *
 */
 
-function setWindow(polygons, data){
+function setRWindow(polygons, data){
   console.log(data);
   if ( ! Detector.webgl ) alert('webGL needed');
 
@@ -67,8 +67,57 @@ function setWindow(polygons, data){
   // insert3D(Rwindow, polygon);
   THREE_init(polygons, data, Rwindow);
 
-  Rwindow.find('.raiz-window-body').append(toji_possession(data));
+  Rwindow.find('.raiz-window-body').append(toji_characteristics(data));
+  customAjax($SITE_URL+'get/tojiPossession', {
+    sigunguCd : data['sigunguCd'],
+    bjdongCd : data['bjdongCd'],
+    bun : data['bun'],
+    ji : data['ji']
+  }, function(data){
+    Rwindow.find('.raiz-window-body').append(toji_possession(data));
+  });
+
+  customAjax($SITE_URL+'get/tojiUsage', {
+    sigunguCd : data['sigunguCd'],
+    bjdongCd : data['bjdongCd'],
+    bun : data['bun'],
+    ji : data['ji']
+  }, function(data){
+    Rwindow.find('.raiz-window-body').append(toji_usage(data));
+  });
+
+  customAjax($SITE_URL+'get/tojiIndivPrice', {
+    sigunguCd : data['sigunguCd'],
+    bjdongCd : data['bjdongCd'],
+    bun : data['bun'],
+    ji : data['ji']
+  }, function(data){
+    console.log(data);
+
+  });
+
+  // Rwindow.find('.raiz-window-body').append(toji_usage(data));
+  // Rwindow.find('.raiz-window-body').append(toji_indivPrice(data));
   Rwindow.show('normal');
+}
+
+function setSTCSWindow(polygons, data){
+  // console.log(data);
+  if ( ! Detector.webgl ) alert('webGL needed');
+
+  // RAIZ WINDOW SETUP
+  var header = $('#stat-side-sido').text() + ' ' + $('#stat-side-sgg').text() + ' ' + $('#stat-side-dong').text();
+  var STCSwindow = raiz_window(header);
+  $(document.body).append(STCSwindow);
+
+  // insert3D(STCSwindow, polygon);
+  THREE_init(polygons, data, STCSwindow);
+
+  //Rwindow.find('.raiz-window-body').append(toji_characteristics(data));
+  // Rwindow.find('.raiz-window-body').append(toji_usage(data));
+  // Rwindow.find('.raiz-window-body').append(toji_possession(data));
+  // Rwindow.find('.raiz-window-body').append(toji_indivPrice(data));
+  STCSwindow.show('normal');
 }
 
 /*
@@ -113,7 +162,7 @@ function setPoly(type, polygon, data){
 
       });
 
-      setWindow(polygons, data);
+      setRWindow(polygons, data);
     });
 
     landPolygons.push(polygon);
@@ -155,25 +204,25 @@ function setPoly(type, polygon, data){
     polygon.setMap(map);
     // console.log(data);
     polygon.Bb[0] = data['sidoCd'];
+    polygon.Bb[1] = data['sidoNm'];
+
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
     });
-    // console.log(data['center']);
-    //console.log(new daum.maps.LatLng());
-    // console.log(parsePoint(data['center']));
-    // customOverlay.setContent('<div class="stcs_ol">면적 : ' + polygon.Bb[0][0] + ' m<sup>2</sup></br>총 인구 : ' + polygon.Bb[0][1] + ' 명</br>평균 연령 : ' + polygon.Bb[0][2] + ' 세</div>');
-    // customOverlay.setPosition(mouseEvent.latLng);
-    // customOverlay.setMap(map);
 
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
       // console.log('polygon mouseover activated! : ' , polygon );
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-      // console.log(polygon.Bb[0]);
-      getStcsSgg(polygon.Bb[0])
-      $('.stcs-polygon').remove();
+      // console.log(polygon.Bb);
+      beforeNm = polygon.Bb[1];
+      getStcsSgg(polygon.Bb[0]);
+      $('#stat-side-sido').text(polygon.Bb[1]);
+      $('#stat-side-sido').attr("name", polygon.Bb[0]);
+
+      $('.stcs-item').remove();
       $('.stcs_label').remove();
 
     });
@@ -183,10 +232,11 @@ function setPoly(type, polygon, data){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
     polygon.Bb[0] = data['sigunguCd'];
+    polygon.Bb[1] = data['sigunguNm'];
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
     });
 
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
@@ -194,7 +244,10 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       getStcsdong(polygon.Bb[0])
-      $('.stcs-polygon').remove();
+      $('#stat-side-sgg').text(polygon.Bb[1]);
+      $('#stat-side-sgg').attr("name", polygon.Bb[0]);
+
+      $('.stcs-item').remove();
       $('.stcs_label').remove();
     });
   }
@@ -203,10 +256,11 @@ function setPoly(type, polygon, data){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
     polygon.Bb[0] = data['dongCd'];
+    polygon.Bb[1] = data['dongNm'];
     // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
     });
 
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
@@ -214,7 +268,11 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       getStcsaggr(polygon.Bb[0])
-      $('.stcs-polygon').remove();
+      $('#stat-side-dong').text(polygon.Bb[1]);
+      $('#stat-side-dong').attr("name", polygon.Bb[0]);
+
+      $('.stcs-item').remove();
+      $('.stcs_label').remove();
     });
   }
   if(type === 'stcsAggr'){
@@ -228,10 +286,16 @@ function setPoly(type, polygon, data){
       data['TOT_REG_CD']
     ];
 
+    // var target = polygon.wc;
+    // $.each(target, function(index, path){
+    //   $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+    // });
+
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('stcs-polygon');
+      $("#" + path.id).removeAttr('style').addClass('toji-polygon stcs-item').attr('name', data['TOT_REG_CD']);
     });
+
     var customOverlay = new daum.maps.CustomOverlay({});
     daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
       // console.log('polygon mouseover activated! : ' , polygon );
@@ -246,7 +310,9 @@ function setPoly(type, polygon, data){
     daum.maps.event.addListener(polygon, 'mouseout', function() {
       customOverlay.setMap(null);
     });
-    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+    daum.maps.event.addListener(polygon, 'click', function(mouseEvent) {
+
+      setSTCSWindow([polygon], data);
       // console.log(aggr_poly);
       // $('.stcs-polygon').remove();
       // $('.stcs_ol').remove();

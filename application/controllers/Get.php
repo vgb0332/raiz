@@ -26,6 +26,45 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
+  public function tojiIndivPrice() {
+    $this->load->model('Toji');
+    $data = array (
+      'type' => 'indivPrice',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji')
+    );
+
+    echo $this->Toji->getTojiInfo($data);
+  }
+
+  public function tojiUsage(){
+    $this->load->model('Toji');
+    $data = array (
+      'type' => 'usage',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji')
+    );
+
+    echo $this->Toji->getTojiInfo($data);
+  }
+
+  public function tojiPossession() {
+    $this->load->model('Toji');
+    $data = array (
+      'type' => 'possession',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji')
+    );
+
+    echo $this->Toji->getTojiInfo($data);
+  }
+
   public function statscSido() {
     $this->load->model('Statistics');
     echo $this->Statistics->getStcsSido();

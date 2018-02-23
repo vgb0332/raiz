@@ -33,7 +33,7 @@
   <script src="<?php echo base_url();?>assets/vendor/three/threex.geometricglowmesh.js"></script>
 
   <!-- TWEEN JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+  <script src="<?php echo base_url();?>assets/vendor/tween/tween.js"></script>
 
   <style media="screen">
       .no-js #loader { display: none;  }

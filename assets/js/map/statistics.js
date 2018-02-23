@@ -3,7 +3,7 @@ var beforeNm = '';
 function initStcs() {
   console.log('called');
   ajax_type = 'stcsSido';
-  $('.stcs-polygon').remove();
+  $('.stcs-item').remove();
   $('.stcs_label').remove();
   customAjax($SITE_URL+'get/statscSido',0,
             processStcs);
@@ -21,18 +21,22 @@ function processStcs(data) {
   drawPoly(data);
   if (ajax_type === 'stcsSido') {
     $.each(data, function(index, target){
-      createOverlay(target['sidoNm'],parsePoint(target['center']))
+      createOverlay(target['sidoNm']);
     });
   }
   else if (ajax_type === 'stcsSgg') {
     $.each(data, function(index, target){
-      createOverlay(target['sigunguNm'],parsePoint(target['center']))
+      createOverlay(beforeNm+' '+target['sigunguNm']);
     });
-  };
+  }
+  else if (ajax_type === 'stcsDong') {
+    $.each(data, function(index, target){
+      createOverlay(beforeNm+' '+target['dongNm']);
+    });
+  }
 }
 
-function createOverlay(name,point) {
-  point = '0'
+function createOverlay(name) {
   var customOverlay = new daum.maps.CustomOverlay({});
   customOverlay.setContent('<div class="stcs_label">' + name + '</div>');
 
@@ -41,11 +45,11 @@ function createOverlay(name,point) {
   // 주소로 좌표를 검색합니다
   geocoder.addressSearch(name, function(result, status) {
       // 정상적으로 검색이 완료됐으면
-      console.log(name);
+      // console.log(name);
        if (status === daum.maps.services.Status.OK) {
           var coords = new daum.maps.LatLng(result[0].y, result[0].x);
           customOverlay.setPosition(coords);
-          console.log(coords);
+          // console.log(coords);
       }
   });
 
@@ -91,6 +95,37 @@ function setOldindPoly(data) {
   }
 }
 
+function stat_side_btn(code) {
+  console.log(code.length);
+  if (code.length == 5) { //sgg 초기화
+    $('#stat-side-sgg').text('');
+    $('#stat-side-dong').text('');
+    $('#stat-side-sgg').attr("name", '');
+    $('#stat-side-dong').attr("name", '');
+    getStcsSgg($('#stat-side-sido').attr("name"));
+
+    $('.stcs-item').remove();
+    $('.stcs_label').remove();
+  }
+  else if (code.length == 7) {  //dong 초기화
+    $('#stat-side-dong').text('');
+    $('#stat-side-dong').attr("name", '');
+    getStcsdong($('#stat-side-sgg').attr("name"))
+
+    $('.stcs-item').remove();
+    $('.stcs_label').remove();
+  }
+  else {
+    initStcs();
+    $('#stat-side-sido').text('');
+    $('#stat-side-sgg').text('');
+    $('#stat-side-dong').text('');
+    $('#stat-side-sido').attr("name", '');
+    $('#stat-side-sgg').attr("name", '');
+    $('#stat-side-dong').attr("name", '');
+  }
+}
+
 function changePolyFill(key,val,type) {
   if (type === 'oldind') {
     var r = 255;
@@ -118,5 +153,4 @@ function changePolyFill(key,val,type) {
 
     }
   }
-
 }

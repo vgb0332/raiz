@@ -84,15 +84,15 @@ var raiz_window = function(title){
   return $container;
 }
 
-var toji_possession = function(data){
-  var $container = $(document.createElement('div')).addClass("toji-possession").css('display', 'none');
+var toji_characteristics = function(data){
+  var $container = $(document.createElement('div')).addClass("toji-characteristics").css('display', 'none');
   $container.append(
-                      "<div class='toji-possession-header'>"
+                      "<div class='toji-characteristics-header'>"
                     +   '토지특성정보  ' + "<span class='ti-angle-down'></span>"
                     + "</div>"
-                    + "<div class='toji-possession-body' style='display:none;'>"
+                    + "<div class='toji-characteristics-body' style='display:none;'>"
                     + "</div>"
-                    + "<div class='toji-possession-footer' style='display:none;'>"
+                    + "<div class='toji-characteristics-footer' style='display:none;'>"
                     + "</div>"
   );
   console.log(data);
@@ -117,7 +117,7 @@ var toji_possession = function(data){
     'tpgrphFrmCodeNm', 'roadSideCodeNm', 'lastUpdtDt'
   ];
   var index_len = data_index.length;
-  var content = $(document.createElement('div')).addClass('toji-possession-table');
+  var content = $(document.createElement('div')).addClass('toji-characteristics-table');
   for(var i = 0; i < index_len; ++i){
     content.append(
         "<div>" + data_index[i] + "</div>"
@@ -125,10 +125,63 @@ var toji_possession = function(data){
     );
   }
 
+  $container.find('.toji-characteristics-body').append(content);
+
+  $container.find('.toji-characteristics-header').on('click', function(e){
+
+    if($container.find('.toji-characteristics-body').is(":visible")){
+      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+    }
+    else{
+      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+    }
+    $container.find('.toji-characteristics-body').toggle('fast', 'linear');
+  });
+  return $container;
+};
+
+var toji_possession = function(data){
+  var $container = $(document.createElement('div')).addClass("toji-possession").css('display', 'none');
+  $container.append(
+                      "<div class='toji-possession-header'>"
+                    +   '토지소유정보  ' + "<span class='ti-angle-down'></span>"
+                    + "</div>"
+                    + "<div class='toji-possession-body' style='display:none;'>"
+                    + "</div>"
+                    + "<div class='toji-possession-footer' style='display:none;'>"
+                    + "</div>"
+  );
+  console.log(data);
+  var data_index = [
+    '공유인수', '공시지가', '지목',
+    '토지면적', '소유구분', '국가기관구분',
+    '소유권변동원인', '소유권변동일자'
+  ];
+
+  var data_attr = [
+    'cnrsPsnCo', 'pblntfPclnd', 'lndcgrCodeNm',
+    'lndpclAr', 'posesnSeCodeNm', 'nationInsttSeCodeNm',
+    'ownshipChgCauseCodeNm', 'ownshipChgDe'
+  ];
+
+  var index_len = data_index.length;
+  var content = $(document.createElement('div')).addClass('toji-possession-table');
+
+  $.each(data, function(index, value){
+
+    for(var i = 0; i < index_len; ++i){
+      content.append(
+          "<div>" + data_index[i] + "</div>"
+        + "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
+      );
+    }
+
+  });
+
   $container.find('.toji-possession-body').append(content);
 
   $container.find('.toji-possession-header').on('click', function(e){
-  
+
     if($container.find('.toji-possession-body').is(":visible")){
       $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
     }
@@ -136,6 +189,69 @@ var toji_possession = function(data){
       $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
     }
     $container.find('.toji-possession-body').toggle('fast', 'linear');
+  });
+  return $container;
+};
+
+var toji_usage = function(data){
+  var $container = $(document.createElement('div')).addClass("toji-usage").css('display', 'none');
+  $container.append(
+                      "<div class='toji-usage-header'>"
+                    +   '토지이용계획  ' + "<span class='ti-angle-up'></span>"
+                    + "</div>"
+                    + "<div class='toji-usage-body' style='display:none;'>"
+                    + "</div>"
+                    + "<div class='toji-usage-footer' style='display:none;'>"
+                    + "</div>"
+  );
+  // console.log(data);
+  // var data_index = [
+  //   '공유인수', '공시지가', '지목',
+  //   '토지면적', '소유구분', '국가기관구분',
+  //   '소유권변동원인', '소유권변동일자'
+  // ];
+  //
+  // var data_attr = [
+  //   'cnrsPsnCo', 'pblntfPclnd', 'lndcgrCodeNm',
+  //   'lndpclAr', 'posesnSeCodeNm', 'nationInsttSeCodeNm',
+  //   'ownshipChgCauseCodeNm', 'ownshipChgDe'
+  // ];
+  //
+  // var index_len = data_index.length;
+  // var content = $(document.createElement('div')).addClass('toji-usage-table');
+  //
+  // $.each(data, function(index, value){
+  //
+  //   for(var i = 0; i < index_len; ++i){
+  //     content.append(
+  //         "<div>" + data_index[i] + "</div>"
+  //       + "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
+  //     );
+  //   }
+  //
+  // });
+
+  // $container.find('.toji-usage-body').append(content);
+  var content = $(document.createElement('div')).addClass('toji-usage-table');
+  $.each(data, function(index, value){
+    var target = value['prposAreaDstrcCodeNm'];
+    console.log(value);
+    console.log(target);
+    content.append(
+                        "<div>" + target + "</div>"
+                  );
+  });
+   $container.find('.toji-usage-body').prepend(content);
+
+  $container.find('.toji-usage-header').on('click', function(e){
+
+    if($container.find('.toji-usage-body').is(":visible")){
+      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+    }
+    else{
+      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+    }
+    $container.find('.toji-usage-body').toggle('fast', 'linear');
   });
   return $container;
 };

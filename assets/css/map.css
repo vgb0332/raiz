@@ -286,8 +286,8 @@ body {
   width: 70px;
   padding: 5px;
 }
-/* 토지소유정보창 */
-.toji-possession {
+/* 토지특성정보창 */
+.toji-characteristics {
   position: absolute;
   top: 40px;
   left: 10px;
@@ -296,26 +296,69 @@ body {
   background-color: white;
 }
 
-.toji-possession-header{
+.toji-characteristics-header,
+.toji-possession-header,
+.toji-usage-header {
   cursor: pointer;
   width: 100%;
   line-height: 2em;
   border-bottom: 1px solid black;
   background-color: #2d2d2d;
+  padding: 0;
   color: white;
+  border: 1px solid #333;
 }
 
-.toji-possession-body{
+.toji-characteristics-header:hover,
+.toji-possession-header:hover,
+.toji-usage-header:hover {
+  -webkit-transition: background-color 0.5s,border 0.5s, font-size 2s;
+   -moz-transition: background-color 0.5s,border 0.5s, font-size 2s;
+     -o-transition: background-color 0.5s,border 0.5s, font-size 2s;
+        transition: background-color 0.5s, border 0.5s, font-size 2s;
+  border:1px solid #000000;
+  color: black;
+  background-color: white;
+  /* font-size: 15px; */
+}
+
+.toji-characteristics-body,
+.toji-possession-body,
+.toji-usage-body {
   width: 100%;
   color: black;
 }
 
-.toji-possession-table div:nth-child(2n){
+.toji-characteristics-table div:nth-child(2n),
+.toji-possession-table div:nth-child(2n),
+.toji-usage-table div:nth-child(2n) {
   border-bottom: 1px solid #333;
 }
 
-.toji-possession-table div:nth-child(odd){
+.toji-characteristics-table div:nth-child(odd),
+.toji-possession-table div:nth-child(odd),
+.toji-usage-tabel div:nth-child(odd) {
   font-weight: bold;
+}
+
+/* 토지소유창 */
+.toji-possession{
+  position: absolute;
+  top: 40px;
+  left: 220px;
+  width: 200px;
+  border: 1px solid #333;
+  background-color: white;
+}
+
+/* 토지특성창 */
+.toji-usage {
+  position: absolute;
+  bottom: 20px;
+  right: 230px;
+  width: 200px;
+  border: 1px solid #333;
+  background-color: white;
 }
 
 

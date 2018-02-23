@@ -76,6 +76,11 @@
         <span class="raiz-side-tab-return ti-angle-left"></span>
       </div>
       <div class="stat-body">
+
+          <a onclick="stat_side_btn(this.name)" id="stat-side-sido" name="">a</a></br>
+          <a onclick="stat_side_btn(this.name)" id="stat-side-sgg" name="">b</a></br>
+          <a onclick="stat_side_btn(this.name)" id="stat-side-dong" name="">c</a></br>
+
           <ul class="raiz-side-tab-list">
               <li>
                   <button class="btn" onclick="getStcsPopdens();">인구 밀도 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
@@ -104,6 +109,10 @@
             </li>
             <li>
               노년 부양비
+              <button class="offset">Offset</button>
+              <button class="offset">Offset</button>
+              <button class="offset">Offset</button>
+              <button class="offset">Offset</button>
             </li>
           </ul>
       </div>

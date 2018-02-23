@@ -57,7 +57,7 @@ function THREE_init(polygons, data, Rwindow){
 
   controls.addEventListener( 'change', function(e){
     Rwindow.addClass('orbiting');
-    console.log(camera.position);
+    // console.log(camera.position);
     renderer.render(scene, camera);
     var angle = 60 + controls.getAzimuthalAngle() * 180 / Math.PI;
     Rwindow.find(".raiz-compass-pointer").css({
@@ -98,6 +98,7 @@ function THREE_init(polygons, data, Rwindow){
   var new_z;
 
   $.each(polygons, function(index, polygon){
+
     var target_id = polygon.wc[0].id;
     var target = $("#" + target_id);
 
@@ -193,35 +194,7 @@ function THREE_init(polygons, data, Rwindow){
           meshClick('building', Rwindow, building_mesh);
         }, false);
         domEvents.addEventListener(building_mesh, 'mouseover', function(){
-          // meshMouseOver('building', Rwindow, building_mesh);
-          console.log('mouse on the building mesh');
-          var target = new THREE.Vector3(10, -20, 20); // create on init
-          var tween = animateVector3(building_mesh.position, target, {
-
-              duration: 5000,
-
-              easing : TWEEN.Easing.Quadratic.InOut,
-
-              update: function(d) {
-                  console.log("Updating: " + d);
-              },
-
-              callback : function(){
-                  console.log("Completed");
-              }
-          });
-
-          var tweenUpdate = function(){
-              tween.update();
-              renderer.render(scene, camera);
-              requestAnimationFrame(tweenUpdate);
-          };
-          tween.start();
-
-
-          // requestAnimationFrame(tweenUpdate);
-          tweenUpdate();
-
+          meshMouseOver('building', Rwindow, building_mesh);
         }, false);
         domEvents.addEventListener(building_mesh, 'mouseout', function(){
           // meshMouseOut('building', Rwindow, building_mesh);
@@ -254,57 +227,33 @@ function THREE_init(polygons, data, Rwindow){
       return false;
     }
     if(type === 'toji'){
-      Rwindow.find('.toji-possession').fadeIn();
-      var initial_x = 0;
-      var initial_y = 0;
-      var initial_z = new_z;
-      var target_y = initial_z * Math.tan(degToRad(-90));
-      var flagX = false, flagY = false, flagZ = false;
+      TWEEN.removeAll();
       controls.reset();
-      controls.update();
-
-      var delta_x = camera.position.x - initial_x;
-      var delta_y = camera.position.y - target_y;
-      var delta_z = camera.position.z - initial_z;
-      var frames = 100;
-
-      controls.enabled = false;
-      var renderOnClick = function(){
-        if(flagX == true && flagY == true && flagZ == true){
-          controls.enabled = true;
-          return false;
+      var target = new THREE.Vector3(camera.position.x + 8, camera.position.y - 650, camera.position.z -  200);
+      animateVector3(new THREE.Vector3(camera.position.x, camera.position.y,  camera.position.z), target, {
+        duration: 800,
+        easing: TWEEN.Easing.Quadratic.InOut,
+        update: function(d){
+          // console.log('updating' , d);
+          camera.position.x = d.x;
+          camera.position.y = d.y;
+          camera.position.z = d.z;
+          controls.update();
+          renderer.render(scene, camera);
+        },
+        callback: function(){
+          Rwindow.find('.toji-characteristics').fadeIn();
+          Rwindow.find('.toji-possession').fadeIn();
+          Rwindow.find('.toji-usage').fadeIn();
         }
-        requestAnimationFrame(renderOnClick);
-        // controls.update();
-        if(Math.trunc(camera.position.x) === Math.trunc(initial_x)){
-          flagX = true;
-        }
-        else if(!flagX){
-          camera.position.x -= ( delta_x / frames );
-        }
-
-        if(Math.trunc(camera.position.y) === Math.trunc(target_y)){
-          flagY = true;
-        }
-        else if(!flagY){
-          camera.position.y -= ( delta_y / frames );
-        }
-
-        if(Math.trunc(camera.position.z) === Math.trunc(initial_z)){
-          flagZ = true;
-        }
-        else if(!flagZ){
-          camera.position.z -= ( delta_z / frames );
-        }
-
-        camera.lookAt(scene.position);
-        controls.update();
-        renderer.render(scene, camera);
-      };
-      requestAnimationFrame(function(){
-        requestAnimationFrame(renderOnClick);
-        renderOnClick();
       });
+
+      var renderOnMouseClick = function(){
+          requestAnimationFrame(renderOnMouseClick);
+          TWEEN.update();
+      };
+      requestAnimationFrame(renderOnMouseClick);
+
     }
 
     if(type === 'building'){
@@ -339,33 +288,37 @@ function THREE_init(polygons, data, Rwindow){
 
   var meshMouseOver = function(type, Rwindow, mesh){
     Rwindow.css('cursor', 'pointer');
-    console.log('you mouse on the toji mesh');
-    // mesh.material.color.setHex(0xd9fceb);
     mesh.material.opacity = 0.7;
+    if(type === 'toji'){
+
+    }
     if(type === 'building'){
       console.log('its building');
-      // var glowMesh	= new THREEx.GeometricGlowMesh(mesh);
-      // mesh.add(glowMesh.object3d);
-      var renderOnMouseOver = function(){
-        requestAnimationFrame(renderOnMouseOver);
-        mesh.position.z += 1;
-
-        renderer.render( scene, camera );
-      };
-      requestAnimationFrame(function(){
-        requestAnimationFrame(renderOnMouseOver);
-        renderOnMouseOver();
-      });
+      // TWEEN.removeAll();
+      // var target = new THREE.Vector3(0, 0, mesh.position.z + 10);
+      // animateVector3(new THREE.Vector3(0, 0, mesh.position.z), target, {
+      //   duration: 800,
+      //   easing: TWEEN.Easing.Quadratic.InOut,
+      //   update: function(d){
+      //     console.log('updating' , d);
+      //     mesh.position.z = d.z;
+      //     renderer.render(scene, camera);
+      //   }
+      // })
+      // .repeat(Infinity);
+      //
+      // var renderOnMouseOver = function(){
+      //     requestAnimationFrame(renderOnMouseOver);
+      //     TWEEN.update();
+      // };
+      // requestAnimationFrame(renderOnMouseOver);
     }
-
-    renderer.render(scene, camera);
   };
 
   var meshMouseOut = function(type, Rwindow, mesh){
     Rwindow.css('cursor', 'default');
-    console.log('you mouse out the mesh');
-    // mesh.material.color.setHex(0x46d78f);
     mesh.material.opacity = 1;
+    // TWEEN.removeAll();
     if(type === 'building'){
       //remove glow
       // if(mesh.children.length > 0){
@@ -377,8 +330,6 @@ function THREE_init(polygons, data, Rwindow){
   };
 
   // animate();
-  console.log(camera.position);
-  console.log(new_z);
   renderer.render(scene, camera);
 }
 
