@@ -298,7 +298,8 @@ body {
 
 .toji-characteristics-header,
 .toji-possession-header,
-.toji-usage-header {
+.toji-usage-header,
+.toji-indivPrice-header {
   cursor: pointer;
   width: 100%;
   line-height: 2em;
@@ -356,6 +357,16 @@ body {
   position: absolute;
   bottom: 20px;
   right: 230px;
+  width: 200px;
+  border: 1px solid #333;
+  background-color: white;
+}
+
+/* 토지공시지가 */
+.toji-indivPrice{
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
   width: 200px;
   border: 1px solid #333;
   background-color: white;

@@ -204,39 +204,10 @@ var toji_usage = function(data){
                     + "<div class='toji-usage-footer' style='display:none;'>"
                     + "</div>"
   );
-  // console.log(data);
-  // var data_index = [
-  //   '공유인수', '공시지가', '지목',
-  //   '토지면적', '소유구분', '국가기관구분',
-  //   '소유권변동원인', '소유권변동일자'
-  // ];
-  //
-  // var data_attr = [
-  //   'cnrsPsnCo', 'pblntfPclnd', 'lndcgrCodeNm',
-  //   'lndpclAr', 'posesnSeCodeNm', 'nationInsttSeCodeNm',
-  //   'ownshipChgCauseCodeNm', 'ownshipChgDe'
-  // ];
-  //
-  // var index_len = data_index.length;
-  // var content = $(document.createElement('div')).addClass('toji-usage-table');
-  //
-  // $.each(data, function(index, value){
-  //
-  //   for(var i = 0; i < index_len; ++i){
-  //     content.append(
-  //         "<div>" + data_index[i] + "</div>"
-  //       + "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
-  //     );
-  //   }
-  //
-  // });
 
-  // $container.find('.toji-usage-body').append(content);
   var content = $(document.createElement('div')).addClass('toji-usage-table');
   $.each(data, function(index, value){
     var target = value['prposAreaDstrcCodeNm'];
-    console.log(value);
-    console.log(target);
     content.append(
                         "<div>" + target + "</div>"
                   );
@@ -254,4 +225,116 @@ var toji_usage = function(data){
     $container.find('.toji-usage-body').toggle('fast', 'linear');
   });
   return $container;
+};
+
+var toji_indivPrice = function(data){
+  var $container = $(document.createElement('div')).addClass("toji-indivPrice").css('display', 'none');
+  $container.append(
+                      "<div class='toji-indivPrice-header'>"
+                    +   '개별공시지가  ' + "<span class='ti-angle-up'></span>"
+                    + "</div>"
+                    + "<div class='toji-indivPrice-body' style='display:none;'>"
+                    +   "<canvas id='toji-indivPrice-canvas' width=500 height=500></canvas>"
+                    + "</div>"
+                    + "<div class='toji-indivPrice-footer' style='display:none;'>"
+                    + "</div>"
+  );
+
+  var content = $(document.createElement('div')).addClass('toji-indivPrice-table');
+  var labels = [], values = [];
+  $.each(data, function(index, value){
+    labels.push(value['pblntfDe'].split('-')[0] + '년');
+    values.push(value['pblntfPclnd']);
+  });
+  console.log(labels, values);
+  // var canvas = $container.find("#toji-indivPrice-canvas");
+  var ctx = $container.find("#toji-indivPrice-canvas");
+  var indivPriceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: '개별공시지가',
+            data: values,
+            backgroundColor: '#41c980',
+            borderColor: '#41c980',
+            fill: false,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        legend: {
+          display: false
+        },
+        responsive: true,
+        hover: {
+          mode: false,
+          intersect: false
+        },
+        tooltips: {
+          callbacks: {
+               label: function(tooltipItem, data) {
+                   return comma(tooltipItem.yLabel) + '원';
+               },
+           }
+        },
+        scales: {
+            yAxes: [{
+              ticks: {
+                  fontSize: 12,
+                  beginAtZero: false,
+                  padding: 0,
+                  userCallback: function(value, index, values) {
+                      if (value == 0)
+                          return "0원";
+                      else
+                          return comma(value)+'원';
+                  }
+              }
+            }]
+        },
+        animation: {
+          onComplete: function(e){
+            var ctx = this.chart.ctx;
+            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+            ctx.fillStyle = this.chart.config.options.defaultFontColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+
+            this.data.datasets.forEach(function (dataset) {
+              // console.log(dataset);
+              var percentage = [];
+              for(var i = 1; i < dataset['data'].length; ++i){
+                percentage.push( (dataset['data'][i] - dataset['data'][i-1])/dataset['data'][i-1] * 100 );
+              }
+                var index = Object.keys(dataset['_meta']);
+                var points = dataset['_meta'][index]['dataset']['_children'];
+                for(var i = 1; i < points.length; ++i){
+                  var x = points[i]['_view']['x'];
+                  var y = points[i]['_view']['y'];
+                  if(percentage[i-1] > 0) {
+                    ctx.fillText('+' + percentage[i-1].toFixed(1) + '%', x, y);
+                  }
+                  else{
+                    ctx.fillText(percentage[i-1].toFixed(1) + '%', x, y);
+                  }
+                }
+            });
+          }
+        }
+    }
+  });
+
+  $container.find('.toji-indivPrice-header').on('click', function(e){
+
+    if($container.find('.toji-indivPrice-body').is(":visible")){
+      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+    }
+    else{
+      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+    }
+    $container.find('.toji-indivPrice-body').toggle('fast', 'linear');
+  });
+  return $container;
+
 };

@@ -154,3 +154,94 @@ function changePolyFill(key,val,type) {
     }
   }
 }
+
+
+var raiz_StcsWindow = function(title){
+  var $container = $(document.createElement('div')).addClass("raiz-window-container");
+  // $container.append(`
+  //                     <div class="raiz-window-top">
+  //                       <div class="column controller">
+  //                         <span class="ti-minus point-cursor"></span>
+  //                         <span class="ti-layers point-cursor"></span>
+  //                         <span class="ti-close point-cursor"></span>
+  //                       </div>
+  //                       <div class="column header">${title}</div>
+  //                     </div>
+  //                     <div class="raiz-window-body">
+  //
+  //                     </div>
+  //                     <div class="raiz-window-footer"></div>
+  //                   `
+  //                 );
+  $container.append("<div class='raiz-window-top'>"
+                    +  "<div class='column controller'>"
+                    +     "<span class='ti-minus point-cursor'></span>"
+                    +      "<span class='ti-layers point-cursor'></span>"
+                    +      "<span class='ti-close point-cursor'></span>"
+                    +   "</div>"
+                    +   "<div class='column header'>" + title + "</div>"
+                    +  "</div>"
+                    +  "<div class='raiz-window-body'>"
+                    +   "<div class='stcs-window-title'>"
+                    +   "</div>"
+                    +  "</div>"
+
+                    +  "<div class='raiz-window-footer'></div>"
+                  );
+  lifeToWindow($container);
+  $container.removeAttr('style');
+  return $container;
+}
+
+
+var stcs_additag = function(data,addiType){
+  var $container;
+  switch (addiType) {
+
+    case 'initdata':
+      $container = $(document.createElement('div')).addClass("stcs-initdata").css('display', 'block');
+      $container.css('color','black');
+      $container.css('margin-top','15px');
+      $container.append(
+                          "<h class='stcs-initdata-area'>"
+                        + "면적 : "+data[0]
+                        + "</h>"
+                        +  "<h class='stcs-initdata-pop'>"
+                        + " 총 인구 : "+data[1]
+                        + "</h>"
+                        +  "<h class='stcs-initdata-age'>"
+                        + " 평균 나이 : "+data[2]
+                        + "</h>"
+      );
+      break;
+
+    case 'totaljobs' :
+      if (data.length == 0) {
+        break;
+      }
+      console.log(data);
+      $container = $(document.createElement('h')).addClass("stcs-initdata-totaljobs");
+      $container.append(
+                         " 총괄사업체수 : "+data[0]['value']
+      );
+      break;
+
+    case 'popdens' :
+      if (data.length == 0) {
+        break;
+      }
+      console.log(data);
+      $container = $(document.createElement('h')).addClass("stcs-initdata-popdens");
+      $container.append(
+                         " 인구밀도 : "+data[0]['value']
+      );
+      break;
+
+    default:
+      alert('stcs-additag error')
+
+  }
+
+  // console.log(data);
+  return $container;
+};

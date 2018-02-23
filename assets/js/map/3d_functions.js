@@ -157,6 +157,7 @@ function THREE_init(polygons, data, Rwindow){
 
     }
     else if(target.hasClass('building-polygon')){
+      console.log(target.attr('data-buildingID'));
       polyPoints = [];
       $.each(polygon.Id[0], function(index, target){
           polyPoints.push(new THREE.Vector2(target.ib, target.jb));
@@ -191,14 +192,14 @@ function THREE_init(polygons, data, Rwindow){
 
       if(!is_mobile){
         domEvents.addEventListener(building_mesh, 'click', function(){
-          meshClick('building', Rwindow, building_mesh);
+          meshClick('building', Rwindow, building_mesh, target);
         }, false);
         domEvents.addEventListener(building_mesh, 'mouseover', function(){
-          meshMouseOver('building', Rwindow, building_mesh);
+          meshMouseOver('building', Rwindow, building_mesh, target);
         }, false);
         domEvents.addEventListener(building_mesh, 'mouseout', function(){
           // meshMouseOut('building', Rwindow, building_mesh);
-          building_mesh.position.z = height + 2;
+          // building_mesh.position.z = height + 2;
         }, false);
       }
       else{
@@ -220,7 +221,7 @@ function THREE_init(polygons, data, Rwindow){
     renderer.render(scene, camera);
   });
 
-  var meshClick = function(type, Rwindow, mesh){
+  var meshClick = function(type, Rwindow, mesh, target){
     console.log('you clicked on the mesh', mesh);
     if(Rwindow.hasClass('orbiting')){
       Rwindow.removeClass('orbiting');
@@ -245,6 +246,7 @@ function THREE_init(polygons, data, Rwindow){
           Rwindow.find('.toji-characteristics').fadeIn();
           Rwindow.find('.toji-possession').fadeIn();
           Rwindow.find('.toji-usage').fadeIn();
+          Rwindow.find('.toji-indivPrice').fadeIn();
         }
       });
 
@@ -257,36 +259,63 @@ function THREE_init(polygons, data, Rwindow){
     }
 
     if(type === 'building'){
-      // controls.reset();
-      // controls.update();
 
-      var geometry = mesh.geometry;
-      geometry.computeBoundingBox();
-      var center = geometry.boundingBox.getCenter();
+      var buildingID = target.attr('data-buildingID');
+      var sigunguCd = target.attr('data-sigunguCd');
+      var bjdongCd = target.attr('data-bjdongCd');
+      var bun = target.attr('data-bun');
+      var ji = target.attr('data-ji');
 
-      // camera.position.set( Xoffset + center.x, 50, 100);
-      // camera.aspect = 1;
-      // camera.updateProjectionMatrix();
-      // camera.lookAt(mesh.geometry);
-      // controls.update();
+      if(buildingID === '') {
+        alert('정보 없음');
+        return;
+      }
+      console.log(buildingID);
+      customAjax($SITE_URL + 'get/buildingTitleInfo', {
+        sigunguCd : sigunguCd,
+        bjdongCd : bjdongCd,
+        bun : bun,
+        ji : ji,
+        buildingID : sigunguCd + '-' + buildingID
+      }, function(data){
+        console.log(data);
+        redrawBuilding(data[0]);
 
+      });
+      function redrawBuilding(building){
+        console.log(building);
+        var grndFlrCnt = building['grndFlrCnt'];
+        var ugrndFlrCnt = building['ugrndFlrCnt'];
+        var totalFlrCnt = grndFlrCnt*1 + ugrndFlrCnt*1;
 
-      // controls.target = (mesh);
-      console.log(group);
-      group.children = [];
-      group.add(mesh);
-      console.log(center);
-      mesh.position.set(-center.x, -center.y, 0);
-      camera.position.y = camera.position.z * 3/10;
-      camera.position.z = 0;
+        var geometry = mesh.geometry;
+        var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 1 };
+        geometry.computeBoundingBox();
+        var center = geometry.boundingBox.getCenter();
+        var building = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { map: building_texture } ) );
+        console.log(group);
+        group.children = [];
+        group.add(mesh);
+        console.log(center);
+        mesh.position.set(-center.x, -center.y, 0);
 
-      controls.update();
-      renderer.render(scene, camera);
+        console.log(mesh.geometry.parameters.options.bevelThickness);
+        var curThickness = mesh.geometry.parameters.options.bevelThickness = 10;
+
+        // mesh.scale.z
+        console.log(mesh);
+        camera.position.y = camera.position.z * 3/10;
+        camera.position.z = 0;
+        mesh.scale.z = 0.1;
+        console.log(geometry.boundingBox);
+        controls.update();
+        renderer.render(scene, camera);
+      };
     }
 
   };
 
-  var meshMouseOver = function(type, Rwindow, mesh){
+  var meshMouseOver = function(type, Rwindow, mesh, target){
     Rwindow.css('cursor', 'pointer');
     mesh.material.opacity = 0.7;
     if(type === 'toji'){

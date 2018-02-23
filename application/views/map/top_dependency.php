@@ -35,6 +35,9 @@
   <!-- TWEEN JS -->
   <script src="<?php echo base_url();?>assets/vendor/tween/tween.js"></script>
 
+  <!-- CHART JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
   <style media="screen">
       .no-js #loader { display: none;  }
       .js #loader { display: block; position: absolute; left: 100px; top: 0; }

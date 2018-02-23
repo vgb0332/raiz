@@ -66,34 +66,24 @@ function setRWindow(polygons, data){
 
   // insert3D(Rwindow, polygon);
   THREE_init(polygons, data, Rwindow);
+  var values = {
+      sigunguCd : data['sigunguCd'],
+      bjdongCd : data['bjdongCd'],
+      bun : data['bun'],
+      ji : data['ji']
+  };
 
   Rwindow.find('.raiz-window-body').append(toji_characteristics(data));
-  customAjax($SITE_URL+'get/tojiPossession', {
-    sigunguCd : data['sigunguCd'],
-    bjdongCd : data['bjdongCd'],
-    bun : data['bun'],
-    ji : data['ji']
-  }, function(data){
+  customAjax($SITE_URL+'get/tojiPossession', values, function(data){
     Rwindow.find('.raiz-window-body').append(toji_possession(data));
   });
 
-  customAjax($SITE_URL+'get/tojiUsage', {
-    sigunguCd : data['sigunguCd'],
-    bjdongCd : data['bjdongCd'],
-    bun : data['bun'],
-    ji : data['ji']
-  }, function(data){
+  customAjax($SITE_URL+'get/tojiUsage', values, function(data){
     Rwindow.find('.raiz-window-body').append(toji_usage(data));
   });
 
-  customAjax($SITE_URL+'get/tojiIndivPrice', {
-    sigunguCd : data['sigunguCd'],
-    bjdongCd : data['bjdongCd'],
-    bun : data['bun'],
-    ji : data['ji']
-  }, function(data){
-    console.log(data);
-
+  customAjax($SITE_URL+'get/tojiIndivPrice', values, function(data){
+    Rwindow.find('.raiz-window-body').append(toji_indivPrice(data));
   });
 
   // Rwindow.find('.raiz-window-body').append(toji_usage(data));
@@ -107,16 +97,24 @@ function setSTCSWindow(polygons, data){
 
   // RAIZ WINDOW SETUP
   var header = $('#stat-side-sido').text() + ' ' + $('#stat-side-sgg').text() + ' ' + $('#stat-side-dong').text();
-  var STCSwindow = raiz_window(header);
+  var STCSwindow = raiz_StcsWindow(header);
   $(document.body).append(STCSwindow);
 
   // insert3D(STCSwindow, polygon);
-  THREE_init(polygons, data, STCSwindow);
+  // THREE_init(polygons, data, STCSwindow);
 
-  //Rwindow.find('.raiz-window-body').append(toji_characteristics(data));
-  // Rwindow.find('.raiz-window-body').append(toji_usage(data));
-  // Rwindow.find('.raiz-window-body').append(toji_possession(data));
-  // Rwindow.find('.raiz-window-body').append(toji_indivPrice(data));
+  STCSwindow.find('.stcs-window-title').append(stcs_additag(data,'initdata'));
+
+  console.log(polygons[0].Bb[0][3]);
+  customAjax($SITE_URL+'get/stcsTotaljobs', {currHjstcs:polygons[0].Bb[0][3]}, function(data){
+    STCSwindow.find('.stcs-initdata-age').append(stcs_additag(data,'totaljobs'));
+  });
+
+  console.log(polygons[0].Bb[0][3]);
+  customAjax($SITE_URL+'get/stcsPopdens', {currHjstcs:polygons[0].Bb[0][3]}, function(data){
+    STCSwindow.find('.stcs-initdata-totaljobs').append(stcs_additag(data,'popdens'));
+  });
+
   STCSwindow.show('normal');
 }
 
@@ -127,7 +125,7 @@ function setSTCSWindow(polygons, data){
 */
 
 function setPoly(type, polygon, data){
-  // console.log(data);
+
   if(type === 'toji'){
     polygon.setMap(map);
     // console.log(polygon);
@@ -169,13 +167,18 @@ function setPoly(type, polygon, data){
   }
 
   if(type ==='building'){
+
     polygon.setMap(map);
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id)
       .removeAttr('style').addClass('building-polygon')
       .attr('name', data['pnu'])
-      .attr('data-buildingID', data['buildingID'])
+      .attr('data-buildingID',  data['buildingID'])
+      .attr('data-sigunguCd' , data['sigunguCd'])
+      .attr('data-bjdongCd', data['bjdongCd'])
+      .attr('data-bun', data['bun'])
+      .attr('data-ji', data['ji'])
       .attr('data-height', data['height']);
     });
 
@@ -312,7 +315,7 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener(polygon, 'click', function(mouseEvent) {
 
-      setSTCSWindow([polygon], data);
+      setSTCSWindow([polygon], polygon.Bb[0]);
       // console.log(aggr_poly);
       // $('.stcs-polygon').remove();
       // $('.stcs_ol').remove();

@@ -21,3 +21,48 @@ function customAjax(url,data,callback) {
   });
   return ajax_call;
 }
+
+function comma(number) {
+
+    var minusText = "";
+
+    if (parseFloat(number) < 0) {
+        minusText = "-";
+    }
+
+    number = '' + number;
+    number = number.replace("-", "");
+    if (number.length > 3) {
+
+        var mod = number.length % 3;
+        var output = (mod > 0 ? (number.substring(0,mod)) : '');
+        for (var i=0 ; i < Math.floor(number.length / 3); i++) {
+            if ((mod == 0) && (i == 0))
+                output += number.substring(mod+ 3 * i, mod + 3 * i + 3);
+            else
+                output+= ',' + number.substring(mod + 3 * i, mod + 3 * i + 3);
+        }
+        return (minusText + '' + output);
+    }
+    else return minusText + '' + number;
+}
+
+function price_format(value) {
+    var p = String(value).replace(',', '');
+
+    if (p.length <= 4) {
+        return p + "만원";
+    } else if (p.length >= 5 && p.length <= 8) {
+        if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+            return p.slice(0, p.length - 4) + "억 ";
+        else
+            return p.slice(0, p.length - 4) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+    } else if (p.length > 8 && p.length <= 11) {
+        if (parseInt(p.slice(p.length - 8, p.length)) == 0)
+            return p.slice(0, p.length - 8) + "조 ";
+        else if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+            return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억";
+        else
+            return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+    }
+}

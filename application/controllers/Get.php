@@ -26,6 +26,20 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
+  public function buildingTitleInfo(){
+    $this->load->model('Building');
+    $data = array (
+      'type' => 'brTitleInfo',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji'),
+      'buildingID' => $this->input->post('buildingID')
+    );
+
+    echo $this->Building->getBuildingInfo($data);
+  }
+
   public function tojiIndivPrice() {
     $this->load->model('Toji');
     $data = array (
@@ -98,6 +112,12 @@ class Get extends CI_Controller {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
     echo $this->Statistics->getStcsPopdens($code);
+  }
+
+  public function stcsTotaljobs() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsTotaljobs($code);
   }
 
 
