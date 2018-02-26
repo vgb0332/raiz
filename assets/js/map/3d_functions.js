@@ -57,7 +57,7 @@ function THREE_init(polygons, data, Rwindow){
 
   controls.addEventListener( 'change', function(e){
     Rwindow.addClass('orbiting');
-    // console.log(camera.position);
+    console.log('camera position : ' , camera.position);
     renderer.render(scene, camera);
     var angle = 60 + controls.getAzimuthalAngle() * 180 / Math.PI;
     Rwindow.find(".raiz-compass-pointer").css({
@@ -86,16 +86,11 @@ function THREE_init(polygons, data, Rwindow){
 
   // POLYGON CREATION PROCESS
   var polyPoints = [];
-  // $.each(polygon.Id[0], function(index, target){
-  //     polyPoints.push(new THREE.Vector2(target.ib, target.jb));
-  // });
 
   var group = new THREE.Group();
-  // var toji_mesh, building_mesh;
   var Xoffset, Yoffset;
 
   var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
-  var new_z;
 
   $.each(polygons, function(index, polygon){
 
@@ -123,11 +118,10 @@ function THREE_init(polygons, data, Rwindow){
       var size = geometry.boundingBox.getSize();
 
       var longLen = size.x > size.y ? size.x : size.y;
-      new_z = initial_camera_ratio * longLen;
-      camera.position.z = new_z;
+
       Xoffset = x - center.x;
       Yoffset = y - center.y;
-      // toji_mesh.position.set( x - center.x , y - center.y, z  );
+
       toji_mesh.translateX(Xoffset);
       toji_mesh.translateY(Yoffset);
       toji_mesh.rotation.set( rx, ry, rz );
@@ -137,7 +131,7 @@ function THREE_init(polygons, data, Rwindow){
       axesHelper.position.y = 0;
       axesHelper.position.x = 0;
       scene.add( axesHelper );
-
+      group.scale.set( camera.position.z / longLen, camera.position.z / longLen, camera.position.z / longLen);
       group.add(toji_mesh);
 
       if(!is_mobile){
@@ -152,7 +146,9 @@ function THREE_init(polygons, data, Rwindow){
         }, false);
       }
       else{
-        // domEvents.addEventListener(mesh, 'mouseover', meshClick, false);
+        domEvents.addEventListener(toji_mesh, 'click', function(){
+          meshClick('toji', Rwindow, toji_mesh);
+        }, false);
       }
 
     }
@@ -168,7 +164,7 @@ function THREE_init(polygons, data, Rwindow){
 
       var poly3D = new THREE.Shape(polyPoints);
 
-      var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: height };
+      var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 1 };
       var color = 0x189AD3;
       var x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s = 1;
       var geometry = new THREE.ExtrudeGeometry( poly3D, extrudeSettings );
@@ -180,7 +176,7 @@ function THREE_init(polygons, data, Rwindow){
       var center = geometry.boundingBox.getCenter();
       var size = geometry.boundingBox.getSize();
 
-      building_mesh.scale.set( s, s, s );
+      building_mesh.scale.set( s, s, height );
       // building_mesh.position.set( Xoffset , Yoffset, z  );
       building_mesh.translateX(Xoffset);
       building_mesh.translateY(Yoffset);
@@ -194,11 +190,11 @@ function THREE_init(polygons, data, Rwindow){
         domEvents.addEventListener(building_mesh, 'click', function(){
           meshClick('building', Rwindow, building_mesh, target);
         }, false);
-        domEvents.addEventListener(building_mesh, 'mouseover', function(){
+        domEvents.addEventListener(building_mesh, 'mouseover', function() {
           meshMouseOver('building', Rwindow, building_mesh, target);
         }, false);
         domEvents.addEventListener(building_mesh, 'mouseout', function(){
-          // meshMouseOut('building', Rwindow, building_mesh);
+          meshMouseOut('building', Rwindow, building_mesh, target);
           // building_mesh.position.z = height + 2;
         }, false);
       }
@@ -214,7 +210,7 @@ function THREE_init(polygons, data, Rwindow){
     console.log('dblclick');
     controls.reset();
     controls.update();
-    camera.position.set(0, 0, new_z);
+    camera.position.set(0, 0, 500);
     camera.aspect = 1;
     camera.updateProjectionMatrix();
 
@@ -222,15 +218,16 @@ function THREE_init(polygons, data, Rwindow){
   });
 
   var meshClick = function(type, Rwindow, mesh, target){
-    console.log('you clicked on the mesh', mesh);
+
     if(Rwindow.hasClass('orbiting')){
       Rwindow.removeClass('orbiting');
       return false;
     }
     if(type === 'toji'){
+      console.log('you clicked toji mesh');
       TWEEN.removeAll();
       controls.reset();
-      var target = new THREE.Vector3(camera.position.x + 8, camera.position.y - 650, camera.position.z -  200);
+      var target = new THREE.Vector3(camera.position.x - 20, camera.position.y - 400, camera.position.z -  200);
       animateVector3(new THREE.Vector3(camera.position.x, camera.position.y,  camera.position.z), target, {
         duration: 800,
         easing: TWEEN.Easing.Quadratic.InOut,
@@ -259,7 +256,7 @@ function THREE_init(polygons, data, Rwindow){
     }
 
     if(type === 'building'){
-
+      console.log('you clicked builiding mesh');
       var buildingID = target.attr('data-buildingID');
       var sigunguCd = target.attr('data-sigunguCd');
       var bjdongCd = target.attr('data-bjdongCd');
@@ -270,7 +267,7 @@ function THREE_init(polygons, data, Rwindow){
         alert('정보 없음');
         return;
       }
-      console.log(buildingID);
+
       customAjax($SITE_URL + 'get/buildingTitleInfo', {
         sigunguCd : sigunguCd,
         bjdongCd : bjdongCd,
@@ -278,36 +275,146 @@ function THREE_init(polygons, data, Rwindow){
         ji : ji,
         buildingID : sigunguCd + '-' + buildingID
       }, function(data){
-        console.log(data);
-        redrawBuilding(data[0]);
-
+        if(!data.brTitleInfo[0]){           alert('정보없음');   return;      }
+        redrawBuilding(data);
       });
-      function redrawBuilding(building){
-        console.log(building);
+
+      function redrawBuilding(data){
+
+        var building = data.brTitleInfo[0];
+
         var grndFlrCnt = building['grndFlrCnt'];
         var ugrndFlrCnt = building['ugrndFlrCnt'];
         var totalFlrCnt = grndFlrCnt*1 + ugrndFlrCnt*1;
+        var flrOffset = data.flrCnt.length - totalFlrCnt;
 
         var geometry = mesh.geometry;
-        var extrudeSettings = { curveSegments : 20, amount: 1, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 1, bevelThickness: 1 };
-        geometry.computeBoundingBox();
         var center = geometry.boundingBox.getCenter();
-        var building = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { map: building_texture } ) );
-        console.log(group);
-        group.children = [];
-        group.add(mesh);
-        console.log(center);
-        mesh.position.set(-center.x, -center.y, 0);
+        var size = geometry.boundingBox.getSize();
+        var groupA = new TWEEN.Group();
 
-        console.log(mesh.geometry.parameters.options.bevelThickness);
-        var curThickness = mesh.geometry.parameters.options.bevelThickness = 10;
+        for(var i = group.children.length - 1; i >= 0; i--){
+          (function(i){
+              //disappearing animation with heap garbage collect
+              console.log(group.children[i]);
+              // TWEEN.removeAll();
+              var target = {};
+              target.opacity = 1;
 
-        // mesh.scale.z
-        console.log(mesh);
-        camera.position.y = camera.position.z * 3/10;
-        camera.position.z = 0;
-        mesh.scale.z = 0.1;
-        console.log(geometry.boundingBox);
+              var tween = new TWEEN.Tween(target, groupA)
+                          .to( { opacity: 0 } , 1000 )
+                          .onUpdate(function(){
+                            group.children[i].material.opacity = target.opacity;
+                            renderer.render(scene, camera);
+                          })
+                          .onComplete(function(){
+                            group.children[i].material.dispose();
+                            group.children[i].geometry.dispose();
+                            delete group.children[i]._3xDomEvent;
+                            group.remove(group.children[i]);
+                          })
+                          .start();
+
+          })(i);
+
+        };
+        controls.reset();
+        var renderOnMouseClick = function(){
+            requestAnimationFrame(renderOnMouseClick);
+            groupA.update();
+        };
+        requestAnimationFrame(renderOnMouseClick);
+        groupA.onComplete(function(){
+          for(var i = 0; i < totalFlrCnt; ++i){
+            (function(i){
+                var twin = mesh.clone();
+                twin.material.dispose();
+                twin.material = new THREE.MeshPhongMaterial( { map: building_texture, transparent: true } );
+                twin.scale.z = 1;
+                twin.position.set(-center.x, -center.y, i*3);
+                group.add(twin);
+            })(i);
+          }
+
+          console.log('flrOffset', flrOffset);
+
+          for(var i = 0; i < flrOffset; ++i){
+            (function(i){
+                var twin = mesh.clone();
+                twin.material.dispose();
+                twin.material = new THREE.MeshPhongMaterial( { map: building_texture, transparent: true } );
+
+                twin.scale.set(1, 1, 1);
+
+                var geometry = new THREE.BoxGeometry( size.x / 3, size.y / 3, size.z );
+                var material = new THREE.MeshBasicMaterial( { map: building_texture, transparent: true } );
+                var cube = new THREE.Mesh( geometry, material );
+                cube.position.z = group.children[group.children.length - 1].position.z + 3 + i * 3;
+
+                group.add(cube);
+            })(i);
+          }
+
+          console.log(group);
+          for(var i = 0; i < group.children.length; ++i){
+            (function(i){
+              domEvents.addEventListener(group.children[i], 'click', function(){
+                var curFlrCnt = i - ugrndFlrCnt;
+                curFlrCnt = ( curFlrCnt < 0 ) ? curFlrCnt : curFlrCnt + 1;
+                var flrNo = curFlrCnt;
+                var flrGbCd = 20;
+                if(curFlrCnt > grndFlrCnt){
+                  console.log('여기는 옥탑 ' + (curFlrCnt - grndFlrCnt) + '층');
+                  flrNo = curFlrCnt - grndFlrCnt;
+                  flrGbCd = 30;
+                }
+                else if(curFlrCnt < 0){
+                  console.log('여기는 지하' + curFlrCnt + ' 층');
+                  flrGbCd = 10;
+                }
+                else{
+                  console.log('여기는 ' + curFlrCnt + '층임');
+                }
+
+                customAjax($SITE_URL + 'get/buildingFlrInfo', {
+                    sigunguCd : sigunguCd,
+                    bjdongCd : bjdongCd,
+                    bun : bun,
+                    ji : ji,
+                    buildingID : sigunguCd + '-' + buildingID,
+                    flrNo : Math.abs(flrNo),
+                    flrGbCd : flrGbCd
+                  }, function(data){
+                    console.log(data);
+                  });
+
+              }, false);
+
+              domEvents.addEventListener(group.children[i], 'mouseover', function(){
+                console.log('buidling mouseover');
+                Rwindow.css('cursor', 'pointer');
+                group.children[i].material.opacity = 0.6;
+                renderer.render(scene, camera);
+              }, false);
+
+              domEvents.addEventListener(group.children[i], 'mouseout', function(){
+                console.log('buidling mouseout');
+                Rwindow.css('cursor', 'default');
+                group.children[i].material.opacity = 1;
+                renderer.render(scene, camera);
+              }, false);
+            })(i);
+          }
+
+          group.translateZ(-ugrndFlrCnt * 2);
+        });
+
+
+
+        // camera.position.y = camera.position.z * 3/10;
+        // camera.position.z = 0;
+        // mesh.scale.z = 1;
+        // console.log(geometry.boundingBox);
         controls.update();
         renderer.render(scene, camera);
       };
@@ -322,7 +429,8 @@ function THREE_init(polygons, data, Rwindow){
 
     }
     if(type === 'building'){
-      console.log('its building');
+      console.log('building mouseover');
+      mesh.material.opacity = 0.7;
       // TWEEN.removeAll();
       // var target = new THREE.Vector3(0, 0, mesh.position.z + 10);
       // animateVector3(new THREE.Vector3(0, 0, mesh.position.z), target, {
@@ -344,16 +452,18 @@ function THREE_init(polygons, data, Rwindow){
     }
   };
 
-  var meshMouseOut = function(type, Rwindow, mesh){
+  var meshMouseOut = function(type, Rwindow, mesh, target){
     Rwindow.css('cursor', 'default');
-    mesh.material.opacity = 1;
+
     // TWEEN.removeAll();
     if(type === 'building'){
+      mesh.material.opacity = 1;
+      console.log('mesh mouseout');
       //remove glow
       // if(mesh.children.length > 0){
       //   mesh.children = [];
       // }
-      mesh.position.z = 2;
+      // mesh.position.z = 2;
     }
     renderer.render(scene, camera);
   };

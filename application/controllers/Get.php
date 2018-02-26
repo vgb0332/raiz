@@ -26,6 +26,22 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
+  public function buildingFlrInfo(){
+    $this->load->model('Building');
+    $data = array (
+      'type' => 'brFlrInfo',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji'),
+      'buildingID' => $this->input->post('buildingID'),
+      'flrNo' => $this->input->post('flrNo'),
+      'flrGbCd' => $this->input->post('flrGbCd')
+    );
+
+    echo $this->Building->getBuildingInfo($data);
+  }
+
   public function buildingTitleInfo(){
     $this->load->model('Building');
     $data = array (
