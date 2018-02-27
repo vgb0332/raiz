@@ -5,7 +5,7 @@ function initStcs() {
   ajax_type = 'stcsSido';
   $('.stcs-item').remove();
   $('.stcs_label').remove();
-  customAjax($SITE_URL+'get/statscSido',0,
+  customAjax($SITE_URL+'getStcs/statscSido',0,
             processStcs);
   map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
 
@@ -58,33 +58,33 @@ function createOverlay(name) {
 
 function getStcsSgg(sggcode) {
   ajax_type = 'stcsSgg';
-  customAjax($SITE_URL+'get/statscSgg',{sggcode:sggcode},
+  customAjax($SITE_URL+'getStcs/statscSgg',{sggcode:sggcode},
             processStcs);
 }
 
 function getStcsdong(dongcode) {
   ajax_type = 'stcsDong';
   currHjstcs = dongcode;
-  customAjax($SITE_URL+'get/statscDong',{dongcode:dongcode},
+  customAjax($SITE_URL+'getStcs/statscDong',{dongcode:dongcode},
             processStcs);
 }
 
 function getStcsaggr(aggrcode) {
   ajax_type = 'stcsAggr';
   currHjstcs = aggrcode;
-  customAjax($SITE_URL+'get/statscAggr',{aggrcode:aggrcode},
+  customAjax($SITE_URL+'getStcs/statscAggr',{aggrcode:aggrcode},
             drawPoly);
 }
 
 function getStcsOldind() {
   ajax_type = 'stcsOldind';
-  customAjax($SITE_URL+'get/stcsOldind',{currHjstcs:currHjstcs},
+  customAjax($SITE_URL+'getStcs/stcsOldind',{currHjstcs:currHjstcs},
             setOldindPoly);
 }
 
 function getStcsPopdens() {
   ajax_type = 'stcsPopdens';
-  customAjax($SITE_URL+'get/stcsPopdens',{currHjstcs:currHjstcs},
+  customAjax($SITE_URL+'getStcs/stcsPopdens',{currHjstcs:currHjstcs},
             setOldindPoly);
 }
 
@@ -135,7 +135,7 @@ function changePolyFill(key,val,type) {
     val = val*1;
     for (var i = 0; i < aggr_poly.length; i++) {
       if (aggr_poly[i].Bb[0][3] == key) {
-        if (30 >= val) {
+        if (val <= 30 ) {
           r -= (val*2).toFixed(0); g -= (val*2).toFixed(0);
         }
         else {
@@ -181,11 +181,10 @@ var raiz_StcsWindow = function(title){
                     +   "</div>"
                     +   "<div class='column header'>" + title + "</div>"
                     +  "</div>"
-                    +  "<div class='raiz-window-body'>"
+                    +  "<div class='raiz-window-body stcs'>"
                     +   "<div class='stcs-window-title'>"
                     +   "</div>"
                     +  "</div>"
-
                     +  "<div class='raiz-window-footer'></div>"
                   );
   lifeToWindow($container);
@@ -193,15 +192,16 @@ var raiz_StcsWindow = function(title){
   return $container;
 }
 
-
 var stcs_additag = function(data,addiType){
   var $container;
+  console.log(addiType);
   switch (addiType) {
 
     case 'initdata':
       $container = $(document.createElement('div')).addClass("stcs-initdata").css('display', 'block');
       $container.css('color','black');
-      $container.css('margin-top','15px');
+      $container.css('padding-top','15px');
+      $container.css('padding-bottom','15px');
       $container.append(
                           "<h class='stcs-initdata-area'>"
                         + "면적 : "+data[0]
@@ -215,27 +215,122 @@ var stcs_additag = function(data,addiType){
       );
       break;
 
-    case 'totaljobs' :
+    case 'stcsTotaljobs' :
       if (data.length == 0) {
         break;
       }
       console.log(data);
-      $container = $(document.createElement('h')).addClass("stcs-initdata-totaljobs");
+      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotaljobs");
       $container.append(
                          " 총괄사업체수 : "+data[0]['value']
       );
       break;
 
-    case 'popdens' :
+    case 'stcsPopdens' :
       if (data.length == 0) {
         break;
       }
       console.log(data);
-      $container = $(document.createElement('h')).addClass("stcs-initdata-popdens");
+      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsPopdens");
       $container.append(
                          " 인구밀도 : "+data[0]['value']
       );
       break;
+
+    case 'stcsHouseType' :
+      if (data.length == 0) {
+        break;
+      }
+      console.log(data);
+      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseType");
+      for (var i = 0; i < data.length; i++) {
+        $container.append(
+                           "</br>유형별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
+        );
+      }
+
+      break;
+
+    case 'stcsTotalHouse' :
+      if (data.length == 0) {
+        break;
+      }
+      console.log(data);
+      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalHouse");
+      $container.append(
+                         "</br>총 주택 수 : "+data[0]['value']
+      );
+      break;
+
+      case 'stcsHouseSize' :
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseSize");
+        for (var i = 0; i < data.length; i++) {
+          $container.append(
+                             "</br>연건평별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
+          );
+        }
+
+        break;
+
+      case 'stcsHouseHold' :
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseHold");
+        for (var i = 0; i < data.length; i++) {
+          $container.append(
+                             "</br>세대구성별 가구 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
+          );
+        }
+
+        break;
+
+      case 'stcsTotalFamily' :
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalFamily");
+        for (var i = 0; i < data.length; i++) {
+          $container.append(
+                             "</br>가구 총괄 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
+          );
+        }
+
+        break;
+
+      case 'stcsJobsPop' :
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsPop");
+        for (var i = 0; i < data.length; i++) {
+          $container.append(
+                             "</br>산업 분류별 종사자수 : "+data[i]['name']+" / "+data[i]['value']+" 명"
+          );
+        }
+
+        break;
+
+      case 'stcsJobsBiz' :
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsBiz");
+        for (var i = 0; i < data.length; i++) {
+          $container.append(
+                             "</br>산업 분류별 사업체수 : "+data[i]['name']+" / "+data[i]['value']+" 개"
+          );
+        }
+
+        break;
 
     default:
       alert('stcs-additag error')

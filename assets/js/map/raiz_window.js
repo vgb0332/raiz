@@ -215,7 +215,14 @@ function lifeToWindow(Rwindow){
     $(this).tooltip({
       'animation': true,
       'title' : '컨트롤',
-      'placement' : 'left'
+      'placement' : 'right'
     });
+  });
+
+  Rwindow.find(".raiz-window-top").on("click", function(e){
+    Rwindow.find(".raiz-window-info").toggle('slide', {direction:"right"}, 100, function(){
+        Rwindow.trigger('resize');
+    });
+
   });
 }

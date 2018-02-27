@@ -52,7 +52,7 @@ Class Statistics extends CI_Model {
 
   function getStcsOldind($code){
       $query = $this->db->query(
-                "SELECT tot_oa_cd, item, value
+                "SELECT value
                 FROM raiz2.2016OldIndices
                 WHERE tot_oa_cd LIKE '$code%'
                 ");
@@ -77,6 +77,83 @@ Class Statistics extends CI_Model {
                 "SELECT value
                 FROM raiz2.2016TotalJobs
                 WHERE tot_oa_cd = $code
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsTotalHouse($code){
+      $query = $this->db->query(
+                "SELECT value
+                FROM raiz2.2016TotalHouse
+                WHERE tot_oa_cd = $code
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsHouseSize($code){
+      $query = $this->db->query(
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseSize where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsHouseHold($code){
+      $query = $this->db->query(
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseHold where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsTotalFamily($code){
+      $query = $this->db->query(
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016TotalFamily where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsJobsPop($code){
+      $query = $this->db->query(
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016JobsPop where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsJobsBiz($code){
+      $query = $this->db->query(
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016JobsBiz where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsHouseType($code){
+      $query = $this->db->query(
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseType where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
                 ");
 
     $result = $query->result_array();

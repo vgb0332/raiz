@@ -95,46 +95,4 @@ class Get extends CI_Controller {
     echo $this->Toji->getTojiInfo($data);
   }
 
-  public function statscSido() {
-    $this->load->model('Statistics');
-    echo $this->Statistics->getStcsSido();
-  }
-
-  public function statscSgg() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('sggcode');
-    echo $this->Statistics->getStcsSgg($code);
-  }
-
-  public function statscDong() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('dongcode');
-    echo $this->Statistics->getStcsDong($code);
-  }
-
-  public function statscAggr() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('aggrcode');
-    echo $this->Statistics->getStcsAggr($code);
-  }
-
-  public function stcsOldind() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsOldind($code);
-  }
-
-  public function stcsPopdens() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsPopdens($code);
-  }
-
-  public function stcsTotaljobs() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsTotaljobs($code);
-  }
-
-
 }

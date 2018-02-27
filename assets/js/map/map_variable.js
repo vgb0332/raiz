@@ -55,8 +55,8 @@ var raiz_window = function(title){
                     +     "<div class='raiz-mouse-control'>"
                     +       "<span class='ti-mouse-alt'></span>"
                     +     "</div>"
-                    +     "<div class=raiz-mouse-control-info>"
-                    +         "<div class=raiz-mouse-control-img>"
+                    +     "<div class='raiz-mouse-control-info'>"
+                    +         "<div class='raiz-mouse-control-img'>"
                     +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-left-click.png' title='mouse_left_click'>"
                     +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-right-click.png' title='mouse_left_click'>"
                     +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-scroll.png' title='mouse_left_click'>"
@@ -68,6 +68,14 @@ var raiz_window = function(title){
                     +            "<p> 확대/축소 </p>"
                     +            "<p> 초기화 </p>"
                     +         "</div>"
+                    +         "<div class=raiz-mouse-control-text>"
+                    +            "<p> 회전 </p>"
+                    +            "<p> 이동 </p>"
+                    +            "<p> 확대/축소 </p>"
+                    +            "<p> 초기화 </p>"
+                    +         "</div>"
+                    +     "</div>"
+                    +     "<div class='raiz-window-info'>"
                     +     "</div>"
                     +     "<div class='raiz-compass'>"
                     +       "<span>" + "N" + "</span>"
@@ -80,9 +88,15 @@ var raiz_window = function(title){
                     +  "<div class='raiz-window-footer'></div>"
                   );
   lifeToWindow($container);
+  $container.trigger('resize');
   $container.removeAttr('style');
   return $container;
 }
+
+var toji_info_icon = function(){
+  var $container = $(document.createElement('div')).addClass("toji-info-icon").addClass('ti-layout-column3-alt');
+  return $container;
+};
 
 var toji_characteristics = function(data){
   var $container = $(document.createElement('div')).addClass("toji-characteristics").css('display', 'none');
@@ -197,7 +211,7 @@ var toji_usage = function(data){
   var $container = $(document.createElement('div')).addClass("toji-usage").css('display', 'none');
   $container.append(
                       "<div class='toji-usage-header'>"
-                    +   '토지이용계획  ' + "<span class='ti-angle-up'></span>"
+                    +   '토지이용계획  ' + "<span class='ti-angle-down'></span>"
                     + "</div>"
                     + "<div class='toji-usage-body' style='display:none;'>"
                     + "</div>"
@@ -217,10 +231,10 @@ var toji_usage = function(data){
   $container.find('.toji-usage-header').on('click', function(e){
 
     if($container.find('.toji-usage-body').is(":visible")){
-      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
     }
     else{
-      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
     }
     $container.find('.toji-usage-body').toggle('fast', 'linear');
   });
@@ -231,10 +245,10 @@ var toji_indivPrice = function(data){
   var $container = $(document.createElement('div')).addClass("toji-indivPrice").css('display', 'none');
   $container.append(
                       "<div class='toji-indivPrice-header'>"
-                    +   '개별공시지가  ' + "<span class='ti-angle-up'></span>"
+                    +   '개별공시지가  ' + "<span class='ti-angle-down'></span>"
                     + "</div>"
                     + "<div class='toji-indivPrice-body' style='display:none;'>"
-                    +   "<canvas id='toji-indivPrice-canvas' width=500 height=500></canvas>"
+                    +   "<canvas id='toji-indivPrice-canvas' width=300 height=400></canvas>"
                     + "</div>"
                     + "<div class='toji-indivPrice-footer' style='display:none;'>"
                     + "</div>"
@@ -262,6 +276,7 @@ var toji_indivPrice = function(data){
             borderWidth: 1
         }]
     },
+    responsive: true,
     options: {
         legend: {
           display: false
@@ -328,10 +343,10 @@ var toji_indivPrice = function(data){
   $container.find('.toji-indivPrice-header').on('click', function(e){
 
     if($container.find('.toji-indivPrice-body').is(":visible")){
-      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
     }
     else{
-      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
     }
     $container.find('.toji-indivPrice-body').toggle('fast', 'linear');
   });

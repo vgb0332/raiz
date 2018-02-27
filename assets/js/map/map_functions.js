@@ -66,6 +66,10 @@ function setRWindow(polygons, data){
 
   // insert3D(Rwindow, polygon);
   THREE_init(polygons, data, Rwindow);
+
+  //insert toji_info_icon
+  Rwindow.append(toji_info_icon());
+  
   var values = {
       sigunguCd : data['sigunguCd'],
       bjdongCd : data['bjdongCd'],
@@ -73,17 +77,18 @@ function setRWindow(polygons, data){
       ji : data['ji']
   };
 
-  Rwindow.find('.raiz-window-body').append(toji_characteristics(data));
+  Rwindow.find('.raiz-window-info').append(toji_characteristics(data));
+
   customAjax($SITE_URL+'get/tojiPossession', values, function(data){
-    Rwindow.find('.raiz-window-body').append(toji_possession(data));
+    Rwindow.find('.raiz-window-info').append(toji_possession(data));
   });
 
   customAjax($SITE_URL+'get/tojiUsage', values, function(data){
-    Rwindow.find('.raiz-window-body').append(toji_usage(data));
+    Rwindow.find('.raiz-window-info').append(toji_usage(data));
   });
 
   customAjax($SITE_URL+'get/tojiIndivPrice', values, function(data){
-    Rwindow.find('.raiz-window-body').append(toji_indivPrice(data));
+    Rwindow.find('.raiz-window-info').append(toji_indivPrice(data));
   });
 
   // Rwindow.find('.raiz-window-body').append(toji_usage(data));
@@ -106,14 +111,18 @@ function setSTCSWindow(polygons, data){
   STCSwindow.find('.stcs-window-title').append(stcs_additag(data,'initdata'));
 
   console.log(polygons[0].Bb[0][3]);
-  customAjax($SITE_URL+'get/stcsTotaljobs', {currHjstcs:polygons[0].Bb[0][3]}, function(data){
-    STCSwindow.find('.stcs-initdata-age').append(stcs_additag(data,'totaljobs'));
-  });
 
-  console.log(polygons[0].Bb[0][3]);
-  customAjax($SITE_URL+'get/stcsPopdens', {currHjstcs:polygons[0].Bb[0][3]}, function(data){
-    STCSwindow.find('.stcs-initdata-totaljobs').append(stcs_additag(data,'popdens'));
-  });
+  var stcsAggList = ['stcsTotaljobs','stcsPopdens','stcsHouseType','stcsTotalHouse','stcsHouseSize'
+                    ,'stcsHouseHold','stcsTotalFamily','stcsJobsPop','stcsJobsBiz'];
+
+  for (var i = 0; i < stcsAggList.length; i++) {
+    (function(i){
+      console.log(stcsAggList[i]);
+      customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
+        STCSwindow.find('.stcs-initdata').append(stcs_additag(data,stcsAggList[i]));
+      });
+    })(i)
+  }
 
   STCSwindow.show('normal');
 }
