@@ -30,25 +30,51 @@ Class Building extends CI_Model {
     }
 
     if($type === 'brTitleInfo'){
-      $buildingID = $values['buildingID'];
       $this->db->start_cache();
       $this->db->where('sigunguCd', $sigunguCd);
       $this->db->where('bjdongCd', $bjdongCd);
       $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
       $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
-      $this->db->where('mgmBldrgstPk', $buildingID);
       $this->db->stop_cache();
-      $title_result = $this->db->get('getBrTitleInfo')->result();
 
-      $this->db->select('COUNT(*)');
-      $this->db->group_by('flrGbCd, flrNo');
-      $floor_result = $this->db->get('getBrFlrOulnInfo')->result();
+      $result = $this->db->get('getBrTitleInfo')->result();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
 
-      return json_encode(array(
-        'brTitleInfo' => $title_result,
-        'flrCnt' => $floor_result
-      ), JSON_UNESCAPED_UNICODE);
     }
+
+    if($type === 'brRecapTitleInfo'){
+      $this->db->start_cache();
+      $this->db->where('sigunguCd', $sigunguCd);
+      $this->db->where('bjdongCd', $bjdongCd);
+      $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
+      $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
+      $this->db->stop_cache();
+
+      $result = $this->db->get('getBrRecapTitleInfo')->result();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+
+    }
+
+    // if($type === 'brTitleInfo'){
+    //   $buildingID = $values['buildingID'];
+    //   $this->db->start_cache();
+    //   $this->db->where('sigunguCd', $sigunguCd);
+    //   $this->db->where('bjdongCd', $bjdongCd);
+    //   $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
+    //   $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
+    //   $this->db->where('mgmBldrgstPk', $buildingID);
+    //   $this->db->stop_cache();
+    //   $title_result = $this->db->get('getBrTitleInfo')->result();
+    //
+    //   $this->db->select('COUNT(*)');
+    //   $this->db->group_by('flrGbCd, flrNo');
+    //   $floor_result = $this->db->get('getBrFlrOulnInfo')->result();
+    //
+    //   return json_encode(array(
+    //     'brTitleInfo' => $title_result,
+    //     'flrCnt' => $floor_result
+    //   ), JSON_UNESCAPED_UNICODE);
+    // }
     // return json_encode($this->db->last_query());
     // return json_encode($values);
     // return json_encose($floor_result, JSON_UNESCAPED_UNICODE);

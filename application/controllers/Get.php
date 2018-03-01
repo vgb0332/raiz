@@ -42,6 +42,19 @@ class Get extends CI_Controller {
     echo $this->Building->getBuildingInfo($data);
   }
 
+  public function buildingRecapTitleInfo(){
+    $this->load->model('Building');
+    $data = array (
+      'type' => 'brRecapTitleInfo',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji'),
+    );
+
+    echo $this->Building->getBuildingInfo($data);
+  }
+
   public function buildingTitleInfo(){
     $this->load->model('Building');
     $data = array (
@@ -50,7 +63,6 @@ class Get extends CI_Controller {
       'bjdongCd' => $this->input->post('bjdongCd'),
       'bun' => $this->input->post('bun'),
       'ji' => $this->input->post('ji'),
-      'buildingID' => $this->input->post('buildingID')
     );
 
     echo $this->Building->getBuildingInfo($data);

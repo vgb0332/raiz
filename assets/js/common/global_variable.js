@@ -5,5 +5,5 @@
 
 */
 
-const $SITE_URL = 'http://www.re-go.kr/raiz1.3/';
+var $SITE_URL = 'http://www.re-go.kr/raiz1.3/';
 var is_mobile = false;

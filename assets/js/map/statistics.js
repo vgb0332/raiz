@@ -158,6 +158,8 @@ function changePolyFill(key,val,type) {
 
 var raiz_StcsWindow = function(title){
   var $container = $(document.createElement('div')).addClass("raiz-window-container");
+  // $($container).width();
+  // $($container).height();
   // $container.append(`
   //                     <div class="raiz-window-top">
   //                       <div class="column controller">
@@ -187,10 +189,181 @@ var raiz_StcsWindow = function(title){
                     +  "</div>"
                     +  "<div class='raiz-window-footer'></div>"
                   );
+
+  // var $stcsWind = $(document.createElement('div')).addClass("row");
+  // $stcsWind.append('<div class="col-lg-3 col-md-6 col-sm-12">'
+  //               +        '<div class="card">'
+  //               +            '<div class="card-content">'
+  //               +                '<div class="media align-items-stretch">'
+  //               +                    '<div class="p-2 text-center bg-info bg-darken-2">'
+  //               +                        '<span class="icon-camera font-large-2"></span>'
+  //               +                    '</div>'
+  //               +                    '<div class="p-2 bg-gradient-x-info white media-body">'
+  //               +                        '<h5>면적</h5>'
+  //               +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i> 28</h5>'
+  //               +                    '</div>'
+  //               +                '</div>'
+  //               +            '</div>'
+  //               +        '</div>'
+  //               +    '</div>'
+  //               +'<div class="col-lg-3 col-md-6 col-sm-12">'
+  //               +        '<div class="card">'
+  //               +            '<div class="card-content">'
+  //               +                '<div class="media align-items-stretch">'
+  //               +                    '<div class="p-2 text-center bg-danger bg-darken-2">'
+  //               +                        '<i class="icon-user font-large-2"></i>'
+  //               +                    '</div>'
+  //               +                    '<div class="p-2 bg-gradient-x-danger white media-body">'
+  //               +                        '<h5>총 인구</h5>'
+  //               +                        '<h5 class="text-bold-400 mb-0"><i class="ft-arrow-up"></i> 28</h5>'
+  //               +                    '</div>'
+  //               +                '</div>'
+  //               +            '</div>'
+  //               +        '</div>'
+  //               +    '</div>'
+  //               +'<div class="col-lg-3 col-md-6 col-sm-12">'
+  //               +        '<div class="card">'
+  //               +            '<div class="card-content">'
+  //               +                '<div class="media align-items-stretch">'
+  //               +                    '<div class="p-2 text-center bg-warning bg-darken-2">'
+  //               +                        '<i class="icon-basket-loaded font-large-2"></i>'
+  //               +                    '</div>'
+  //               +                    '<div class="p-2 bg-gradient-x-warning white media-body">'
+  //               +                        '<h5>평균 나이</h5>'
+  //               +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i> 28</h5>'
+  //               +                    '</div>'
+  //               +                '</div>'
+  //               +            '</div>'
+  //               +        '</div>'
+  //               +    '</div>'
+  //               +'<div class="col-lg-3 col-md-6 col-sm-12">'
+  //               +        '<div class="card">'
+  //               +            '<div class="card-content">'
+  //               +                '<div class="media align-items-stretch">'
+  //               +                    '<div class="p-2 text-center bg-success bg-darken-2">'
+  //               +                        '<i class="icon-basket-loaded font-large-2"></i>'
+  //               +                    '</div>'
+  //               +                    '<div class="p-2 bg-gradient-x-success white media-body">'
+  //               +                        '<h5>총 주택수</h5>'
+  //               +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i> 28</h5>'
+  //               +                    '</div>'
+  //               +                '</div>'
+  //               +            '</div>'
+  //               +        '</div>'
+  //               +    '</div>');
+  var $stcsWind2 = $(document.createElement('div')).addClass("row match-height");
+  $stcsWind2.append('<div class="col-xl-5 col-lg-5">'
+                +'<div class="card">'
+                +    '<div class="card-header">'
+                +        '<h4 class="card-title">유형별 주택</h4>'
+                +    '</div>'
+                +    '<div class="card-content px-4 height-200">'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">아파트<span class="font-medium-4 float-right pt-1">5 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">단독 주택<span class="font-medium-4 float-right pt-1">7 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">다세대<span class="font-medium-4 float-right pt-1">2 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">연립 주택<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">주택 이외 거처<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">영업용 건물 내 주택<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +        '<div class="media-list">'
+                +             '<div class="media-body w-100">'
+                +                 '<h6 class="list-group-item-heading">자료 없는 집계구<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                +             '</div>'
+                +         '</div>'
+                +    '</div>'
+                +'</div>'
+                +'</div>'
+                +'<div class="col-xl-7 col-lg-7">'
+                +'<div class="card">'
+                +    '<div class="card-header">'
+                +        '<h4 class="card-title">연건평별 주택</h4>'
+                +    '</div>'
+                +    '<div class="card-content px-4 height-200">'
+                +         '<canvas id="houseSizeChart"></canvas>'
+                +    '</div>'
+                +'</div>'
+                +'</div>'
+              );
+
+  var $stcsWind3 = $(document.createElement('div')).addClass("row match-height");
+  $stcsWind3.append('<div class="col-xl-8 col-lg-8">'
+                +'<div class="card">'
+                +    '<div class="card-header">'
+                +        '<h4 class="card-title">연건평별 주택</h4>'
+                +    '</div>'
+                +    '<div class="card-content px-4 height-200">'
+                +         '<canvas id="houseSizeChart"></canvas>'
+                +    '</div>'
+                +'</div>'
+                +'</div>'
+                +'<div class="col-xl-4 col-lg-4">'
+                +'<div class="card">'
+                +    '<div class="card-header">'
+                +        '<h4 class="card-title">연건평별 주택</h4>'
+                +    '</div>'
+                +    '<div class="card-content px-4 height-200">'
+                +         '<canvas id="houseSizeChart"></canvas>'
+                +    '</div>'
+                +'</div>'
+                +'</div>'
+              );
+
+  // $container.append($stcsWind);
+  $container.append($stcsWind2);
+  $container.append($stcsWind3);
+
   lifeToWindow($container);
   $container.removeAttr('style');
+
   return $container;
 }
+    // <div class="col-xl-8 col-lg-12">
+    //     <div class="card" style="height: 402px;">
+    //         <div class="card-header">
+    //             <h4 class="card-title">Products Sales</h4>
+    //             <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+    //             <div class="heading-elements">
+    //                 <ul class="list-inline mb-0">
+    //                     <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+    //                     <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+    //                 </ul>
+    //             </div>
+    //         </div>
+    //         <div class="card-content">
+    //             <div class="card-body">
+    //
+    //             </div>
+    //         </div>
+    //     </div>
+    // </div>
+
+function createStcsChart(){
+
+}
+
 
 var stcs_additag = function(data,addiType){
   var $container;
@@ -198,20 +371,70 @@ var stcs_additag = function(data,addiType){
   switch (addiType) {
 
     case 'initdata':
-      $container = $(document.createElement('div')).addClass("stcs-initdata").css('display', 'block');
+      $container = $(document.createElement('div')).addClass("row stcs-initdata").css('display', 'block').css("background-color","#F5F7FA");
       $container.css('color','black');
       $container.css('padding-top','15px');
       $container.css('padding-bottom','15px');
-      $container.append(
-                          "<h class='stcs-initdata-area'>"
-                        + "면적 : "+data[0]
-                        + "</h>"
-                        +  "<h class='stcs-initdata-pop'>"
-                        + " 총 인구 : "+data[1]
-                        + "</h>"
-                        +  "<h class='stcs-initdata-age'>"
-                        + " 평균 나이 : "+data[2]
-                        + "</h>"
+      $container.append('<div class="col-lg-3 col-md-6 col-sm-12">'
+                    +        '<div class="card">'
+                    +            '<div class="card-content">'
+                    +                '<div class="media align-items-stretch">'
+                    +                    '<div class="p-2 text-center bg-info bg-darken-2">'
+                    +                        '<span class="icon-camera font-large-2"></span>'
+                    +                    '</div>'
+                    +                    '<div class="p-2 bg-gradient-x-info white media-body">'
+                    +                        '<h5>면적</h5>'
+                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i>'+(data[0]*1).toFixed(1)+'</h5>'
+                    +                    '</div>'
+                    +                '</div>'
+                    +            '</div>'
+                    +        '</div>'
+                    +    '</div>'
+                    +'<div class="col-lg-3 col-md-6 col-sm-12">'
+                    +        '<div class="card">'
+                    +            '<div class="card-content">'
+                    +                '<div class="media align-items-stretch">'
+                    +                    '<div class="p-2 text-center bg-danger bg-darken-2">'
+                    +                        '<i class="icon-user font-large-2"></i>'
+                    +                    '</div>'
+                    +                    '<div class="p-2 bg-gradient-x-danger white media-body">'
+                    +                        '<h5>총 인구</h5>'
+                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-arrow-up"></i>'+data[1]+'</h5>'
+                    +                    '</div>'
+                    +                '</div>'
+                    +            '</div>'
+                    +        '</div>'
+                    +    '</div>'
+                    +'<div class="col-lg-3 col-md-6 col-sm-12">'
+                    +        '<div class="card">'
+                    +            '<div class="card-content">'
+                    +                '<div class="media align-items-stretch">'
+                    +                    '<div class="p-2 text-center bg-warning bg-darken-2">'
+                    +                        '<i class="icon-basket-loaded font-large-2"></i>'
+                    +                    '</div>'
+                    +                    '<div class="p-2 bg-gradient-x-warning white media-body">'
+                    +                        '<h5>평균 나이</h5>'
+                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i>'+data[2]+'</h5>'
+                    +                    '</div>'
+                    +                '</div>'
+                    +            '</div>'
+                    +        '</div>'
+                    +    '</div>'
+                    +'<div class="col-lg-3 col-md-6 col-sm-12">'
+                    +        '<div class="card">'
+                    +            '<div class="card-content">'
+                    +                '<div class="media align-items-stretch">'
+                    +                    '<div class="p-2 text-center bg-success bg-darken-2">'
+                    +                        '<i class="icon-basket-loaded font-large-2"></i>'
+                    +                    '</div>'
+                    +                    '<div class="p-2 bg-gradient-x-success white media-body">'
+                    +                        '<h5>총 주택수</h5>'
+                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i> 28</h5>'
+                    +                    '</div>'
+                    +                '</div>'
+                    +            '</div>'
+                    +        '</div>'
+                    +    '</div>'
       );
       break;
 

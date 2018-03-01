@@ -30,7 +30,8 @@
 <script src="<?php echo base_url();?>assets/js/map/map_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/main_activity.js"></script>
 <!-- <script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script> -->
-<script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script>
+<!-- <script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script> -->
+<script src="<?php echo base_url();?>assets/js/map/3d_functions2.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/statistics.js"></script>
 
 <!-- MOBILE CHECK -->

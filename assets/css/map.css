@@ -144,6 +144,33 @@ body {
   overflow-y: scroll;
 }
 
+.raiz-window-info-header{
+  width: 100%;
+  height: 40px;
+  background-color: #333;
+  color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.raiz-window-info-header div{
+  box-shadow : 1px 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.raiz-window-info-header span {
+  float: left;
+  font-size: 25px;
+  line-height: 1.5em;
+  cursor: pointer;
+}
+
+.raiz-window-info-header div{
+  float: left;
+  font-size: 20px;
+  line-height: 1.8em;
+  padding-left:20px;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 10px;
@@ -293,8 +320,41 @@ body {
   top: 40px;
   right: 30px;
   color: #333;
-  font-size: 25px;
+  font-size: 22px;
   cursor: pointer;
+}
+
+/* raiz bullding info icon */
+.building-info-icon{
+  position: absolute;
+  z-index: 2;
+  top: 80px;
+  right: 30px;
+  color: #333;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.raiz-info-icon {
+  -webkit-transition: right 0.1s;
+   -moz-transition: right 0.1s;
+     -o-transition: right 0.1s;
+        transition: right 0.1s;
+}
+
+.raiz-info-icon:hover {
+  -webkit-transition: color 0.1s;
+   -moz-transition: color 0.1s;
+     -o-transition: color 0.1s;
+        transition: color 0.1s;
+  color: #49d690;
+}
+.raiz-mouse-control span:hover{
+  -webkit-transition: color 0.5s;
+   -moz-transition: color 0.5s;
+     -o-transition: color 0.5s;
+        transition: color 0.5s;
+  color: #49d690;
 }
 
 /* mouse controller helper */
@@ -340,20 +400,24 @@ body {
   width: 70px;
   padding: 5px;
 }
-/* 토지특성정보창 */
-.toji-characteristics {
+
+/* 정보창 */
+.toji-info{
   position: relative;
-  /* top: 40px;
-  left: 220px;
-  width: 200px; */
   border: 1px solid #333;
   background-color: white;
 }
 
+
+/* 토지특성정보창 */
+
+
 .toji-characteristics-header,
 .toji-possession-header,
 .toji-usage-header,
-.toji-indivPrice-header {
+.toji-indivPrice-header,
+.building-titleInfo-header,
+.building-recapTitleInfo-header {
   cursor: pointer;
   width: 100%;
   line-height: 2em;
@@ -361,17 +425,15 @@ body {
   background-color: #2d2d2d;
   padding: 0;
   color: white;
-  border: 1px solid #333;
-}
-
-.toji-indivPrice-body{
-  height: 400px;
-  width: 100%;
+  border: 1px solid #8b8585;
 }
 
 .toji-characteristics-header:hover,
 .toji-possession-header:hover,
-.toji-usage-header:hover {
+.toji-usage-header:hover,
+.toji-indivPrice-header:hover,
+.building-titleInfo-header:hover,
+.building-recapTitleInfo-header:hover {
   -webkit-transition: background-color 0.5s,border 0.5s, font-size 2s;
    -moz-transition: background-color 0.5s,border 0.5s, font-size 2s;
      -o-transition: background-color 0.5s,border 0.5s, font-size 2s;
@@ -384,52 +446,59 @@ body {
 
 .toji-characteristics-body,
 .toji-possession-body,
-.toji-usage-body {
+.toji-usage-body,
+.building-titleInfo-body,
+.building-recapTitleInfo-body {
   width: 100%;
   color: black;
 }
 
+.building-titleInfo-body-title,
+.building-recapTitleInfo-body-title {
+  text-align: left;
+  padding-left: 30%;
+  border : 1px solid #333;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.building-titleInfo-body-title:hover,
+.building-recapTitleInfo-body-title:hover {
+  -webkit-transition: background-color 0.5s,color 0.5s, font-size 2s;
+   -moz-transition: background-color 0.5s,color 0.5s, font-size 2s;
+     -o-transition: background-color 0.5s,color 0.5s, font-size 2s;
+        transition: background-color 0.5s, color 0.5s, font-size 2s;
+  background-color : #333;
+  color: #ffffff;
+}
+
+.building-titleInfo-body-title span,
+.building-recapTitleInfo-body-title span{
+  float: right;
+  padding-right: 20px;
+}
+
+.building-titleInfo-body-info,
+.building-recapTitleInfo-body-info {
+  border: 1px solid #333;
+}
+
 .toji-characteristics-table div:nth-child(2n),
 .toji-possession-table div:nth-child(2n),
-.toji-usage-table div:nth-child(2n) {
+.toji-usage-table div:nth-child(2n),
+.building-titleInfo-body-info div:nth-child(2n),
+.building-recapTitleInfo-body-info div:nth-child(2n){
   border-bottom: 1px solid #333;
 }
 
 .toji-characteristics-table div:nth-child(odd),
 .toji-possession-table div:nth-child(odd),
-.toji-usage-tabel div:nth-child(odd) {
+.toji-usage-tabel div:nth-child(odd),
+.building-titleInfo-body-info div:nth-child(odd),
+.building-recapTitleInfo-body-info div:nth-child(odd){
   font-weight: bold;
 }
 
-/* 토지소유창 */
-.toji-possession{
-  position: relative;
-  /* top: 40px;
-  left: 220px;
-  width: 200px; */
-  border: 1px solid #333;
-  background-color: white;
-}
-
-/* 토지특성창 */
-.toji-usage {
-  position: relative;
-  /* top: 40px;
-  left: 220px;
-  width: 200px; */
-  border: 1px solid #333;
-  background-color: white;
-}
-
-/* 토지공시지가 */
-.toji-indivPrice{
-  position: relative;
-  /* top: 40px;
-  left: 220px;
-  width: 200px; */
-  border: 1px solid #333;
-  background-color: white;
-}
 
 
 @media only screen and (max-width: 768px) {
@@ -500,7 +569,7 @@ body {
 }
 
 .side-tab-header span{
-  font-size: 20px;
+  font-size: 22px;
   letter-spacing: -1px;
   line-height: 2.3;
 }

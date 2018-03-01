@@ -211,18 +211,52 @@ function lifeToWindow(Rwindow){
     Rwindow.find('.raiz-mouse-control-info').toggle('fast', 'linear');
   });
 
-  Rwindow.find(".raiz-mouse-control").on("mouseover", function(e){
-    $(this).tooltip({
-      'animation': true,
-      'title' : '컨트롤',
-      'placement' : 'right'
+  Rwindow.find(".raiz-mouse-control").tooltip({
+    'animation': true,
+    'title' : '컨트롤',
+    'placement' : 'right'
+  });
+
+  Rwindow.find(".raiz-mouse-control").on("click", function(e){
+    $(this).tooltip();
+  });
+
+  Rwindow.find(".raiz-info-icon").on("click", function(e){
+    if(!Rwindow.find(".raiz-window-info").is(':visible')){
+
+      var width_to_move = Rwindow.find(".raiz-window-info").width();
+      Rwindow.find(".raiz-info-icon").css('right', width_to_move + 30);
+
+      // Rwindow.width(Rwindow.width() + 300);
+      Rwindow.animate({width: Rwindow.width() + 300}, 'fast' , function(){
+
+        Rwindow.find(".raiz-window-info").show('slide', {direction:"right"}, 200, function(){
+
+            Rwindow.trigger('resize');
+
+        });
+
+      });
+
+    }
+  });
+
+  Rwindow.find(".raiz-window-info").find(".raiz-window-info-return").on("mouseover", function(e){
+    $(this).effect('shake', {
+      distance: 1
     });
   });
 
-  Rwindow.find(".raiz-window-top").on("click", function(e){
-    Rwindow.find(".raiz-window-info").toggle('slide', {direction:"right"}, 100, function(){
-        Rwindow.trigger('resize');
+  Rwindow.find(".raiz-window-info").find(".raiz-window-info-return").on("click", function(e){
+
+      Rwindow.find(".raiz-window-info").hide('slide', {direction:"right"}, 200, function(){
+          Rwindow.animate({width: Rwindow.width() - 300}, 'fast', function(){
+              Rwindow.trigger('resize');
+          });
+
+          Rwindow.find(".raiz-info-icon").css('right', 30);
+
+      });
     });
 
-  });
 }

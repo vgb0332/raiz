@@ -59,17 +59,25 @@ function setRWindow(polygons, data){
   console.log(data);
   if ( ! Detector.webgl ) alert('webGL needed');
 
+  var windows = $(document.body).find(".raiz-window-container")
+                                .find(".raiz-window-top")
+                                .find(".header");
+
   // RAIZ WINDOW SETUP
   var header = data['ldCodeNm'] + ' ' + data['bun'] + ( (data['ji'] === '') ? '' : ('-' + data['ji']) );
+
+  //check if the same window already exists, if does, just copy and show
+  $.each(windows, function(index, value){
+    if(value.innerHTML === header){
+      console.log('이미있어');
+      var domToCopy = $(value).parent().parent();
+      $(document.body).append(domToCopy);
+      return;
+    }
+  });
   var Rwindow = raiz_window(header);
   $(document.body).append(Rwindow);
 
-  // insert3D(Rwindow, polygon);
-  THREE_init(polygons, data, Rwindow);
-
-  //insert toji_info_icon
-  Rwindow.append(toji_info_icon());
-  
   var values = {
       sigunguCd : data['sigunguCd'],
       bjdongCd : data['bjdongCd'],
@@ -77,22 +85,35 @@ function setRWindow(polygons, data){
       ji : data['ji']
   };
 
-  Rwindow.find('.raiz-window-info').append(toji_characteristics(data));
+  Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_characteristics(data));
 
   customAjax($SITE_URL+'get/tojiPossession', values, function(data){
-    Rwindow.find('.raiz-window-info').append(toji_possession(data));
+    if(data.length === 0) return false;
+    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_possession(data));
   });
 
   customAjax($SITE_URL+'get/tojiUsage', values, function(data){
-    Rwindow.find('.raiz-window-info').append(toji_usage(data));
+    if(data.length === 0) return false;
+    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_usage(data));
   });
 
   customAjax($SITE_URL+'get/tojiIndivPrice', values, function(data){
-    Rwindow.find('.raiz-window-info').append(toji_indivPrice(data));
+    if(data.length === 0) return false;
+    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_indivPrice(data));
   });
 
-  // Rwindow.find('.raiz-window-body').append(toji_usage(data));
-  // Rwindow.find('.raiz-window-body').append(toji_indivPrice(data));
+  customAjax($SITE_URL+'get/buildingRecapTitleInfo', values, function(data){
+    if(data.length === 0) return false;
+    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_recapTitleInfo(data));
+  });
+
+  customAjax($SITE_URL+'get/buildingTitleInfo', values, function(data){
+    if(data.length === 0) return false;
+    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_titleInfo(data));
+  });
+
+
+  THREE_init(polygons, data, Rwindow);
   Rwindow.show('normal');
 }
 
@@ -328,6 +349,36 @@ function setPoly(type, polygon, data){
       // console.log(aggr_poly);
       // $('.stcs-polygon').remove();
       // $('.stcs_ol').remove();
+
+      new Chart(document.getElementById("houseSizeChart"),{
+        "type":"bar",
+        "data":{
+          "labels":[
+            "January","February","March","April","May","June","July"],
+          "datasets":[
+            {
+              "label":"My First Dataset",
+              "data":[65,59,80,81,56,55,40],
+              "fill":false,
+              "backgroundColor":[
+                "rgba(255, 99, 132, 0.2)","rgba(255, 159, 64, 0.2)","rgba(255, 205, 86, 0.2)","rgba(75, 192, 192, 0.2)","rgba(54, 162, 235, 0.2)","rgba(153, 102, 255, 0.2)","rgba(201, 203, 207, 0.2)"
+                ],
+              "borderColor":["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+              "borderWidth":1
+            }
+          ]
+        },
+        "options":{
+          "scales":{
+            "yAxes":[
+              {"ticks":{"beginAtZero":true}
+                }
+              ]
+            }
+          }
+        }
+      );
+
     });
   }
 }

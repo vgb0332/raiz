@@ -3,7 +3,7 @@
   <div class="raiz-side-tab raiz-search-tab" style="display:none;">
       <div class="side-tab-header search-header">
         <span class="ti-search"> 검색</span>
-        <span class="raiz-side-tab-return ti-angle-left"></span>
+        <span class="raiz-side-tab-return ti-arrow-circle-left"></span>
       </div>
       <div class="search-body">
           <ul class="raiz-side-tab-list">

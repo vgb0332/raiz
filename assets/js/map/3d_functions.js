@@ -308,10 +308,10 @@ function THREE_init(polygons, data, Rwindow){
           renderer.render(scene, camera);
         },
         callback: function(){
-          Rwindow.find('.toji-characteristics').fadeIn();
-          Rwindow.find('.toji-possession').fadeIn();
-          Rwindow.find('.toji-usage').fadeIn();
-          Rwindow.find('.toji-indivPrice').fadeIn();
+          // Rwindow.find('.toji-characteristics').fadeIn();
+          // Rwindow.find('.toji-possession').fadeIn();
+          // Rwindow.find('.toji-usage').fadeIn();
+          // Rwindow.find('.toji-indivPrice').fadeIn();
           domEvents.camera(camera);
           console.log(resetGroup);
         }
