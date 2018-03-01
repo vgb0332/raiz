@@ -215,6 +215,12 @@ var building_titleInfo = function(data){
       inside +=     "<div>" + data_index[i] + "</div>"
              +       "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
     }
+
+    inside += "<div class='flrInfo-lookup' data-buildingId=" + value['mgmBldrgstPk'] + ">"
+           +       "층별정보 보기&nbsp;"
+           +      "<span class='ti-arrow-up'></span>"
+           +   "</div>";
+
     $container.find(".building-titleInfo-body").append(
         "<div class = 'building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
       +    ( (value['mgmBldrgstPk'] === '') ? 'UNKNOWN' : value['mgmBldrgstPk'] )
@@ -227,11 +233,13 @@ var building_titleInfo = function(data){
   });
 
   $container.find('.building-titleInfo-body-title').on('click', function(e){
-    var clickedDiv = $(this);
+
     if(!$(this).next().is(":visible")){
+      $(this).removeClass('isOpen');
       $(this).find('span').removeClass('ti-angle-double-down').addClass('ti-angle-double-up');
     }
     else{
+      $(this).addClass('isOpen');
       $(this).find('span').removeClass('ti-angle-double-up').addClass('ti-angle-double-down');
     }
     $(this).next().toggle('fast', 'linear');
@@ -253,7 +261,7 @@ var building_titleInfo = function(data){
 
 var building_recapTitleInfo = function(data){
   var $container = $(document.createElement('div'))
-                  .addClass("building_recapTitleInfo")
+                  .addClass("building-recapTitleInfo")
                   .addClass("building-info")
                   .css('display', 'none');
 
@@ -287,6 +295,11 @@ var building_recapTitleInfo = function(data){
              +       "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
     }
 
+    inside += "<div class='flrInfo-lookup' data-buildingId=" + value['mgmBldrgstPk'] + ">"
+           +       "층별정보 보기&nbsp;"
+           +      "<span class='ti-arrow-up'></span>"
+           +   "</div>";
+
     $container.find(".building-recapTitleInfo-body").append(
         "<div class='building-recapTitleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
       +     value['mgmBldrgstPk']
@@ -299,7 +312,7 @@ var building_recapTitleInfo = function(data){
   });
 
   $container.find('.building-recapTitleInfo-body-title').on('click', function(e){
-    var clickedDiv = $(this);
+
     if(!$(this).next().is(":visible")){
       $(this).find('span').removeClass('ti-angle-double-down').addClass('ti-angle-double-up');
     }
@@ -395,7 +408,7 @@ var toji_possession = function(data){
                     + "<div class='toji-possession-footer' style='display:none;'>"
                     + "</div>"
   );
-  console.log(data);
+
   var data_index = [
     '공유인수', '공시지가', '지목',
     '토지면적', '소유구분', '국가기관구분',
@@ -539,7 +552,7 @@ var toji_indivPrice = function(data){
                       if (value == 0)
                           return "0원";
                       else
-                          return comma(value)+'원';
+                          return price_format(value, '일원')+'원';
                   }
               }
             }]

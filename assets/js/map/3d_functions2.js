@@ -182,59 +182,107 @@ function THREE_init(polygons, data, Rwindow){
 
   //for timing issue, all ajax requests for data should be done first before event trigger is assigned.
   $(document).ajaxStop(function(){
-    Rwindow.find('.raiz-window-body').find('.raiz-window-info')
-           .find('.raiz-window-info-body').find('.building-titleInfo')
-           .find('.building-titleInfo-body').find('.building-titleInfo-body-title')
-           .on("mouseover", function(e){
-              console.log($(this).attr('data-buildingID'));
-              var mesh_target = $(this).attr('data-buildingID');
-              $.each(group.children, function(index, mesh){
+    var building_titleInfo = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
+                             .find('.raiz-window-info-body').find('.building-titleInfo')
+                             .find('.building-titleInfo-body').find('.building-titleInfo-body-title');
 
-                console.log(TWEEN._tweens);
-                var sigunguCd =  mesh.userData.target.attr('data-sigunguCd');
-                var buildingID = mesh.userData.target.attr('data-buildingID');
+    var building_recapTitleInfo = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
+                             .find('.raiz-window-info-body').find('.building-recapTitleInfo')
+                             .find('.building-recapTitleInfo-body').find('.building-recapTitleInfo-body-title');
 
-                var target = sigunguCd + '-' + buildingID;
-                console.log(target);
+    var target = building_titleInfo.add(building_recapTitleInfo);
 
-                if(mesh_target === target){
-                  console.log('say yes!');
-                  mesh.material.opacity = 0.7;
-                  // TWEEN.removeAll();
-                  var target_vector = new THREE.Vector3(0, 0, mesh.position.z + 15);
-                  var original_position_z = mesh.position.z;
-                  animateVector3(new THREE.Vector3(0, 0, mesh.position.z), target_vector, {
-                    duration: 600,
-                    easing: TWEEN.Easing.Quadratic.InOut,
-                    update: function(d){
-                      // console.log('updating' , d);
-                      mesh.position.z = d.z;
-                      renderer.render(scene, camera);
-                    },
-                    stop: function(){
-                      console.log('tween stopped TT');
-                    },
-                    callback : function(){
-                      console.log('done');
-                      mesh.material.opacity = 1;
-                      mesh.position.z = original_position_z;
-                      renderer.render(scene, camera);
-                    }
-                  })
-                  .repeat(3);
+    target.on("mouseover", function(e){
+        stopTWEEN();
 
-                  var renderOnMouseOver = function(){
-                      requestAnimationFrame(renderOnMouseOver);
-                      TWEEN.update();
-                  };
-                  requestAnimationFrame(renderOnMouseOver);
-                }
+        var mesh_target = $(this).attr('data-buildingID');
+        $.each(group.children, function(index, mesh){
 
-            });
+
+          var sigunguCd =  mesh.userData.target.attr('data-sigunguCd');
+          var buildingID = mesh.userData.target.attr('data-buildingID');
+
+          var target = sigunguCd + '-' + buildingID;
+
+          if(mesh_target === target){
+            console.log('say yes!');
+            mesh.material.opacity = 0.7;
+            var target_vector = new THREE.Vector3(0, 0, mesh.position.z + 15);
+            var original_position_z = mesh.position.z;
+            animateVector3(new THREE.Vector3(0, 0, mesh.position.z), target_vector, {
+              duration: 600,
+              easing: TWEEN.Easing.Quadratic.InOut,
+              update: function(d){
+                // console.log('updating' , d);
+                mesh.position.z = d.z;
+                renderer.render(scene, camera);
+              },
+              stop: function(){
+                console.log('tween stopped TT');
+                mesh.position.z = original_position_z;
+                mesh.material.opacity = 1;
+                renderer.render(scene, camera);
+              },
+              callback : function(){
+                console.log('done');
+                mesh.material.opacity = 1;
+                mesh.position.z = original_position_z;
+                renderer.render(scene, camera);
+              }
+            })
+            .repeat(Infinity);
+
+            var renderOnMouseOver = function(){
+                requestAnimationFrame(renderOnMouseOver);
+                TWEEN.update();
+            };
+            requestAnimationFrame(renderOnMouseOver);
+          }
+
+      });
+    });
+
+    target.on('mouseout', function(e){
+      stopTWEEN();
+    });
+
+    building_titleInfo.on('click', function(e){
+      stopTWEEN();
+      var mesh_target = $(this).attr('data-buildingID');
+      $.each(group.children, function(index, mesh){
+
+
+        var sigunguCd =  mesh.userData.target.attr('data-sigunguCd');
+        var buildingID = mesh.userData.target.attr('data-buildingID');
+
+        var target = sigunguCd + '-' + buildingID;
+
+        if(mesh_target === target){
+          var mesh_position = mesh.position;
+          var geometry = mesh.geometry;
+          geometry.computeBoundingBox();
+          var center = geometry.boundingBox.getCenter();
+          var size = geometry.boundingBox.getSize();
+
+          console.log(size);
+          console.log(center);
+        }
+
+      });
+
+      if($(this).hasClass('isOpen')){
+        console.log('closing');
+
+      }
+      else{
+        console.log('opneing');
+      }
+
     });
 
   });
 
+  //initial animation
   TWEEN.removeAll();
   controls.reset();
   var target = new THREE.Vector3(5, -370, 330);
@@ -263,6 +311,15 @@ function THREE_init(polygons, data, Rwindow){
   requestAnimationFrame(renderOnMouseClick);
 
 
+}
+
+function stopTWEEN(){
+  var tweenIds = Object.keys(TWEEN._tweens);
+  for(var i = 0; i < tweenIds.length; ++i){
+    var tween = TWEEN._tweens[tweenIds[i]];
+    tween.stop();
+    TWEEN.remove(tween);
+  }
 }
 
 /* Animates a Vector3 to the target */

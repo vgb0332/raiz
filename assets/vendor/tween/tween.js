@@ -28,6 +28,25 @@ _Group.prototype = {
 
 	},
 
+	stopAll: function () {
+		console.log('stopping');
+		var tweenIds = Object.keys(this._tweens);
+
+		if (tweenIds.length === 0) {
+			return false;
+		}
+
+		for (var i = 0; i < tweenIds.length; i++) {
+
+			var tween = this._tweens[tweenIds[i]];
+
+			tween.stop();
+
+			this.remove(tween);
+		}
+
+	},
+
 	add: function (tween) {
 
 		this._tweens[tween.getId()] = tween;

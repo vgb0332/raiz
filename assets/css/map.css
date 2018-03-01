@@ -459,6 +459,8 @@ body {
   padding-left: 30%;
   border : 1px solid #333;
   font-weight: bold;
+  height: 30px;
+  line-height: 2em;
   cursor: pointer;
 }
 
@@ -476,11 +478,12 @@ body {
 .building-recapTitleInfo-body-title span{
   float: right;
   padding-right: 20px;
+  line-height: 2em;
 }
 
 .building-titleInfo-body-info,
 .building-recapTitleInfo-body-info {
-  border: 1px solid #333;
+  border: 2px solid #32d68f;
 }
 
 .toji-characteristics-table div:nth-child(2n),
@@ -499,7 +502,22 @@ body {
   font-weight: bold;
 }
 
+.flrInfo-lookup{
+  line-height: 2em;
+  height: 30px;
+  background-color: #333;
+  color: #ffffff;
+  cursor : pointer;
+}
 
+.flrInfo-lookup:hover{
+  -webkit-transition: background-color 0.5s,color 0.5s, font-size 2s;
+   -moz-transition: background-color 0.5s,color 0.5s, font-size 2s;
+     -o-transition: background-color 0.5s,color 0.5s, font-size 2s;
+        transition: background-color 0.5s, color 0.5s, font-size 2s;
+  color : #333;
+  background-color: #ffffff;
+}
 
 @media only screen and (max-width: 768px) {
   .raiz-window-container {

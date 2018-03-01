@@ -47,22 +47,42 @@ function comma(number) {
     else return minusText + '' + number;
 }
 
-function price_format(value) {
+function price_format(value, scale) {
     var p = String(value).replace(',', '');
-
-    if (p.length <= 4) {
-        return p + "만원";
-    } else if (p.length >= 5 && p.length <= 8) {
-        if (parseInt(p.slice(p.length - 4, p.length)) == 0)
-            return p.slice(0, p.length - 4) + "억 ";
-        else
-            return p.slice(0, p.length - 4) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
-    } else if (p.length > 8 && p.length <= 11) {
-        if (parseInt(p.slice(p.length - 8, p.length)) == 0)
-            return p.slice(0, p.length - 8) + "조 ";
-        else if (parseInt(p.slice(p.length - 4, p.length)) == 0)
-            return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억";
-        else
-            return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+    if(scale === '만원'){
+      if (p.length <= 4) {
+          return p + "만원";
+      } else if (p.length >= 5 && p.length <= 8) {
+          if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+              return p.slice(0, p.length - 4) + "억 ";
+          else
+              return p.slice(0, p.length - 4) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+      } else if (p.length > 8 && p.length <= 11) {
+          if (parseInt(p.slice(p.length - 8, p.length)) == 0)
+              return p.slice(0, p.length - 8) + "조 ";
+          else if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+              return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억";
+          else
+              return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+      }
     }
+
+    if(scale === '일원'){
+      if (p.length <= 4) {
+          return p + "원";
+      } else if (p.length >= 5 && p.length <= 8) {
+          if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+              return p.slice(0, p.length - 4) + "만 ";
+          else
+              return p.slice(0, p.length - 4) + "만 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+      } else if (p.length > 8 && p.length <= 11) {
+          if (parseInt(p.slice(p.length - 8, p.length)) == 0)
+              return p.slice(0, p.length - 8) + "억 ";
+          else if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+              return p.slice(0, p.length - 8) + "억 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억";
+          else
+              return p.slice(0, p.length - 8) + "억 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+      }
+    }
+
 }
