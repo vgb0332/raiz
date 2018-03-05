@@ -151,10 +151,13 @@ Class Statistics extends CI_Model {
 
   function getStcsHouseType($code){
       $query = $this->db->query(
-                "SELECT a.name,b.value
-                FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseType where tot_oa_cd = $code) as b
-                WHERE a.item = b.item
-                ");
+                // "SELECT a.name,b.value
+                // FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseType where tot_oa_cd = $code) as b
+                // WHERE a.item = b.item"
+                "SELECT item,value
+                FROM raiz2.2016HouseType
+                WHERE tot_oa_cd = $code"
+                );
 
     $result = $query->result_array();
     return json_encode($result, JSON_UNESCAPED_UNICODE);

@@ -264,37 +264,37 @@ var stcs_initTag = function(target){
                     +    '<div class="card-content px-4 height-200">'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">아파트<span class="font-medium-4 float-right pt-1">5 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">아파트<span id="ho_gb_003" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">단독 주택<span class="font-medium-4 float-right pt-1">7 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">단독 주택<span id="ho_gb_002" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">다세대<span class="font-medium-4 float-right pt-1">2 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">다세대<span id="ho_gb_001" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">연립 주택<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">연립 주택<span id="ho_gb_004" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">주택 이외 거처<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">주택 이외 거처<span id="ho_gb_006" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">영업용 건물 내 주택<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">영업용 건물 내 주택<span id="ho_gb_005" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">자료 없는 집계구<span class="font-medium-4 float-right pt-1">4 개</span></h6>'
+                    +                 '<h6 class="list-group-item-heading">자료 없는 집계구<span id="ho_gb_999" class="font-medium-4 float-right pt-1"></span></h6>'
                     +             '</div>'
                     +         '</div>'
                     +    '</div>'
@@ -373,112 +373,54 @@ var testFunc = function(data,target){
 }
 
 
-var stcs_additag = function(data,addiType){
-  var $container;
+var stcs_additag = function(target,data,addiType){
+
   console.log(addiType);
   switch (addiType) {
 
     case 'initdata':
-      $container = $(document.createElement('div')).addClass("row stcs-initdata").css('display', 'block').css("background-color","#F5F7FA");
-      $container.css('color','black');
-      $container.css('padding-top','15px');
-      $container.css('padding-bottom','15px');
-      $container.append('<div class="col-lg-3 col-md-6 col-sm-12">'
-                    +        '<div class="card">'
-                    +            '<div class="card-content">'
-                    +                '<div class="media align-items-stretch">'
-                    +                    '<div class="p-2 text-center bg-info bg-darken-2">'
-                    +                        '<span class="icon-camera font-large-2"></span>'
-                    +                    '</div>'
-                    +                    '<div class="p-2 bg-gradient-x-info white media-body">'
-                    +                        '<h5>면적</h5>'
-                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i>'+(data[0]*1).toFixed(1)+'</h5>'
-                    +                    '</div>'
-                    +                '</div>'
-                    +            '</div>'
-                    +        '</div>'
-                    +    '</div>'
-                    +'<div class="col-lg-3 col-md-6 col-sm-12">'
-                    +        '<div class="card">'
-                    +            '<div class="card-content">'
-                    +                '<div class="media align-items-stretch">'
-                    +                    '<div class="p-2 text-center bg-danger bg-darken-2">'
-                    +                        '<i class="icon-user font-large-2"></i>'
-                    +                    '</div>'
-                    +                    '<div class="p-2 bg-gradient-x-danger white media-body">'
-                    +                        '<h5>총 인구</h5>'
-                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-arrow-up"></i>'+data[1]+'</h5>'
-                    +                    '</div>'
-                    +                '</div>'
-                    +            '</div>'
-                    +        '</div>'
-                    +    '</div>'
-                    +'<div class="col-lg-3 col-md-6 col-sm-12">'
-                    +        '<div class="card">'
-                    +            '<div class="card-content">'
-                    +                '<div class="media align-items-stretch">'
-                    +                    '<div class="p-2 text-center bg-warning bg-darken-2">'
-                    +                        '<i class="icon-basket-loaded font-large-2"></i>'
-                    +                    '</div>'
-                    +                    '<div class="p-2 bg-gradient-x-warning white media-body">'
-                    +                        '<h5>평균 나이</h5>'
-                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i>'+data[2]+'</h5>'
-                    +                    '</div>'
-                    +                '</div>'
-                    +            '</div>'
-                    +        '</div>'
-                    +    '</div>'
-                    +'<div class="col-lg-3 col-md-6 col-sm-12">'
-                    +        '<div class="card">'
-                    +            '<div class="card-content">'
-                    +                '<div class="media align-items-stretch">'
-                    +                    '<div class="p-2 text-center bg-success bg-darken-2">'
-                    +                        '<i class="icon-basket-loaded font-large-2"></i>'
-                    +                    '</div>'
-                    +                    '<div class="p-2 bg-gradient-x-success white media-body">'
-                    +                        '<h5>총 주택수</h5>'
-                    +                        '<h5 class="text-bold-400 mb-0"><i class="ft-plus"></i> 28</h5>'
-                    +                    '</div>'
-                    +                '</div>'
-                    +            '</div>'
-                    +        '</div>'
-                    +    '</div>'
-      );
+      $(target).find('#stcs-init-area').text((data[0]*1).toFixed(1));
+      $(target).find('#stcs-init-pop').text(data[1]);
+      $(target).find('#stcs-init-avr').text(data[2]);
+
       break;
 
     case 'stcsTotaljobs' :
       if (data.length == 0) {
         break;
       }
-      console.log(data);
-      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotaljobs");
-      $container.append(
-                         " 총괄사업체수 : "+data[0]['value']
-      );
+      // console.log(data);
+      // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotaljobs");
+      // $container.append(
+      //                    " 총괄사업체수 : "+data[0]['value']
+      // );
       break;
 
     case 'stcsPopdens' :
       if (data.length == 0) {
         break;
       }
-      console.log(data);
-      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsPopdens");
-      $container.append(
-                         " 인구밀도 : "+data[0]['value']
-      );
+      // console.log(data);
+      // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsPopdens");
+      // $container.append(
+      //                    " 인구밀도 : "+data[0]['value']
+      // );
       break;
 
     case 'stcsHouseType' :
       if (data.length == 0) {
         break;
       }
-      console.log(data);
-      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseType");
       for (var i = 0; i < data.length; i++) {
-        $container.append(
-                           "</br>유형별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
-        );
+        $(target).find('#'+data[i]['item']).text(data[i]['value']);
       }
+      // console.log(data);
+      // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseType");
+      // for (var i = 0; i < data.length; i++) {
+      //   $container.append(
+      //                      "</br>유형별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
+      //   );
+      // }
 
       break;
 
@@ -486,38 +428,80 @@ var stcs_additag = function(data,addiType){
       if (data.length == 0) {
         break;
       }
-      console.log(data);
-      $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalHouse");
-      $container.append(
-                         "</br>총 주택 수 : "+data[0]['value']
-      );
+      $(target).find('#stcs-init-tothouse').text(data[0]['value']);
+      // console.log(data);
+      // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalHouse");
+      // $container.append(
+      //                    "</br>총 주택 수 : "+data[0]['value']
+      // );
       break;
 
       case 'stcsHouseSize' :
         if (data.length == 0) {
           break;
         }
-        console.log(data);
-        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseSize");
-        for (var i = 0; i < data.length; i++) {
-          $container.append(
-                             "</br>연건평별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
-          );
-        }
+        // console.log(data);
+        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseSize");
+        // for (var i = 0; i < data.length; i++) {
+        //   $container.append(
+        //                      "</br>연건평별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
+        //   );
+        // }
 
+        new Chart(document.getElementById("houseSizeChart"),{
+          "type":"bar",
+          "data":{
+            "labels":[
+              "20㎡이하(호)","20㎡~40㎡이하(호)","40㎡~60㎡이하(호)","60㎡~85㎡이하(호)","85㎡~100㎡이하(호)","100㎡~130㎡이하(호)","130㎡~165㎡이하(호)"],
+            "datasets":[
+              {
+                // "label":"My First Dataset",
+                "data":[5,59,48,35,0,0,13],
+                "fill":false,
+                "backgroundColor":[
+                  "rgba(255, 99, 132, 0.2)","rgba(255, 159, 64, 0.2)","rgba(255, 205, 86, 0.2)","rgba(75, 192, 192, 0.2)","rgba(54, 162, 235, 0.2)","rgba(153, 102, 255, 0.2)","rgba(201, 203, 207, 0.2)"
+                  ],
+                "borderColor":["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+                "borderWidth":1
+              }
+            ]
+          },
+          "options":{
+            "scales":{
+              "yAxes":[
+                {"ticks":{"beginAtZero":true}
+                  }
+                ]
+              }
+            }
+          }
+        );
         break;
 
       case 'stcsHouseHold' :
         if (data.length == 0) {
           break;
         }
-        console.log(data);
-        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseHold");
-        for (var i = 0; i < data.length; i++) {
-          $container.append(
-                             "</br>세대구성별 가구 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
-          );
-        }
+        // console.log(data);
+        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseHold");
+        // for (var i = 0; i < data.length; i++) {
+        //   $container.append(
+        //                      "</br>세대구성별 가구 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
+        //   );
+        // }
+        new Chart(document.getElementById("houseHoldChart"),{
+            'type': 'doughnut',
+            'data': {
+                  'labels': ['1세대가구', '2세대가구', '3세대가구', '1인가구'],
+                  'datasets': [{
+                      'data': [20, 10, 4, 2],
+                      'backgroundColor':[
+                        "rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)"
+                        ]
+                  }]
+              },
+            'options': 'options'
+        });
 
         break;
 
@@ -525,13 +509,13 @@ var stcs_additag = function(data,addiType){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
-        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalFamily");
-        for (var i = 0; i < data.length; i++) {
-          $container.append(
-                             "</br>가구 총괄 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
-          );
-        }
+        // console.log(data);
+        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalFamily");
+        // for (var i = 0; i < data.length; i++) {
+        //   $container.append(
+        //                      "</br>가구 총괄 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
+        //   );
+        // }
 
         break;
 
@@ -539,13 +523,24 @@ var stcs_additag = function(data,addiType){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
-        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsPop");
-        for (var i = 0; i < data.length; i++) {
-          $container.append(
-                             "</br>산업 분류별 종사자수 : "+data[i]['name']+" / "+data[i]['value']+" 명"
-          );
-        }
+        // console.log(data);
+        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsPop");
+        // for (var i = 0; i < data.length; i++) {
+        //   $container.append(
+        //                      "</br>산업 분류별 종사자수 : "+data[i]['name']+" / "+data[i]['value']+" 명"
+        //   );
+        // }
+
+        new Chart(document.getElementById("jobsChart"),{
+            'type': 'radar',
+            'data': {
+                  'labels': ['건설업', '도매 및 소매업', '운수업', '통신업'],
+                  'datasets': [{
+                      'data': [44, 39, 39, 44]
+                  }]
+              },
+            'options': 'options'
+        });
 
         break;
 
@@ -553,13 +548,13 @@ var stcs_additag = function(data,addiType){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
-        $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsBiz");
-        for (var i = 0; i < data.length; i++) {
-          $container.append(
-                             "</br>산업 분류별 사업체수 : "+data[i]['name']+" / "+data[i]['value']+" 개"
-          );
-        }
+        // console.log(data);
+        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsBiz");
+        // for (var i = 0; i < data.length; i++) {
+        //   $container.append(
+        //                      "</br>산업 분류별 사업체수 : "+data[i]['name']+" / "+data[i]['value']+" 개"
+        //   );
+        // }
 
         break;
 
@@ -569,5 +564,5 @@ var stcs_additag = function(data,addiType){
   }
 
   // console.log(data);
-  return $container;
+
 };

@@ -12,7 +12,7 @@ Class Building extends CI_Model {
     $bun = $values['bun'];
     $ji = $values['ji'];
 
-    if($type === 'brFlrInfo'){
+    if($type === 'brSingleFlrInfo'){
       $buildingID = $values['buildingID'];
       $flrNo = $values['flrNo'];
       $flrGbCd = $values['flrGbCd'];
@@ -25,6 +25,19 @@ Class Building extends CI_Model {
 
       $this->db->where('flrGbCd', $flrGbCd);
       $this->db->where('flrNo', $flrNo);
+      $result = $this->db->get('getBrFlrOulnInfo')->result();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+
+    if($type === 'brFlrInfo'){
+      $buildingID = $values['buildingID'];
+
+      $this->db->where('sigunguCd', $sigunguCd);
+      $this->db->where('bjdongCd', $bjdongCd);
+      $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
+      $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
+      $this->db->where('mgmBldrgstPk', $buildingID);
+
       $result = $this->db->get('getBrFlrOulnInfo')->result();
       return json_encode($result, JSON_UNESCAPED_UNICODE);
     }

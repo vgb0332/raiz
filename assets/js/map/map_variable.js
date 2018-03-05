@@ -14,6 +14,9 @@ var geocoder = new daum.maps.services.Geocoder();
 
 var categoryOverlay = new daum.maps.CustomOverlay({});
 
+// 장소 검색 객체를 생성합니다
+var ps = new daum.maps.services.Places();
+
 /*
   ajax_type => DB에서 데이터를 요청할 때, 타입을 지정해주어 폴리곤의 형태를 정한다.
             => toji : 토지
@@ -218,18 +221,43 @@ var building_titleInfo = function(data){
 
     inside += "<div class='flrInfo-lookup' data-buildingId=" + value['mgmBldrgstPk'] + ">"
            +       "층별정보 보기&nbsp;"
-           +      "<span class='ti-arrow-up'></span>"
+           +      "<span class='ti-arrow-down'></span>"
            +   "</div>";
 
     $container.find(".building-titleInfo-body").append(
         "<div class = 'building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
-      +    ( (value['mgmBldrgstPk'] === '') ? 'UNKNOWN' : value['mgmBldrgstPk'] )
+      +    ( (value['dongNm'] === '') ? value['mgmBldrgstPk'] : value['dongNm']  )
       +    "<span class='ti-angle-double-down'></span>"
       + "</div>"
       + "<div class='building-titleInfo-body-info' style='display:none;'>"
       +    inside
       + "</div>"
     );
+
+
+    // var values = {
+    //   'type' : 'brFlrInfo',
+    //   'sigunguCd' : value['sigunguCd'],
+    //   'bjdongCd' : value['bjdongCd'],
+    //   'bun' : value['bun'],
+    //   'ji' : value['ji'],
+    //   'buildingID' : value['mgmBldrgstPk'],
+    // };
+    //
+    // customAjax($SITE_URL+'get/buildingFlrInfo', values, function(data){
+    //
+    //     $container.find(".building-titleInfo-body").append(
+    //
+    //     );
+    //
+    // });
+  });
+
+
+  $container.find('.building-titleInfo-body-info').find('.flrInfo-lookup').on('click', function(e){
+
+    $(this).find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+
   });
 
   $container.find('.building-titleInfo-body-title').on('click', function(e){

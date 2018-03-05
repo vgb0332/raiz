@@ -24,10 +24,44 @@
           <!-- 위의 리스트와 동일한 순서의 컨텐츠가 들어가야합니다. -->
           <ul class="raiz-side-tab-content">
             <li>
-              키워드 검색
+              <div id="keyword-input-group" class="keyword-search input-group">
+
+                <input id="keyword-input" autocomplete="off" type="text" class="form-control" name="email" placeholder="키워드를 입력하세요">
+                <span onclick="javascript:console.log('keyword-search');"id="keyword-submit" class="input-group-addon"><i class="glyphicon glyphicon-search" style="color:#ffffff;"></i></span>
+
+              </div>
+              <div class="keyword-suggestions">
+
+                <ul class="keyword-suggestions-list-group">
+                  <!-- <li>something1</li>
+                  <li>something2</li>
+                  <li>something3</li>
+                  <li>something4</li> -->
+                </ul>
+
+              </div>
+              <div class="keyword-result">
+                <ul class="keyword-result-list-group">
+                  
+                </ul>
+              </div>
             </li>
             <li>
-              지번 검색
+              <div id="jibun-input-group" class="keyword-search input-group">
+
+                <input id="jibun" type="text" class="form-control" name="email" placeholder="주소를 입력하세요">
+                <span onclick="javascript:console.log('keyword-search');"id="jibun-submit" class="input-group-addon"><i class="glyphicon glyphicon-search" style="color:#ffffff;"></i></span>
+
+                <script type="text/javascript">
+                  var input = document.getElementById("jibun-input-group");
+                  input.addEventListener("keyup", function(e){
+                    event.preventDefault();
+                    if(e.keyCode === 13){
+                      document.getElementById("jibun-submit").click();
+                    }
+                  });
+                </script>
+              </div>
             </li>
             <li>
               건물 검색
