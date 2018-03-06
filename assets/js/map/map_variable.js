@@ -29,6 +29,26 @@ var ajax_type = 'toji';
 var currHjstcs = '';
 var aggr_poly = [];
 
+var search_result = function(data){
+  var $container = $(document.createElement('li'));
+  $container.append(  "<h4 class='place_name'>"
+                    +   data['place_name']
+                    + "</h4>"
+                    + "<h5 class='road_address_name'>"
+                    +   data['road_address_name']
+                    + "</h5>"
+                    + "<h6 class='address_name'>"
+                    +   data['address_name']
+                    + "</h6>"
+                    + "<h6 class='phone'>"
+                    +   data['phone']
+                    + "</h6>"
+                    );
+
+  $container.removeAttr('style');
+  return $container;
+};
+
 var raiz_window = function(title){
   var $container = $(document.createElement('div')).addClass("raiz-window-container");
   // $container.append(

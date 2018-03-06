@@ -1,6 +1,7 @@
 function coord2RegionCode(coords, callback) {
+
     // 좌표로 법정동 상세 주소 정보를 요청합니다
-    geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
+    geocoder.coord2RegionCode(coords.ib, coords.jb, callback);
 }
 
 // 키워드 검색을 요청하는 함수입니다

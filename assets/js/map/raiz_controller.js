@@ -82,16 +82,47 @@ $(".raiz-side-tab-list li").on('click', function(){
 
 //SIDE tab
 //search automcomplete event
-$( "#keyword-input" ).on("change keyup",function(e){
+var keyword_history = [];
+$( "#keyword-input" ).on("focus change keyup",function(e){
 
     e.preventDefault();
 
     delay(function(){
       var q = $( '#keyword-input' ).val();
+      if(q === ''){
+        //show history
+          console.log('empty string');
+          $(".keyword-result-list-group").hide();
+          $(".keyword-suggestions-list-group li").remove();
+          var item = '';
+          $.each(keyword_history, function(index, value){
+
+            item += "<li data-index="+ index + ">"
+
+                  + value
+
+                  + "</li>";
+
+          });
+
+          $(".keyword-suggestions-list-group").append(item).show('slow');
+          $(".keyword-suggestions-list-group li").on('click', function(e){
+
+            var name = $(this).text();
+            $("#keyword-input").val(name);
+
+
+          });
+
+          return false;
+      }
       if (!q.replace(/^\s+|\s+$/g, '')) {
           // alert('키워드를 입력해주세요!');
           console.log('invalid string');
-          $(".keyword-suggestions-list-group li").remove();
+          $(".keyword-suggestions-list-group li")
+          .hide("slide", { direction: "up" }, 200, function(){
+            $(this).remove();
+          });
           return false;
       }
 
@@ -109,15 +140,26 @@ $( "#keyword-input" ).on("change keyup",function(e){
 
 function fillKeywordSuggestions(data, status, pagination){
       console.log(data);
+      $(".keyword-result-list-group").hide();
       //first delete all previous lists
-      $(".keyword-suggestions-list-group li").remove();
+      $(".keyword-suggestions-list-group li")
+      .hide("slide", { direction: "up" }, 200, function(){
+        $(this).remove();
+      });
 
       //Then refill the list with the result
       if (status === daum.maps.services.Status.OK) {
           var item = '';
           $.each(data, function(index, value){
-            item += "<li data-index="+ index + ">" + value['place_name'] + "</li>";
+
+            item += "<li data-index="+ index + " data-id=" + value['id'] + " data-name=" + value['place_name'] + ">"
+
+                  + value['place_name'] + '(' + value['address_name'] + ')'
+
+                  + "</li>";
+
           });
+
       }
 
       else if(status === daum.maps.services.Status.ZERO_RESULT){
@@ -128,17 +170,31 @@ function fillKeywordSuggestions(data, status, pagination){
 
       }
 
-      console.log(item);
       $(".keyword-suggestions-list-group").append(item);
 
       $(".keyword-suggestions-list-group li").on('click', function(e){
-          var name = $( this ).attr('name');
+          var name = $( this ).attr('data-name');
           $("#keyword-input").val(name);
+
           console.log('you have clicked ' + $( this ).attr('data-index'));
           var selected = data[$( this ).attr('data-index')];
-          console.log(selected);
-          item = "<li>" + selected['road_address_name'] + "</li>";
-          $(".keyword-result-list-group").append(item);
+
+          $(".keyword-suggestions-list-group li")
+          .hide("slide", { direction: "up" }, 200, function(){
+            $(this).remove();
+          });
+
+          item = search_result(selected);
+          $(".keyword-result-list-group").append(item).show('slide', { direction: "left" }, 300);
+          var mouseEvent = {};
+          mouseEvent.latLng = {
+            ib: selected['x'],
+            jb: selected['y']
+          };
+
+          keyword_history.push(name);
+          map.panTo(new daum.maps.LatLng(mouseEvent.latLng.jb, mouseEvent.latLng.ib));
+          daum.maps.event.trigger(map, trigger_by, mouseEvent);
       });
 
 }
@@ -151,18 +207,38 @@ $("#keyword-submit").on('click', function(e){
         return false;
     }
 
-    ps.keywordSearch( q, fillKeywordResult);
+    ps.keywordSearch( q, fillKeywordResult );
 
 });
 
 function fillKeywordResult(data, status, pagination){
+    var item = '';
+
     if (status === daum.maps.services.Status.OK) {
 
-        console.log(data);
+        // item = "<li>" + data[0]['road_address_name'] + "</li>";
+        item = search_result(data[0]);
+        $(".keyword-suggestions-list-group li")
+        .hide("slide", { direction: "up" }, 200, function(){
+          $(this).remove();
+        });
+
+        $(".keyword-result-list-group li").remove();
+
+        $(".keyword-result-list-group").append(item).show('slide', { direction: "left" }, 300);
+        var mouseEvent = {};
+        mouseEvent.latLng = {
+          ib: data[0]['x'],
+          jb: data[0]['y']
+        };
+
+        keyword_history.push(data[0]['place_name']);
+        map.panTo(new daum.maps.LatLng(mouseEvent.latLng.jb, mouseEvent.latLng.ib));
+        daum.maps.event.trigger(map, trigger_by, mouseEvent);
 
     } else if (status === daum.maps.services.Status.ZERO_RESULT) {
 
-        console.log('검색 결과가 존재하지 않습니다.');
+        alert('검색 결과가 존재하지 않습니다.');
 
 
     } else if (status === daum.maps.services.Status.ERROR) {

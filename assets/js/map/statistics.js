@@ -261,7 +261,7 @@ var stcs_initTag = function(target){
                     +    '<div class="card-header">'
                     +        '<h4 class="card-title">유형별 주택</h4>'
                     +    '</div>'
-                    +    '<div class="card-content px-4 height-200">'
+                    +    '<div class="card-content px-4 stcsNlabel">'
                     +        '<div class="media-list">'
                     +             '<div class="media-body w-100">'
                     +                 '<h6 class="list-group-item-heading">아파트<span id="ho_gb_003" class="font-medium-4 float-right pt-1"></span></h6>'
@@ -305,8 +305,8 @@ var stcs_initTag = function(target){
                     +    '<div class="card-header">'
                     +        '<h4 class="card-title">연건평별 주택</h4>'
                     +    '</div>'
-                    +    '<div class="card-content px-4 height-200">'
-                    +         '<canvas id="houseSizeChart"></canvas>'
+                    +    '<div class="card-content px-4">'
+                    +         '<canvas id="houseSizeChart" class="stchart"></canvas>'
                     +    '</div>'
                     +'</div>'
                     +'</div>'
@@ -320,8 +320,8 @@ var stcs_initTag = function(target){
                       +    '<div class="card-header">'
                       +        '<h4 class="card-title">산업분류별 사업체 수 / 종사자 수</h4>'
                       +    '</div>'
-                      +    '<div class="card-content px-4 height-200">'
-                      +         '<canvas id="jobsChart"></canvas>'
+                      +    '<div class="card-content px-4">'
+                      +         '<canvas id="jobsChart" class="stchart"></canvas>'
                       +    '</div>'
                       +'</div>'
                       +'</div>'
@@ -330,8 +330,8 @@ var stcs_initTag = function(target){
                       +    '<div class="card-header">'
                       +        '<h4 class="card-title">세대 구성별 가구 / 총 가구 수 : 300</h4>'
                       +    '</div>'
-                      +    '<div class="card-content px-4 height-200">'
-                      +         '<canvas id="houseHoldChart"></canvas>'
+                      +    '<div class="card-content px-4">'
+                      +         '<canvas id="houseHoldChart" class="stchart"></canvas>'
                       +    '</div>'
                       +'</div>'
                       +'</div>'
@@ -345,8 +345,8 @@ var stcs_initTag = function(target){
                         +    '<div class="card-header">'
                         +        '<h4 class="card-title">성 연령별 인구</h4>'
                         +    '</div>'
-                        +    '<div class="card-content px-4 height-200">'
-                        +         '<canvas id="sexAgeChart"></canvas>'
+                        +    '<div class="card-content px-4">'
+                        +         '<canvas id="sexAgeChart" class="stchart"></canvas>'
                         +    '</div>'
                         +'</div>'
                         +'</div>'
@@ -448,11 +448,11 @@ var stcs_additag = function(target,data,addiType){
         //   );
         // }
 
-        new Chart(document.getElementById("houseSizeChart"),{
+        new Chart($(target).find('#houseSizeChart'),{
           "type":"bar",
           "data":{
             "labels":[
-              "20㎡이하(호)","20㎡~40㎡이하(호)","40㎡~60㎡이하(호)","60㎡~85㎡이하(호)","85㎡~100㎡이하(호)","100㎡~130㎡이하(호)","130㎡~165㎡이하(호)"],
+              "20㎡이하","20㎡~40㎡","40㎡~60㎡","60㎡~85㎡","85㎡~100㎡","100㎡~130㎡","130㎡~165㎡"],
             "datasets":[
               {
                 // "label":"My First Dataset",
@@ -489,7 +489,7 @@ var stcs_additag = function(target,data,addiType){
         //                      "</br>세대구성별 가구 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
         //   );
         // }
-        new Chart(document.getElementById("houseHoldChart"),{
+        new Chart($(target).find('#houseHoldChart'),{
             'type': 'doughnut',
             'data': {
                   'labels': ['1세대가구', '2세대가구', '3세대가구', '1인가구'],
@@ -531,7 +531,7 @@ var stcs_additag = function(target,data,addiType){
         //   );
         // }
 
-        new Chart(document.getElementById("jobsChart"),{
+        new Chart($(target).find('#jobsChart'),{
             'type': 'radar',
             'data': {
                   'labels': ['건설업', '도매 및 소매업', '운수업', '통신업'],

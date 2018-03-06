@@ -37,7 +37,14 @@
   display: block;
 }
 
-
+.stchart {
+  width: inherit !important;
+  height: inherit !important;
+  padding-bottom: 5px;
+  left: 50% !important;
+  transform: translateX(-50%);
+  position: relative !important;
+}
 /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 */
 .row {
@@ -132,6 +139,7 @@
     background-color: #FFFFFF;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     border-bottom: none;
+    padding-bottom: 0;
 }
 
 .card-header:first-child {
@@ -153,7 +161,7 @@
 
 
 .height-200 {
-    height: 200px !important;
+    height: 280px !important;
 }
 
 .media-list {

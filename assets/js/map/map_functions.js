@@ -141,6 +141,9 @@ function setSTCSWindow(polygons, data){
   var stcsAggList = ['stcsTotaljobs','stcsPopdens','stcsHouseType','stcsTotalHouse','stcsHouseSize'
                     ,'stcsHouseHold','stcsTotalFamily','stcsJobsPop','stcsJobsBiz'];
 
+  STCSwindow.resize(function(e){
+    STCSwindow.find('.stcsNlabel').height(STCSwindow.find('#houseSizeChart').height());
+  });
   for (var i = 0; i < stcsAggList.length; i++) {
     (function(i){
       console.log(stcsAggList[i]);
