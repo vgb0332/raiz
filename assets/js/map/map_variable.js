@@ -38,13 +38,21 @@ var search_result = function(data){
                     +   data['road_address_name']
                     + "</h5>"
                     + "<h6 class='address_name'>"
-                    +   data['address_name']
+                    +   "지번: " + data['address_name']
                     + "</h6>"
                     + "<h6 class='phone'>"
                     +   data['phone']
                     + "</h6>"
                     );
 
+  $container.attr('data-id', data['id']);
+  $container.attr('data-x', data['x']);
+  $container.attr('data-y', data['y']);
+  $container.on('click', function(e) {
+
+      map.panTo(new daum.maps.LatLng(data['y'], data['x']));
+
+  });
   $container.removeAttr('style');
   return $container;
 };
@@ -235,18 +243,36 @@ var building_titleInfo = function(data){
 
     var inside = '';
     for(var i = 0; i < data_attr.length; ++i){
-      inside +=     "<div>" + data_index[i] + "</div>"
-             +       "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
+
+      var index = data_index[i];
+      var content = value[data_attr[i]];
+      if(content === null) content = '정보없음';
+      if($.isNumeric(content)) content = (content*1).toFixed(2);
+
+      inside +=       "<div>" + index + "</div>"
+             +        "<div>" + content + "</div>" ;
+
+      console.log(inside);
     }
 
+    //층별정보 데스네
     inside += "<div class='flrInfo-lookup' data-buildingId=" + value['mgmBldrgstPk'] + ">"
-           +       "층별정보 보기&nbsp;"
-           +      "<span class='ti-arrow-down'></span>"
-           +   "</div>";
+           +      "<div class='flrInfo-header'>"
+           +          "층별정보 보기&nbsp;"
+           +          "<span class='ti-arrow-down'></span>"
+           +      "</div>"
+           +      "<div class='flrInfo'>"
+           +         "<select class='flrInfo-select'>"
+           +         "</select>"
+           +         "<label>층</label>"
+           +      "</div>"
+           +   "</div>"
+
+           ;
 
     $container.find(".building-titleInfo-body").append(
         "<div class = 'building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
-      +    ( (value['dongNm'] === '') ? value['mgmBldrgstPk'] : value['dongNm']  )
+      +    ( (value['dongNm'] === null) ? ( value['mainPurpsCdNm'] + ' ' + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
       +    "<span class='ti-angle-double-down'></span>"
       + "</div>"
       + "<div class='building-titleInfo-body-info' style='display:none;'>"
@@ -254,31 +280,75 @@ var building_titleInfo = function(data){
       + "</div>"
     );
 
+    var values = {
+      'type' : 'brFlrInfo',
+      'sigunguCd' : value['sigunguCd'],
+      'bjdongCd' : value['bjdongCd'],
+      'bun' : value['bun'],
+      'ji' : value['ji'],
+      'buildingID' : value['mgmBldrgstPk'],
+    };
 
-    // var values = {
-    //   'type' : 'brFlrInfo',
-    //   'sigunguCd' : value['sigunguCd'],
-    //   'bjdongCd' : value['bjdongCd'],
-    //   'bun' : value['bun'],
-    //   'ji' : value['ji'],
-    //   'buildingID' : value['mgmBldrgstPk'],
-    // };
-    //
-    // customAjax($SITE_URL+'get/buildingFlrInfo', values, function(data){
-    //
-    //     $container.find(".building-titleInfo-body").append(
-    //
-    //     );
-    //
-    // });
+    $container.find(".flrInfo-lookup[data-buildingId="+ value['mgmBldrgstPk'] + "]").find('.flrInfo-header').on('click', function(e){
+        var currentDom = $(this);
+        if(!currentDom.parent().find(".flrInfo").is(":visible")){
+
+          currentDom.find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+          console.log($(this).find(".flrInfo select").length);
+
+        }
+        else{
+
+          currentDom.find('span').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+
+        }
+
+        if($(this).find(".flrInfo select").length < 1){
+
+          customAjax($SITE_URL+'get/buildingFlrInfo', values, function(data){
+
+              console.log(data);
+              data.sort(
+                function(a, b){
+                  if(a['flrGbCd'] == '10'){
+                    return a['flrGbCd'] - b['flrGbCd'] || b['flrNo'] - a['flrNo'];
+                  }
+                  else{
+                    return a['flrGbCd'] - b['flrGbCd'] || a['flrNo'] - b['flrNo'];
+                  }
+                }
+              );
+
+
+
+              $.each(data, function(index, value){
+                // console.log(value['flrNoNm']);
+                // var option = $(document.createElement('option')).text(value['flrNoNm']);
+                // console.log(option);
+                currentDom.parent().find(".flrInfo select")
+                .append($('<option>', {
+                    value: index,
+                    text: value['flrNoNm'].replace(/층/g,'')
+                }));
+
+              });
+
+              currentDom.parent().find(".flrInfo").toggle('fast', 'linear');
+              console.log(data);
+
+          });
+
+        }
+
+
+    });
+
+
+
+
+
   });
 
-
-  $container.find('.building-titleInfo-body-info').find('.flrInfo-lookup').on('click', function(e){
-
-    $(this).find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
-
-  });
 
   $container.find('.building-titleInfo-body-title').on('click', function(e){
 
@@ -350,7 +420,7 @@ var building_recapTitleInfo = function(data){
 
     $container.find(".building-recapTitleInfo-body").append(
         "<div class='building-recapTitleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
-      +     value['mgmBldrgstPk']
+      +    ( (value['dongNm'] === null) ? ( value['mainPurpsCdNm'] + ' ' + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
       +    "<span class='ti-angle-double-down'></span>"
       + "</div>"
       + "<div class='building-recapTitleInfo-body-info' style='display:none;'>"

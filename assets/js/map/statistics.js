@@ -96,7 +96,7 @@ function setOldindPoly(data) {
 }
 
 function stat_side_btn(code) {
-  console.log(code.length);
+  // console.log(code.length);
   if (code.length == 5) { //sgg 초기화
     $('#stat-side-sgg').text('');
     $('#stat-side-dong').text('');
@@ -131,7 +131,7 @@ function changePolyFill(key,val,type) {
     var r = 255;
     var g = 255;
     var b = 255;
-    console.log(r,g,b);
+    // console.log(r,g,b);
     val = val*1;
     for (var i = 0; i < aggr_poly.length; i++) {
       if (aggr_poly[i].Bb[0][3] == key) {
@@ -146,7 +146,7 @@ function changePolyFill(key,val,type) {
             g -= val.toFixed(0); b -= val.toFixed(0);
           }
         }
-        console.log(r,g,b);
+        // console.log(r,g,b);
         $("#" + aggr_poly[i].wc[0].id).css("fill", "rgb("+r+","+g+","+b+")")
         break;
       }
@@ -256,7 +256,7 @@ var stcs_initTag = function(target){
 
     case 1:
       $container = $(document.createElement('div')).addClass("row");
-      $container.append('<div class="col-lg-5 col-md-5" col-sm-5>'
+      $container.append('<div class="col-lg-4 col-md-4" col-sm-4>'
                     +'<div class="card">'
                     +    '<div class="card-header">'
                     +        '<h4 class="card-title">유형별 주택</h4>'
@@ -300,7 +300,7 @@ var stcs_initTag = function(target){
                     +    '</div>'
                     +'</div>'
                     +'</div>'
-                    +'<div class="col-lg-7 col-md-7" col-sm-7">'
+                    +'<div class="col-lg-8 col-md-8" col-sm-8">'
                     +'<div class="card">'
                     +    '<div class="card-header">'
                     +        '<h4 class="card-title">연건평별 주택</h4>'
@@ -317,7 +317,7 @@ var stcs_initTag = function(target){
         $container = $(document.createElement('div')).addClass("row");
         $container.append('<div class="col-lg-6 col-md-6" col-sm-6">'
                       +'<div class="card">'
-                      +    '<div class="card-header">'
+                      +    '<div class="card-header jobsToggle">'
                       +        '<h4 class="card-title">산업분류별 사업체 수 / 종사자 수</h4>'
                       +    '</div>'
                       +    '<div class="card-content px-4">'
@@ -328,7 +328,7 @@ var stcs_initTag = function(target){
                       +'<div class="col-lg-6 col-md-6" col-sm-6">'
                       +'<div class="card">'
                       +    '<div class="card-header">'
-                      +        '<h4 class="card-title">세대 구성별 가구 / 총 가구 수 : 300</h4>'
+                      +        '<h4 id="stcs-totalFaily" class="card-title">세대 구성별 가구 / 총 가구 수 : 300</h4>'
                       +    '</div>'
                       +    '<div class="card-content px-4">'
                       +         '<canvas id="houseHoldChart" class="stchart"></canvas>'
@@ -373,9 +373,50 @@ var testFunc = function(data,target){
 }
 
 
-var stcs_additag = function(target,data,addiType){
+var stcs_additag = function(target,data,addiType,code){
 
-  console.log(addiType);
+  var colorarr_fill = [
+    "rgba(255, 99, 132, 0.2)",
+    "rgba(255, 159, 64, 0.2)",
+    "rgba(255, 205, 86, 0.2)",
+    "rgba(75, 192, 192, 0.2)",
+    "rgba(54, 162, 235, 0.2)",
+    "rgba(153, 102, 255, 0.2)",
+    "rgba(201, 203, 207, 0.2)",
+    "rgba(154, 95, 15,0.2)",
+    "rgba(118, 227, 116,0.2)",
+    "rgba(214, 66, 227,0.2)"
+  ];
+
+  var colorarr_border = [
+    "rgb(255, 99, 132)",
+    "rgb(255, 159, 64)",
+    "rgb(255, 205, 86)",
+    "rgb(75, 192, 192)",
+    "rgb(54, 162, 235)",
+    "rgb(153, 102, 255)",
+    "rgb(201, 203, 207)",
+    "rgb(154, 95, 15)",
+    "rgb(118, 227, 116)",
+    "rgb(214, 66, 227)"
+  ];
+
+  var name = [];
+  var value = [];
+  for (var i = 0; i < data.length; i++) {
+    if (data[i]['value'] == "0") {
+      continue;
+    }
+    if (addiType == "stcsHouseSize" && String(data[i]['name']).indexOf("~")) {
+      name.push(String(data[i]['name']).replace("이하(호)",""));
+      value.push(data[i]['value']);
+    }
+    else{
+      name.push(data[i]['name']);
+      value.push(data[i]['value']);
+    }
+  }
+  // console.log(addiType);
   switch (addiType) {
 
     case 'initdata':
@@ -440,28 +481,17 @@ var stcs_additag = function(target,data,addiType){
         if (data.length == 0) {
           break;
         }
-        // console.log(data);
-        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseSize");
-        // for (var i = 0; i < data.length; i++) {
-        //   $container.append(
-        //                      "</br>연건평별 주택 : "+data[i]['name']+" / "+data[i]['value']+" 개"
-        //   );
-        // }
-
         new Chart($(target).find('#houseSizeChart'),{
           "type":"bar",
           "data":{
-            "labels":[
-              "20㎡이하","20㎡~40㎡","40㎡~60㎡","60㎡~85㎡","85㎡~100㎡","100㎡~130㎡","130㎡~165㎡"],
+            "labels":name,
             "datasets":[
               {
-                // "label":"My First Dataset",
-                "data":[5,59,48,35,0,0,13],
+                "label":"연건평별 주택",
+                "data":value,
                 "fill":false,
-                "backgroundColor":[
-                  "rgba(255, 99, 132, 0.2)","rgba(255, 159, 64, 0.2)","rgba(255, 205, 86, 0.2)","rgba(75, 192, 192, 0.2)","rgba(54, 162, 235, 0.2)","rgba(153, 102, 255, 0.2)","rgba(201, 203, 207, 0.2)"
-                  ],
-                "borderColor":["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+                "backgroundColor":colorarr_fill,
+                "borderColor":colorarr_border,
                 "borderWidth":1
               }
             ]
@@ -483,21 +513,16 @@ var stcs_additag = function(target,data,addiType){
           break;
         }
         // console.log(data);
-        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseHold");
-        // for (var i = 0; i < data.length; i++) {
-        //   $container.append(
-        //                      "</br>세대구성별 가구 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
-        //   );
-        // }
+        // console.log(name);
+        // console.log(value);
+
         new Chart($(target).find('#houseHoldChart'),{
             'type': 'doughnut',
             'data': {
-                  'labels': ['1세대가구', '2세대가구', '3세대가구', '1인가구'],
+                  'labels': name,
                   'datasets': [{
-                      'data': [20, 10, 4, 2],
-                      'backgroundColor':[
-                        "rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)"
-                        ]
+                      'data': value,
+                      'backgroundColor':colorarr_border
                   }]
               },
             'options': 'options'
@@ -516,6 +541,7 @@ var stcs_additag = function(target,data,addiType){
         //                      "</br>가구 총괄 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
         //   );
         // }
+        $(target).find('#stcs-totalFaily').text('세대 구성별 가구 / 총 가구 수 : '+data[0]['value']);
 
         break;
 
@@ -523,24 +549,24 @@ var stcs_additag = function(target,data,addiType){
         if (data.length == 0) {
           break;
         }
-        // console.log(data);
-        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsPop");
-        // for (var i = 0; i < data.length; i++) {
-        //   $container.append(
-        //                      "</br>산업 분류별 종사자수 : "+data[i]['name']+" / "+data[i]['value']+" 명"
-        //   );
-        // }
-
+        console.log(data);
+        console.log(name);
+        console.log(value);
         new Chart($(target).find('#jobsChart'),{
             'type': 'radar',
             'data': {
-                  'labels': ['건설업', '도매 및 소매업', '운수업', '통신업'],
+                  'labels': name,
                   'datasets': [{
-                      'data': [44, 39, 39, 44]
+                      'data': value,
+                      'backgroundColor': "rgba(255, 99, 132, 0.2)",
+            					'borderColor': "rgb(255, 99, 132)",
+            					'pointBackgroundColor': 'red',
                   }]
               },
             'options': 'options'
         });
+        var temp = '<a onclick="#" style="position:absolute;z-index:1" class="btn btn-sm btn-primary mr-1"><i class="icon-bar-chart"></i></a>';
+        $(target).find('.jobsToggle').append(temp);
 
         break;
 

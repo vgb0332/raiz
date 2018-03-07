@@ -207,7 +207,7 @@ function THREE_init(polygons, data, Rwindow){
           if(mesh_target === target){
             console.log('say yes!');
             mesh.material.opacity = 0.7;
-            var target_vector = new THREE.Vector3(0, 0, mesh.position.z + 15);
+            var target_vector = new THREE.Vector3(0, 0, mesh.position.z + 10);
             var original_position_z = mesh.position.z;
             animateVector3(new THREE.Vector3(0, 0, mesh.position.z), target_vector, {
               duration: 600,
