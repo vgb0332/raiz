@@ -50,28 +50,6 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
-  function getStcsOldind($code){
-      $query = $this->db->query(
-                "SELECT value
-                FROM raiz2.2016OldIndices
-                WHERE tot_oa_cd LIKE '$code%'
-                ");
-
-    $result = $query->result_array();
-    return json_encode($result, JSON_UNESCAPED_UNICODE);
-  }
-
-  function getStcsPopdens($code){
-      $query = $this->db->query(
-                "SELECT value
-                FROM raiz2.2016PopDensity
-                WHERE tot_oa_cd = $code
-                ");
-
-    $result = $query->result_array();
-    return json_encode($result, JSON_UNESCAPED_UNICODE);
-  }
-
   function getStcsTotaljobs($code){
       $query = $this->db->query(
                 "SELECT value
@@ -158,6 +136,65 @@ Class Statistics extends CI_Model {
                 FROM raiz2.2016HouseType
                 WHERE tot_oa_cd = $code"
                 );
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsSexAge($code){
+      $query = $this->db->query(
+                // "SELECT a.name,b.value
+                // FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseType where tot_oa_cd = $code) as b
+                // WHERE a.item = b.item"
+                "SELECT right(item,2) as item,value
+                FROM raiz2.2016SexAgePop
+                WHERE tot_oa_cd = $code
+                and right(item,3) > 30"
+                );
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsOldind($code){
+      $query = $this->db->query(
+                "SELECT value
+                FROM raiz2.2016OldIndices
+                WHERE tot_oa_cd = $code
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsPopdens($code){
+      $query = $this->db->query(
+                "SELECT value
+                FROM raiz2.2016PopDensity
+                WHERE tot_oa_cd = $code
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsSupportY($code){
+      $query = $this->db->query(
+                "SELECT value
+                FROM raiz2.2016SupportYoung
+                WHERE tot_oa_cd = $code
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getStcsSupportO($code){
+      $query = $this->db->query(
+                "SELECT value
+                FROM raiz2.2016SupportOld
+                WHERE tot_oa_cd = $code
+                ");
 
     $result = $query->result_array();
     return json_encode($result, JSON_UNESCAPED_UNICODE);

@@ -222,21 +222,29 @@ var building_titleInfo = function(data){
                     + "</div>"
                     + "<div class='building-titleInfo-body'>"
                     + "</div>"
-                    + "<div class='building-titleInfo-footer' style='display:none;'>"
-                    + "</div>"
                   );
 
-  var data_attr = [ "bldNm", "mainPurpsCdNm", "heit", "strctCdNm",
-                    "hoCnt", "archArea", "fmlyCnt", "totArea",
-                    "hhldCnt", "bcRat", "etcPurps", "vlRat", "engrGrade",
-                    "gnBldGrade", "pmsDay", "useAprDay"
+  // var data_attr = [ "bldNm", "mainPurpsCdNm", "heit", "strctCdNm",
+  //                   "hoCnt", "archArea", "fmlyCnt", "totArea",
+  //                   "hhldCnt", "bcRat", "etcPurps", "vlRat", "engrGrade",
+  //                   "gnBldGrade", "pmsDay", "useAprDay"
+  //                 ];
+
+  // var data_index = [ "건물이름", "주용도", "높이", "구조명",
+  //                   "호수" , "건축면적", "가구수","연면적",
+  //                   "세대수", "건폐율", "기타용도", "용적률",
+  //                   "에너지효율등급", "친환경건축물등급", "허가일", "사용승인일"
+  //                 ];
+
+  var data_attr = [ "bldNm", "mainPurpsCdNm","etcPurps",
+                    "strctCdNm", "archArea", "totArea",
+                    "bcRat", "vlRat", "useAprDay"
                   ];
 
-  var data_index = [ "건물명", "주용도명", "높이", "구조명",
-                    "호수" , "건축면적", "가구수","연면적",
-                    "세대수", "건폐율", "기타용도", "용적률",
-                    "에너지효율등급", "친환경건축물등급", "허가일", "사용승인일"
-                  ];
+  var data_index = [ "건물이름", "주용도", "기타용도",
+                    "구조",    "건축면적", "연면적",
+                    "건폐율",  "용적률",   "사용승인일"
+                   ];
 
 
   $.each(data, function(index, value){
@@ -244,39 +252,58 @@ var building_titleInfo = function(data){
     var inside = '';
     for(var i = 0; i < data_attr.length; ++i){
 
-      var index = data_index[i];
+      var value_index = data_index[i];
       var content = value[data_attr[i]];
-      if(content === null) content = '정보없음';
-      if($.isNumeric(content)) content = (content*1).toFixed(2);
+      if(content === null)        continue;
+      if($.isNumeric(content)){
 
-      inside +=       "<div>" + index + "</div>"
-             +        "<div>" + content + "</div>" ;
+        if(content*1 == 0)         continue;
+        if(data_attr[i] === "useAprDay"){
+          //날짜
+          content = content.substring(0, 4) + '-' + content.substring(4, 6) + '-' + content.substring(6, 8);
+        }
+        else{
+          content = (content*1).toFixed(2) + 'm<sup>2</sup>';
+        }
+      }
 
-      console.log(inside);
+      inside +=       "<p>"
+             +              "<strong>" + value_index + "</strong>"
+             +              " <span> " + content + "</span>"
+             +        "</p>";
+
+
     }
 
     //층별정보 데스네
     inside += "<div class='flrInfo-lookup' data-buildingId=" + value['mgmBldrgstPk'] + ">"
            +      "<div class='flrInfo-header'>"
-           +          "층별정보 보기&nbsp;"
+           +          "층별정보"
            +          "<span class='ti-arrow-down'></span>"
            +      "</div>"
            +      "<div class='flrInfo'>"
-           +         "<select class='flrInfo-select'>"
-           +         "</select>"
-           +         "<label>층</label>"
+
            +      "</div>"
            +   "</div>"
 
            ;
 
+
     $container.find(".building-titleInfo-body").append(
-        "<div class = 'building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
+        "<div href=#building-info-" + index + " data-toggle=collapse class='building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
       +    ( (value['dongNm'] === null) ? ( value['bldNm'] + '-' + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
       +    "<span class='ti-angle-double-down'></span>"
       + "</div>"
-      + "<div class='building-titleInfo-body-info' style='display:none;'>"
-      +    inside
+      + "<div id=building-info-" + index + " class='collapse building-titleInfo-body-info'>"
+        // + "<div href='#demo' data-toggle='collapse'>"
+        // +  "<img src='bandmember.jpg' class='img-circle person' alt='Random Name' width='255' height='255'>"
+        // + "</div>"
+        // + "<div id='demo' class='collapse'>"
+        // +   "<p>Guitarist and Lead Vocalist</p>"
+        // +   "<p>Loves long walks on the beach</p>"
+        // +   "<p>Member since 1988</p>"
+        // + "</div>"
+      +     inside
       + "</div>"
     );
 
@@ -294,7 +321,6 @@ var building_titleInfo = function(data){
         if(!currentDom.parent().find(".flrInfo").is(":visible")){
 
           currentDom.find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
-          console.log($(this).find(".flrInfo select").length);
 
         }
         else{
@@ -302,8 +328,8 @@ var building_titleInfo = function(data){
           currentDom.find('span').removeClass('ti-arrow-up').addClass('ti-arrow-down');
 
         }
-
-        if($(this).find(".flrInfo select").length < 1){
+        console.log($(this).find(".flrInfo div").length);
+        if($(this).find(".flrInfo div").length < 1){
 
           customAjax($SITE_URL+'get/buildingFlrInfo', values, function(data){
 
@@ -311,10 +337,10 @@ var building_titleInfo = function(data){
               data.sort(
                 function(a, b){
                   if(a['flrGbCd'] == '10'){
-                    return a['flrGbCd'] - b['flrGbCd'] || b['flrNo'] - a['flrNo'];
+                    return b['flrGbCd'] - a['flrGbCd'] || a['flrNo'] - b['flrNo'];
                   }
                   else{
-                    return a['flrGbCd'] - b['flrGbCd'] || a['flrNo'] - b['flrNo'];
+                    return b['flrGbCd'] - a['flrGbCd'] || b['flrNo'] - a['flrNo'];
                   }
                 }
               );
@@ -322,14 +348,50 @@ var building_titleInfo = function(data){
 
 
               $.each(data, function(index, value){
-                // console.log(value['flrNoNm']);
-                // var option = $(document.createElement('option')).text(value['flrNoNm']);
-                // console.log(option);
-                currentDom.parent().find(".flrInfo select")
-                .append($('<option>', {
-                    value: index,
-                    text: value['flrNoNm'].replace(/층/g,'')
-                }));
+
+                var checkDup = false;
+                currentDom.parent().find(".flrInfo div").each(function(){
+
+                  var flrGbCd = $(this).attr('data-flrGbCd');
+                  var flrNo = $(this).attr('data-flrNo');
+                  if(value['flrGbCd'] === flrGbCd && value['flrNo'] === flrNo){
+                    checkDup = true;
+                    return false;
+                  };
+                });
+
+                if(!checkDup){
+                  var color = '#54ff9f';
+                  //지하는 블랙, 옥탑은 파랑색, 보통은 노랑색
+                  if(value['flrGbCd'] === '10'){
+                    color = '#8b8b83';
+                  }
+                  else if((value['flrGbCd']) === '30'){
+                    color = '#c9e1ff';
+                  }
+
+                  currentDom.parent().find(".flrInfo")
+                  .append($('<div>', {
+                      'href' : '#' + value['mgmBldrgstPk']+'-'+value['flrGbCd']+'-'+value['flrNo'],
+                      'data-toggle' : 'collapse',
+                      'data-flrGbCd': value['flrGbCd'],
+                      'data-flrNo': value['flrNo'],
+                      'text': value['flrNoNm'].replace(/층/g,'').replace(/지/g,'B') + '층'
+                  })
+                  .css('background-color', color)
+                  .tooltip({
+                    'animation': true,
+                    'title' :  value['mainPurpsCdNm'],
+                    'placement' : 'right'
+                  }))
+
+                  .append($('<div>', {
+                      'id' : value['mgmBldrgstPk']+'-'+value['flrGbCd']+'-'+value['flrNo'],
+                      'class' : 'collapse',
+                      'text' : 'test'
+                    }).css('width', '100%')
+                  );
+                }
 
               });
 
@@ -342,10 +404,6 @@ var building_titleInfo = function(data){
 
 
     });
-
-
-
-
 
   });
 
@@ -360,19 +418,19 @@ var building_titleInfo = function(data){
       $(this).addClass('isOpen');
       $(this).find('span').removeClass('ti-angle-double-up').addClass('ti-angle-double-down');
     }
-    $(this).next().toggle('fast', 'linear');
+    // $(this).next().toggle('fast', 'linear');
   });
 
-  $container.find('.building-titleInfo-header').on('click', function(e){
-
-    if($container.find('.building-titleInfo-body').is(":visible")){
-      $container.find('.building-titleInfo-header').find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
-    }
-    else{
-      $container.find('.building-titleInfo-header').find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
-    }
-    $container.find('.building-titleInfo-body').toggle('fast', 'linear');
-  });
+  // $container.find('.building-titleInfo-header').on('click', function(e){
+  //
+  //   if($container.find('.building-titleInfo-body').is(":visible")){
+  //     $container.find('.building-titleInfo-header').find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+  //   }
+  //   else{
+  //     $container.find('.building-titleInfo-header').find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+  //   }
+  //   $container.find('.building-titleInfo-body').toggle('fast', 'linear');
+  // });
 
   return $container;
 };

@@ -34,18 +34,6 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->getStcsAggr($code);
   }
 
-  public function stcsOldind() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsOldind($code);
-  }
-
-  public function stcsPopdens() {
-    $this->load->model('Statistics');
-    $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsPopdens($code);
-  }
-
   public function stcsTotaljobs() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
@@ -93,5 +81,36 @@ class GetStcs extends CI_Controller {
     $code = $this->input->post('currHjstcs');
     echo $this->Statistics->getStcsJobsBiz($code);
   }
+
+  public function stcsSexAge() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsSexAge($code);
+  }
+
+  public function stcsOldind() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsOldind($code);
+  }
+
+  public function stcsPopdens() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsPopdens($code);
+  }
+
+  public function stcsSupportY() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsSupportY($code);
+  }
+
+  public function stcsSupportO() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsSupportO($code);
+  }
+
 
 }

@@ -129,7 +129,7 @@ function setSTCSWindow(polygons, data){
   // insert3D(STCSwindow, polygon);
   // THREE_init(polygons, data, STCSwindow);
 
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 5; i++) {
     STCSwindow.find('.stcs-initdata').append(stcs_initTag(i));
   }
 
@@ -139,7 +139,7 @@ function setSTCSWindow(polygons, data){
   console.log(polygons[0].Bb[0][3]);
 
   var stcsAggList = ['stcsTotaljobs','stcsPopdens','stcsHouseType','stcsTotalHouse','stcsHouseSize'
-                    ,'stcsHouseHold','stcsTotalFamily','stcsJobsPop','stcsJobsBiz'];
+                    ,'stcsHouseHold','stcsTotalFamily','stcsJobsPop','stcsJobsBiz','stcsSexAge','stcsOldind','stcsPopdens','stcsSupportY','stcsSupportO'];
 
   STCSwindow.resize(function(e){
     STCSwindow.find('.stcsNlabel').height(STCSwindow.find('#houseSizeChart').height());

@@ -38,6 +38,9 @@
   <!-- CHART JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 
+  <!-- MOMENT JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
   <style media="screen">
       .no-js #loader { display: none;  }
       .js #loader { display: block; position: absolute; left: 100px; top: 0; }

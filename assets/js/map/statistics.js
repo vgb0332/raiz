@@ -1,5 +1,7 @@
 var beforeNm = '';
-var Jchartarr = [];
+var Jchartname = [];
+var Jchartvalue = [];
+var nowcht;
 
 function initStcs() {
   console.log('called');
@@ -354,6 +356,59 @@ var stcs_initTag = function(target){
                       );
           break;
 
+          case 4:
+            $container = $(document.createElement('div')).addClass("row");
+            $container.append('<div class="col-md-12">'
+                          +'<div class="card">'
+                          +    '<div class="card-content">'
+                          +       '<div class="row">'
+                          +         '<div class="col-xl-3 col-lg-3 col-md-6 border-right-blue-grey border-right-lighten-5">'
+                          +           '<div class="my-1 text-center">'
+                          +              '<div class="card-header mb-2 pt-0">'
+                          +                  '<h5 class="primary">인구밀도</h5>'
+                          +                  '<h3 id="stcs-popDensity" class="stcsbottom text-bold-200">3,261</h3>'
+                          +              '</div>'
+                          +              '<div class="card-content">'
+                          +              '</div>'
+                          +            '</div>'
+                          +         '</div>'
+                          +         '<div class="col-xl-3 col-lg-3 col-md-6 border-right-blue-grey border-right-lighten-5">'
+                          +           '<div class="my-1 text-center">'
+                          +              '<div class="card-header mb-2 pt-0">'
+                          +                  '<h5 class="primary">노령화 지수</h5>'
+                          +                  '<h3 id="stcs-oldIndices" class="stcsbottom text-bold-200">3,261</h3>'
+                          +              '</div>'
+                          +              '<div class="card-content">'
+                          +              '</div>'
+                          +            '</div>'
+                          +         '</div>'
+                          +         '<div class="col-xl-3 col-lg-3 col-md-6 border-right-blue-grey border-right-lighten-5">'
+                          +           '<div class="my-1 text-center">'
+                          +              '<div class="card-header mb-2 pt-0">'
+                          +                  '<h5 class="primary">유년 부양비</h5>'
+                          +                  '<h3 id="stcs-supportYoung" class="stcsbottom text-bold-200">3,261</h3>'
+                          +              '</div>'
+                          +              '<div class="card-content">'
+                          +              '</div>'
+                          +            '</div>'
+                          +         '</div>'
+                          +         '<div class="col-xl-3 col-lg-3 col-md-6 border-right-blue-grey border-right-lighten-5">'
+                          +           '<div class="my-1 text-center">'
+                          +              '<div class="card-header mb-2 pt-0">'
+                          +                  '<h5 class="primary">노년 부양비</h5>'
+                          +                  '<h3 id="stcs-supportOld" class="stcsbottom text-bold-200">3,261</h3>'
+                          +              '</div>'
+                          +              '<div class="card-content">'
+                          +              '</div>'
+                          +            '</div>'
+                          +         '</div>'
+                          +       '</div>'
+                          +     '</div>'
+                          +'</div>'
+                          +'</div>'
+                        );
+          break;
+
 
     default:
 
@@ -435,17 +490,6 @@ var stcs_additag = function(target,data,addiType,code){
       // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotaljobs");
       // $container.append(
       //                    " 총괄사업체수 : "+data[0]['value']
-      // );
-      break;
-
-    case 'stcsPopdens' :
-      if (data.length == 0) {
-        break;
-      }
-      // console.log(data);
-      // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsPopdens");
-      // $container.append(
-      //                    " 인구밀도 : "+data[0]['value']
       // );
       break;
 
@@ -557,11 +601,12 @@ var stcs_additag = function(target,data,addiType,code){
         // customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
         //   stcs_additag(STCSwindow,data,stcsAggList[i],polygons[0].Bb[0][3]);
 
-        new Chart($(target).find('#jobsChart'),{
+        nowcht = new Chart($(target).find('#jobsChart'),{
             'type': 'radar',
             'data': {
                   'labels': name,
                   'datasets': [{
+                      'label': '종사자 수',
                       'data': value,
                       'backgroundColor': "rgba(255, 99, 132, 0.2)",
             					'borderColor': "rgb(255, 99, 132)",
@@ -570,7 +615,8 @@ var stcs_additag = function(target,data,addiType,code){
               },
             'options': 'options'
         });
-        var temp = '<a onclick="#" style="position:absolute;z-index:1" class="btn btn-sm btn-primary mr-1"><i class="icon-bar-chart"></i></a>';
+
+        var temp = '<a onclick="changeStcsJchart()" name="종사자 수" style="position:absolute;z-index:1" class="btn btn-sm btn-primary mr-1"><i class="icon-bar-chart"></i></a>';
         $(target).find('.jobsToggle').append(temp);
 
         break;
@@ -579,8 +625,8 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        Jchartarr.push([name,value])
-        console.log(Jchartarr);
+        Jchartname = name;
+        Jchartvalue = value;
         // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsBiz");
         // for (var i = 0; i < data.length; i++) {
         //   $container.append(
@@ -590,10 +636,208 @@ var stcs_additag = function(target,data,addiType,code){
 
         break;
 
+      case 'stcsSexAge':
+        if (data.length == 0) {
+          break;
+        }
+
+        var labels = ['~9','10~19','20~29','30~39','40~49','50~59','60~69','70~79','80~89','90~99','100~'];
+        var dataset1 = [0,0,0,0,0,0,0,0,0,0,0];
+        var dataset2 = [0,0,0,0,0,0,0,0,0,0,0];
+
+        for (var i = 0; i < data.length; i++) {
+          if (data[i]['item']*1 < 60) {
+            if (data[i]['item'] == '31' || data[i]['item'] == '32') {
+              dataset1[0] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '33' || data[i]['item'] == '34') {
+              dataset1[1] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '35' || data[i]['item'] == '36') {
+              dataset1[2] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '37' || data[i]['item'] == '38') {
+              dataset1[3] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '39' || data[i]['item'] == '40') {
+              dataset1[4] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '41' || data[i]['item'] == '42') {
+              dataset1[5] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '43' || data[i]['item'] == '44') {
+              dataset1[6] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '45' || data[i]['item'] == '46') {
+              dataset1[7] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '47' || data[i]['item'] == '48') {
+              dataset1[8] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '49' || data[i]['item'] == '50') {
+              dataset1[9] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '51') {
+              dataset1[10] += data[i]['value'];
+            }
+          }
+          else {
+            if (data[i]['item'] == '61' || data[i]['item'] == '62') {
+              dataset2[0] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '63' || data[i]['item'] == '64') {
+              dataset2[1] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '65' || data[i]['item'] == '66') {
+              dataset2[2] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '67' || data[i]['item'] == '68') {
+              dataset2[3] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '69' || data[i]['item'] == '70') {
+              dataset2[4] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '71' || data[i]['item'] == '72') {
+              dataset2[5] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '73' || data[i]['item'] == '74') {
+              dataset2[6] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '75' || data[i]['item'] == '76') {
+              dataset2[7] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '77' || data[i]['item'] == '78') {
+              dataset2[8] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '79' || data[i]['item'] == '80') {
+              dataset2[9] += data[i]['value'];
+            }
+            else if (data[i]['item'] == '81') {
+              dataset2[10] += data[i]['value'];
+            }
+          }
+
+        }
+
+
+        var ctx = document.getElementById('sexAgeChart').getContext('2d');
+        ctx.canvas.width = 1000;
+        ctx.canvas.height = 300;
+        var cfg = {
+            type: 'bar',
+            data:{
+              labels: labels,
+              datasets: [{
+                label: '남성',
+                data: dataset1,
+                // type: 'bar',
+                pointRadius: 0,
+                fill: false,
+                lineTension: 0,
+                borderWidth: 2,
+                backgroundColor: colorarr_fill[4],
+                borderColor : colorarr_border[4]
+              },{
+                label: '여성',
+                data: dataset2,
+                // type: 'bar',
+                pointRadius: 0,
+                fill: false,
+                lineTension: 0,
+                borderWidth: 2,
+                backgroundColor: colorarr_fill[0],
+                borderColor : colorarr_border[0]
+              }
+            ]},
+          options: {
+            scales: {
+              xAxes: [{
+                stacked: true,
+                distribution: 'series',
+                ticks: {
+                  source: 'labels'
+                }
+              }],
+              yAxes: [{
+                stacked: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: '인구 수'
+                }
+              }]
+            }
+          }
+        };
+
+        var chart = new Chart(ctx, cfg);
+
+        break;
+
+
+      case 'stcsOldind':
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $(target).find('#stcs-oldIndices').text(data[0]['value']);
+        break;
+
+
+
+      case 'stcsPopdens':
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $(target).find('#stcs-popDensity').text(data[0]['value']);
+        break;
+
+      case 'stcsSupportY':
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $(target).find('#stcs-supportYoung').text(data[0]['value']);
+        break;
+
+      case 'stcsSupportO':
+        if (data.length == 0) {
+          break;
+        }
+        console.log(data);
+        $(target).find('#stcs-supportOld').text(data[0]['value']);
+        break;
+
+
     default:
       alert('stcs-additag error')
 
   }
 };
 
-function changeStcsChart()
+function changeStcsJchart(){
+  console.log(Jchartname,Jchartvalue);
+  var jname = Jchartname;
+  var jvalue = Jchartvalue;
+  removeData(nowcht);
+
+  addData(nowcht,Jchartname,Jchartvalue);
+}
+
+function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
+    chart.update();
+}
+
+function removeData(chart) {
+    var temp = [];
+    Jchartname = chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
+        temp.push(dataset.data.pop());
+    });
+    Jchartvalue = temp;
+    chart.update();
+}
