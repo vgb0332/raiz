@@ -102,10 +102,10 @@ function setRWindow(polygons, data){
     Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_indivPrice(data));
   });
 
-  customAjax($SITE_URL+'get/buildingRecapTitleInfo', values, function(data){
-    if(data.length === 0) return false;
-    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_recapTitleInfo(data));
-  });
+  // customAjax($SITE_URL+'get/buildingRecapTitleInfo', values, function(data){
+  //   if(data.length === 0) return false;
+  //   Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_recapTitleInfo(data));
+  // });
 
   customAjax($SITE_URL+'get/buildingTitleInfo', values, function(data){
     if(data.length === 0) return false;
@@ -148,7 +148,7 @@ function setSTCSWindow(polygons, data){
     (function(i){
       console.log(stcsAggList[i]);
       customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
-        stcs_additag(STCSwindow,data,stcsAggList[i]);
+        stcs_additag(STCSwindow,data,stcsAggList[i],polygons[0].Bb[0][3]);
       });
     })(i)
   }

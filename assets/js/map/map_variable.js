@@ -217,10 +217,10 @@ var building_titleInfo = function(data){
                   .css('display', 'none');
 
   $container.append(
-                      "<div class='building-titleInfo-header'>"
-                    +   '표제부  ' + "<span class='ti-angle-down'></span>"
+                      "<div class='building-titleInfo-header' sytle='display:none;'>"
+                    // +   '표제부  ' + "<span class='ti-angle-down'></span>"
                     + "</div>"
-                    + "<div class='building-titleInfo-body' style='display:none;'>"
+                    + "<div class='building-titleInfo-body'>"
                     + "</div>"
                     + "<div class='building-titleInfo-footer' style='display:none;'>"
                     + "</div>"
@@ -272,7 +272,7 @@ var building_titleInfo = function(data){
 
     $container.find(".building-titleInfo-body").append(
         "<div class = 'building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
-      +    ( (value['dongNm'] === null) ? ( value['mainPurpsCdNm'] + ' ' + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
+      +    ( (value['dongNm'] === null) ? ( value['bldNm'] + '-' + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
       +    "<span class='ti-angle-double-down'></span>"
       + "</div>"
       + "<div class='building-titleInfo-body-info' style='display:none;'>"

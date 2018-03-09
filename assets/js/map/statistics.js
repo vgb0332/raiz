@@ -1,4 +1,5 @@
 var beforeNm = '';
+var Jchartarr = [];
 
 function initStcs() {
   console.log('called');
@@ -552,6 +553,10 @@ var stcs_additag = function(target,data,addiType,code){
         console.log(data);
         console.log(name);
         console.log(value);
+
+        // customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
+        //   stcs_additag(STCSwindow,data,stcsAggList[i],polygons[0].Bb[0][3]);
+
         new Chart($(target).find('#jobsChart'),{
             'type': 'radar',
             'data': {
@@ -574,7 +579,8 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        // console.log(data);
+        Jchartarr.push([name,value])
+        console.log(Jchartarr);
         // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsBiz");
         // for (var i = 0; i < data.length; i++) {
         //   $container.append(
@@ -588,7 +594,6 @@ var stcs_additag = function(target,data,addiType,code){
       alert('stcs-additag error')
 
   }
-
-  // console.log(data);
-
 };
+
+function changeStcsChart()

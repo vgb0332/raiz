@@ -140,7 +140,7 @@ body {
   right: 0px;
   width: 300px;
   height: calc(100% - 30px);
-  /* background-color: #000000; */
+  background-color: #ececec;
   overflow-y: scroll;
 }
 
@@ -458,10 +458,11 @@ body {
   text-align: left;
   /* padding-left: 20%; */
   text-align: center;
-  border : 1px solid #333;
+  border : 1px solid #ccc7c7;
   font-weight: bold;
-  height: 30px;
-  line-height: 2em;
+  height: 35px;
+  line-height: 2.3em;
+  background-color: #ececec;
   cursor: pointer;
 }
 
@@ -838,4 +839,5 @@ body {
   padding: 10px;
   background-color: #ffffff;
   color : #333;
+  box-shadow: 4px 4px 5px #888888;
 }
