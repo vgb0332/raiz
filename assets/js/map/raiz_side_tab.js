@@ -383,3 +383,112 @@ var delay = (function(){
 /********************************************************************/
 
 /*************************** 실거래 창 ********************************/
+
+//주소 초기화
+geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(data, status){
+
+    if (status === daum.maps.services.Status.OK) {
+
+        $(".sil-location-name").text(data[0]['address_name']);
+
+    }
+
+});
+
+$(".raiz-sil-tab .raiz-side-tab-list > li").on('click', function(e){
+    daum.maps.event.trigger(map, 'idle');
+});
+
+daum.maps.event.addListener(map, 'idle', function() {
+
+    //find which sil tab is open!
+
+    var target = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
+    if(target.attr('id') === undefined) return false;
+
+    if(map.getLevel() > 5){
+        target.find(".sil-result-list > li").text('조금만 확대해주세요^^;;');
+        return false;
+    }
+
+    if(target.attr('id') === 'apt-sil'){
+
+      geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
+        if (status === daum.maps.services.Status.OK) {
+
+           if(address[0]['code'] === currentCode) return false;
+           target.find(".sil-location-name").text(address[0]['address_name']);
+           target.find(".cs-loader").fadeIn('slow');
+           customAjax($SITE_URL+'get/aptSilPolygon',
+                     {
+                       bjdongCd : address[0]['code'],
+                     },
+                     fillAptSilTab);
+
+        }
+      });
+    }
+
+});
+
+function fillAptSilTab(result){
+  console.log(result);
+  if(result.length <= 0){
+    //결과없음
+    $(".raiz-sil-tab .raiz-side-tab-content li:visible").find(".cs-loader").fadeOut('slow');
+    return false;
+  }
+
+  var cur_jibun =result[0]['지번'];
+  var prev_jibun = cur_jibun;
+  var sorted_data = {};
+  $.each(result, function(index, value){
+    cur_jibun = value['지번'];
+    var new_label = value['아파트'];
+    sorted_data[new_label] = value;
+    sorted_data[new_label].push(value);
+    if(cur_jibun !== prev_jibun){
+
+      prev_jibun = cur_jibun;
+    }
+
+    if(index === result.length - 1){
+
+    }
+  });
+  console.log(sorted_data);
+  // for(var i = 0; i < result.length; ++i){
+  //   cur_jibun = result[i]['지번'];
+  //   if(cur_jibun !== prev_jibun){
+  //     var li = "<li>" + result[i-1]['아파트'] + "</li>";
+  //     $(".raiz-sil-tab .raiz-side-tab-content li:visible").find(".sil-result-list").append(li);
+  //
+  //     var point = parsePoint(result[i-1]['point']);
+  //     customAjax($SITE_URL+'get/singlePolygon',
+  //                 {
+  //                   bjdongCd : currentCode,
+  //                   lat : point[0],
+  //                   lng : point[1]
+  //                 },
+  //                 mainActivity);
+  //     prev_jibun = cur_jibun;
+  //   }
+  //   if(i == result.length - 1){
+  //     var li = "<li>" + result[i]['아파트'] + "</li>";
+  //     $(".raiz-sil-tab .raiz-side-tab-content li:visible").find(".sil-result-list").append(li);
+  //     var point = parsePoint(result[i]['point']);
+  //     customAjax($SITE_URL+'get/singlePolygon',
+  //                 {
+  //                   bjdongCd : currentCode,
+  //                   lat : point[0],
+  //                   lng : point[1]
+  //                 },
+  //                 mainActivity);
+  //   }
+  // }
+  $(".raiz-sil-tab .raiz-side-tab-content li:visible").find(".cs-loader").fadeOut('slow');
+}
+
+function parsePoint(point){
+  return point.replace(/POINT+(+)/g,'');
+}

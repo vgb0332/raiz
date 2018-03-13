@@ -141,6 +141,7 @@ function THREE_init(polygons, data, Rwindow){
         'target' : target
       };
       building_mesh.material.transparent = true;
+      building_mesh.material.opacity = 0.7;
 
       group.add(building_mesh);
       resetGroup.push(building_mesh);
@@ -148,6 +149,12 @@ function THREE_init(polygons, data, Rwindow){
   });
 
   scene.add( group );
+  //copy initial group for reset clone fucking doesn't work;
+  var resetGroup = [];
+  $.each(group.children, function(index, mesh){
+    resetGroup.push(mesh);
+  });
+
   renderer.render(scene, camera);
 
   /* event listeners */
@@ -180,6 +187,60 @@ function THREE_init(polygons, data, Rwindow){
     domEvents.camera(camera);
   });
 
+  Rwindow.find(".raiz-reset").on("click", function(e){
+    try{
+      var type_check = group.children[0].userData['type'];
+    }catch(err){
+      return false;
+    }
+
+    //initial animation
+    TWEEN.removeAll();
+    controls.reset();
+    var target = new THREE.Vector3(5, -370, 330);
+    var camera_tween = animateVector3(
+              new THREE.Vector3(camera.position.x, camera.position.y,  camera.position.z), target, {
+              duration: 1200,
+              easing: TWEEN.Easing.Quadratic.InOut,
+              update: function(d){
+                // console.log('updating' , d);
+                camera.position.x = d.x;
+                camera.position.y = d.y;
+                camera.position.z = d.z;
+                controls.update();
+                renderer.render(scene, camera);
+              },
+              callback: function(){
+                console.log('camera job done');
+                domEvents.camera(camera);
+              }
+            });
+
+    if(type_check !== 'floor') {
+        camera_tween.start();
+    }
+    else{
+
+      TWEEN.removeAll();
+      controls.reset();
+      $.each(group.children, function(index, mesh){
+        mesh.material.dispose();
+        mesh.geometry.dispose();
+      });
+
+      group.children = [];
+      $.each(resetGroup, function(index, mesh){
+        mesh.material.opacity = 1;
+        group.add(mesh);
+      });
+      group.position.z = 0;
+      camera_tween.start();
+      // renderer.render(scene, camera);
+
+    }
+
+  });
+
   //for timing issue, all ajax requests for data should be done first before event trigger is assigned.
   $(document).ajaxStop(function(){
     var building_titleInfo = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
@@ -190,11 +251,198 @@ function THREE_init(polygons, data, Rwindow){
                              .find('.raiz-window-info-body').find('.building-recapTitleInfo')
                              .find('.building-recapTitleInfo-body').find('.building-recapTitleInfo-body-title');
 
+    var building_flrInfo = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
+                             .find('.raiz-window-info-body').find('.building-titleInfo')
+                             .find('.building-titleInfo-body').find('.building-titleInfo-body-info')
+                             .find('.flrInfo').find('.flr3d');
+
+    var building_pubInfo = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
+                             .find('.raiz-window-info-body').find('.building-titleInfo')
+                             .find('.building-titleInfo-body').find('.building-titleInfo-body-info')
+                             .find('.pubInfo').find('.flr3d');
+
+    var building_flr = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
+                            .find('.raiz-window-info-body').find('.building-titleInfo')
+                            .find('.building-titleInfo-body').find('.building-titleInfo-body-info')
+                            .find('.flrInfo').find('.flr');
+
+    var building_pubFlr = Rwindow.find('.raiz-window-body').find('.raiz-window-info')
+                            .find('.raiz-window-info-body').find('.building-titleInfo')
+                            .find('.building-titleInfo-body').find('.building-titleInfo-body-info')
+                            .find('.pubInfo').find('.flr');
+
     var target = building_titleInfo.add(building_recapTitleInfo);
+
+    building_flr.add(building_pubFlr).on('mouseover', function(e){
+      stopTWEEN();
+      var target_flrGbCd = $(this).attr('data-flrGbCd');
+      var target_flrNo = $(this).attr('data-flrNo');
+
+      $.each(group.children, function(index, mesh){
+        if(mesh.userData.type !== 'floor') return false;
+
+        var mesh_flrGbCd = mesh.userData['flrGbCd'];
+        var mesh_flrNo = mesh.userData['flrNo'];
+
+        if(target_flrGbCd === mesh_flrGbCd && target_flrNo ===  mesh_flrNo){
+
+        var mouseover_tween = new TWEEN.Tween({opacity : 1})
+                      .to( {opacity: 0.3}, 500)
+                      .onUpdate(function(e){
+                        mesh.material.opacity = e.opacity;
+                        renderer.render(scene, camera);
+                      })
+                      .onStop(function(){
+                        mesh.material.opacity = 1;
+                      })
+                      .onComplete(function(e){
+
+                      })
+                      .start()
+                      .repeat(Infinity);
+        }
+
+      });
+    });
+
+    building_flr.add(building_pubFlr).on('mouseout', function(e){
+      stopTWEEN();
+    });
+
+    building_flrInfo.add(building_pubInfo).on('click', function(e){
+        console.log('I want 3d floors');
+        console.log(group.position);
+        var target_buildingID = $(this).parent().parent().attr('data-buildingID');
+        var target_flrNo = $(this).siblings('.flr').length;
+        var floors = $(this).siblings('.flr');
+
+        try{
+          var type_check = group.children[0].userData['type'];
+        }catch(err){
+          return false;
+        }
+
+        if(type_check === 'floor'){
+          console.log('right?');
+          TWEEN.removeAll();
+          controls.reset();
+          $.each(group.children, function(index, mesh){
+            mesh.material.dispose();
+            mesh.geometry.dispose();
+          });
+
+          group.children = [];
+          $.each(resetGroup, function(index, mesh){
+            mesh.material.opacity = 1;
+            group.add(mesh);
+          });
+          group.position.z = 0;
+          // camera_tween.start();
+
+        };
+
+        $.each(group.children, function(index, mesh){
+
+          var sigunguCd =  mesh.userData.target.attr('data-sigunguCd');
+          var buildingID = mesh.userData.target.attr('data-buildingID');
+
+          var target = sigunguCd + '-' + buildingID;
+
+          if(target === target_buildingID){
+            var geometry = mesh.geometry;
+            var center = geometry.boundingBox.getCenter();
+
+            var delete_tween = new TWEEN.Tween({opacity : 1})
+                        .to( {opacity: 0}, 500)
+                        .onUpdate(function(e){
+                          $.each(group.children, function(index, mesh){
+                            mesh.material.opacity = e.opacity;
+                          });
+                          renderer.render(scene, camera);
+                        })
+                        .onComplete(function(e){
+
+                          $.each(group.children, function(index, mesh){
+                            mesh.material.dispose();
+                            mesh.geometry.dispose();
+                          });
+
+                          group.children = [];
+                          onComp();
+
+                        })
+                        .start();
+              function onComp(){
+
+                var z = 0;
+                for(var i = floors.length - 1; i >= 0; --i){
+
+                    var floor = floors[i];
+                    var flrGbCd = $(floor).attr('data-flrGbCd');
+                    var flrNo = $(floor).attr('data-flrNo');
+                    var color = '#54ff9f';
+                    //지하는 블랙, 옥탑은 파랑색, 보통은 노랑색
+                    if(flrGbCd === '10'){
+                      color = '#8b8b83';
+                    }
+                    else if(flrGbCd === '30'){
+                      color = '#c9e1ff';
+                    }
+
+                    var twin = mesh.clone();
+                    twin.material.dispose();
+                    twin.geometry.dispose();
+
+                    twin.material = new THREE.MeshPhongMaterial( { color: color, transparent: true } );
+                    twin.scale.z = 2;
+                    twin.position.set(-center.x, -center.y, (z++) * 5);
+                    twin.material.opacity = 1;
+
+                    twin.userData = {
+                      'type' : 'floor',
+                      'flrGbCd' : flrGbCd,
+                      'flrNo' : flrNo
+                    };
+                    group.add(twin);
+                    if(i === 0){
+                      group.translateZ(-twin.position.z / 2);
+                    }
+                    // group.translateZ(-(target_flrNo - 1) / 2);
+                    renderer.render(scene, camera);
+
+                };
+
+              }
+
+              controls.reset();
+              var target = new THREE.Vector3(-66, -387, 23);
+              var camera_tween = animateVector3(new THREE.Vector3(camera.position.x, camera.position.y,  camera.position.z), target, {
+                duration: 800,
+                easing: TWEEN.Easing.Quadratic.InOut,
+                update: function(d){
+                  // console.log('updating' , d);
+                  camera.position.x = d.x;
+                  camera.position.y = d.y;
+                  camera.position.z = d.z;
+                  controls.update();
+                  renderer.render(scene, camera);
+                },
+                callback: function(){
+                  console.log('camera job done');
+                  domEvents.camera(camera);
+                }
+              });
+              delete_tween.chain(camera_tween);
+          }
+
+        });
+
+    });
 
     target.on("mouseover", function(e){
         stopTWEEN();
-
+        var type_check = group.children[0].userData['type'];
+        if(type_check === 'floor') return false;
         var mesh_target = $(this).attr('data-buildingID');
         $.each(group.children, function(index, mesh){
 
@@ -218,25 +466,26 @@ function THREE_init(polygons, data, Rwindow){
                 renderer.render(scene, camera);
               },
               stop: function(){
-                console.log('tween stopped TT');
+
                 mesh.position.z = original_position_z;
                 mesh.material.opacity = 1;
                 renderer.render(scene, camera);
               },
               callback : function(){
-                console.log('done');
+
                 mesh.material.opacity = 1;
                 mesh.position.z = original_position_z;
                 renderer.render(scene, camera);
               }
             })
+            .start()
             .repeat(Infinity);
 
-            var renderOnMouseOver = function(){
-                requestAnimationFrame(renderOnMouseOver);
-                TWEEN.update();
-            };
-            requestAnimationFrame(renderOnMouseOver);
+            // var renderOnMouseOver = function(){
+            //     requestAnimationFrame(renderOnMouseOver);
+            //     TWEEN.update();
+            // };
+            // requestAnimationFrame(renderOnMouseOver);
           }
 
       });
@@ -249,6 +498,9 @@ function THREE_init(polygons, data, Rwindow){
     building_titleInfo.on('click', function(e){
       stopTWEEN();
       var mesh_target = $(this).attr('data-buildingID');
+      var type_check = group.children[0].userData['type'];
+      if(type_check === 'floor') return false;
+
       $.each(group.children, function(index, mesh){
 
 
@@ -302,7 +554,7 @@ function THREE_init(polygons, data, Rwindow){
       console.log('camera job done');
       domEvents.camera(camera);
     }
-  });
+  }).start();
 
   var renderOnMouseClick = function(){
       requestAnimationFrame(renderOnMouseClick);
@@ -345,7 +597,7 @@ function animateVector3(vectorToAnimate, target, options){
           if(options.callback) options.callback();
         });
     // start the tween
-    tweenVector3.start();
+    // tweenVector3.start();
     // return the tween in case we want to manipulate it later on
     return tweenVector3;
 }

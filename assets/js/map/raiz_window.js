@@ -221,7 +221,7 @@ function lifeToWindow(Rwindow){
     $(this).tooltip();
   });
 
-  Rwindow.find(".raiz-info-icon").on("click", function(e){
+  Rwindow.find(".raiz-info-icon").not('.raiz-reset').on("click", function(e){
     if(!Rwindow.find(".raiz-window-info").is(':visible')){
 
       var width_to_move = Rwindow.find(".raiz-window-info").width();
@@ -257,6 +257,16 @@ function lifeToWindow(Rwindow){
           Rwindow.find(".raiz-info-icon").css('right', 30);
 
       });
-    });
+  });
+
+  Rwindow.find(".raiz-reset").tooltip({
+    'animation' : true,
+    'title': '3D 초기화',
+    'placement' : 'left'
+  });
+
+  Rwindow.find(".raiz-reset").on("mouseover", function(e){
+    $(this).tooltip();
+  });
 
 }

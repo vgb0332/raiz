@@ -34,6 +34,12 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->getStcsAggr($code);
   }
 
+  public function stcsAggrSum() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('currHjstcs');
+    echo $this->Statistics->getStcsAggrSum($code);
+  }
+
   public function stcsTotaljobs() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
@@ -43,73 +49,85 @@ class GetStcs extends CI_Controller {
   public function stcsHouseType() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsHouseType($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsHouseType($code,$type);
   }
 
   public function stcsTotalHouse() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsTotalHouse($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsTotalHouse($code,$type);
   }
 
   public function stcsHouseSize() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsHouseSize($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsHouseSize($code,$type);
   }
 
   public function stcsHouseHold() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsHouseHold($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsHouseHold($code,$type);
   }
 
   public function stcsTotalFamily() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsTotalFamily($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsTotalFamily($code,$type);
   }
 
   public function stcsJobsPop() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsJobsPop($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsJobsPop($code,$type);
   }
 
   public function stcsJobsBiz() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsJobsBiz($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsJobsBiz($code,$type);
   }
 
   public function stcsSexAge() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsSexAge($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsSexAge($code,$type);
   }
 
   public function stcsOldind() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsOldind($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsOldind($code,$type);
   }
 
   public function stcsPopdens() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsPopdens($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsPopdens($code,$type);
   }
 
   public function stcsSupportY() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsSupportY($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsSupportY($code,$type);
   }
 
   public function stcsSupportO() {
     $this->load->model('Statistics');
     $code = $this->input->post('currHjstcs');
-    echo $this->Statistics->getStcsSupportO($code);
+    $type = $this->input->post('type');
+    echo $this->Statistics->getStcsSupportO($code,$type);
   }
 
 

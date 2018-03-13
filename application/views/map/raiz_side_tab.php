@@ -101,16 +101,66 @@
 
         <!-- 위의 리스트와 동일한 순서의 컨텐츠가 들어가야합니다. -->
         <ul class="raiz-side-tab-content">
-          <li id="apt-sil-list" data-index='0'>
+          <li id="apt-sil" data-index='0'>
+            <div class="sil-location-name">
+            </div>
+            <div href="#apt-sil-filter" data-toggle='collapse' class="sil-filter-index">
+              <span class="ti-filter" data-toggle="tooltip" data-placement="left" title="필터 검색"></span>
+              <script type="text/javascript">
+                $('[data-toggle="tooltip"]').tooltip();
+              </script>
+            </div>
+            <div id="apt-sil-filter" class="collapse sil-filter-content">
+              조건입니다용!
+            </div>
+            <div class="sil-result-container">
+              <div class="cs-loader">
+                <div class="cs-loader-inner">
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                </div>
+              </div>
+              <ul class="sil-result-list">
+                <li>결과 1</li>
+                <li>결과 2</li>
+                <li>결과 3</li>
+                <li>결과 4</li>
+              </ul>
+            </div>
+            <!-- <div class="" id="slider-3" style="width:50%;"></div>
+            <script type="text/javascript">
+            $( "#slider-3" ).slider({
+                       range:true,
+                       min: 0,
+                       max: 10,
+                       values: [ 0, 10 ],
+                       step: 1,
+                       slide: function( event, ui ) {
+                         console.log('sliding');
+                       }
+            }).each(function() {
+                var opt = $(this).data().uiSlider.options;
+
+                // Get the number of possible values
+                var vals = opt.max - opt.min;
+                // Space out values
+                $( "#slider-3 label").remove();
+                for (var i = 0; i <= vals; i++) {
+                  var el = $('<label>'+(opt.min*1+i)+'</label>').css('left',(i/vals*100)+'%');
+
+                  $( "#slider-3" ).append(el);
+                }
+              });
+            </script> -->
+          </li>
+          <li id="yunlip-sil" data-index='1'>
 
           </li>
-          <li id="yunlip-sil-list" data-index='1'>
+          <li id="store-sil" data-index='2'>
 
           </li>
-          <li id="store-sil-list" data-index='2'>
-
-          </li>
-          <li id="toji-sil-list" data-index='3'>
+          <li id="toji-sil" data-index='3'>
 
           </li>
         </ul>
@@ -141,12 +191,17 @@
         <span class="ti-stat"> 통계</span>
         <span class="raiz-side-tab-return ti-angle-left"></span>
       </div>
-      <div class="stat-body">
+      <div class="stat-body" style="text-align:center;">
 
           <a onclick="stat_side_btn(this.name)" id="stat-side-sido" name="">a</a></br>
           <a onclick="stat_side_btn(this.name)" id="stat-side-sgg" name="">b</a></br>
           <a onclick="stat_side_btn(this.name)" id="stat-side-dong" name="">c</a></br>
 
+          <h4>통계보기</h4>
+          <div class="btn-group btn-toggle">
+            <button class="btn btn-lg btn-default">OFF</button>
+            <button id="stcsToggle" value="0" class="btn btn-lg">ON</button>
+          </div>
           <!-- <ul class="raiz-side-tab-list">
               <li>
                   <button class="btn" onclick="getStcsPopdens();">인구 밀도 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>

@@ -26,6 +26,16 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
+  public function aptSilPolygon(){
+    $this->load->model('Polygon');
+    $data = array (
+      'type' => 'aptSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+    );
+
+    echo $this->Polygon->getPolyInfo($data);
+  }
+
   public function buildingSingleFlrInfo(){
     $this->load->model('Building');
     $data = array (
@@ -51,6 +61,21 @@ class Get extends CI_Controller {
       'bun' => $this->input->post('bun'),
       'ji' => $this->input->post('ji'),
       'buildingID' => $this->input->post('buildingID'),
+    );
+
+    echo $this->Building->getBuildingInfo($data);
+  }
+
+  public function buildingPubInfo(){
+    $this->load->model('Building');
+    $data = array (
+      'type' => 'brPubInfo',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji'),
+      'buildingID' => $this->input->post('buildingID'),
+      'dongNm' => $this->input->post('dongNm')
     );
 
     echo $this->Building->getBuildingInfo($data);

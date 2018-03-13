@@ -12,6 +12,30 @@ Class Building extends CI_Model {
     $bun = $values['bun'];
     $ji = $values['ji'];
 
+    if($type === 'brPubInfo'){
+      $buildingID = $values['buildingID'];
+      $dongNm = $values['dongNm'];
+      // return json_encode($values, JSON_UNESCAPED_UNICODE);
+      $this->db->select('dongNm');
+      $this->db->select('hoNm');
+      $this->db->select('flrGbCd');
+      $this->db->select('flrNo');
+      $this->db->select('area');
+      $this->db->select('strctCdNm');
+      $this->db->select('exposPubuseGbCdNm');
+      $this->db->select('mainAtchGbCdNm');
+
+      $this->db->where('sigunguCd', $sigunguCd);
+      $this->db->where('bjdongCd', $bjdongCd);
+      $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
+      $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
+      $this->db->where('dongNm', $dongNm);
+
+      // return json_encode($this->db->last_query());
+      $result = $this->db->get('getBrExposPubuseAreaInfo')->result();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+
     if($type === 'brSingleFlrInfo'){
       $buildingID = $values['buildingID'];
       $flrNo = $values['flrNo'];

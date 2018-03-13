@@ -3,6 +3,7 @@ var Jchartname = [];
 var Jchartvalue = [];
 var nowcht;
 
+
 function initStcs() {
   console.log('called');
   ajax_type = 'stcsSido';
@@ -18,6 +19,20 @@ function initStcs() {
   //       duration: 2000
   //   }
   // });
+
+  $('.btn-toggle').click(function() {
+    if ($('#stcsToggle').val() == 0) {          //통계보기 on
+      console.log('hello');
+      $('#stcsToggle').val(1);
+      $('.stcs-polygon').css('fill','#4285f48f')
+    }
+    else {                                      //통계보기 off
+      $('#stcsToggle').val(0);
+      $('.stcs-polygon').css('fill','#404040')
+    }
+    // $(this).find('.btn').toggleClass('active');
+    $(this).find('.btn').toggleClass('btn-default');
+  });
 }
 
 function processStcs(data) {
@@ -202,7 +217,7 @@ var stcs_initTag = function(target){
                     +                    '</div>'
                     +                    '<div class="p-2 bg-gradient-x-info white media-body">'
                     +                        '<h5>면적</h5>'
-                    +                        '<h5 id="stcs-init-area" class="text-bold-400 mb-0"><i class="ft-plus"></i></h5>'
+                    +                        '<h6 id="stcs-init-area" class="text-bold-400 mb-0"><i class="ft-plus"></i></h6>'
                     +                    '</div>'
                     +                '</div>'
                     +            '</div>'
@@ -217,7 +232,7 @@ var stcs_initTag = function(target){
                     +                    '</div>'
                     +                    '<div class="p-2 bg-gradient-x-danger white media-body">'
                     +                        '<h5>총 인구</h5>'
-                    +                        '<h5 id="stcs-init-pop" class="text-bold-400 mb-0"><i class="ft-arrow-up"></i></h5>'
+                    +                        '<h6 id="stcs-init-pop" class="text-bold-400 mb-0"><i class="ft-arrow-up"></i></h6>'
                     +                    '</div>'
                     +                '</div>'
                     +            '</div>'
@@ -232,7 +247,7 @@ var stcs_initTag = function(target){
                     +                    '</div>'
                     +                    '<div class="p-2 bg-gradient-x-warning white media-body">'
                     +                        '<h5>평균 나이</h5>'
-                    +                        '<h5 id="stcs-init-avr" class="text-bold-400 mb-0"><i class="ft-plus"></i></h5>'
+                    +                        '<h6 id="stcs-init-avr" class="text-bold-400 mb-0"><i class="ft-plus"></i></h6>'
                     +                    '</div>'
                     +                '</div>'
                     +            '</div>'
@@ -247,7 +262,7 @@ var stcs_initTag = function(target){
                     +                    '</div>'
                     +                    '<div class="p-2 bg-gradient-x-success white media-body">'
                     +                        '<h5>총 주택수</h5>'
-                    +                        '<h5 id="stcs-init-tothouse" class="text-bold-400 mb-0"><i class="ft-plus"></i></h5>'
+                    +                        '<h6 id="stcs-init-tothouse" class="text-bold-400 mb-0"><i class="ft-plus"></i></h6>'
                     +                    '</div>'
                     +                '</div>'
                     +            '</div>'
@@ -459,23 +474,28 @@ var stcs_additag = function(target,data,addiType,code){
 
   var name = [];
   var value = [];
-  for (var i = 0; i < data.length; i++) {
-    if (data[i]['value'] == "0") {
-      continue;
-    }
-    if (addiType == "stcsHouseSize" && String(data[i]['name']).indexOf("~")) {
-      name.push(String(data[i]['name']).replace("이하(호)",""));
-      value.push(data[i]['value']);
-    }
-    else{
-      name.push(data[i]['name']);
-      value.push(data[i]['value']);
+
+  if (addiType == 'stcsHouseSize' || addiType == 'stcsHouseHold' || addiType == 'stcsJobsPop' || addiType == 'stcsJobsBiz')
+  {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i]['value'] == "0") {
+        continue;
+      }
+      if (addiType == "stcsHouseSize" && String(data[i]['name']).indexOf("~")) {
+        name.push(String(data[i]['name']).replace("이하(호)",""));
+        value.push(data[i]['value']);
+      }
+      else{
+        name.push(data[i]['name']);
+        value.push(data[i]['value']);
+      }
     }
   }
   // console.log(addiType);
   switch (addiType) {
 
     case 'initdata':
+      console.log(data);
       $(target).find('#stcs-init-area').text((data[0]*1).toFixed(1));
       $(target).find('#stcs-init-pop').text(data[1]);
       $(target).find('#stcs-init-avr').text(data[2]);
@@ -586,7 +606,7 @@ var stcs_additag = function(target,data,addiType,code){
         //                      "</br>가구 총괄 : "+data[i]['name']+" / "+data[i]['value']+" 세대"
         //   );
         // }
-        $(target).find('#stcs-totalFaily').text('세대 구성별 가구 / 총 가구 수 : '+data[0]['value']);
+        $(target).find('#stcs-totalFaily').text('총 가구 수 : '+data[0]['value']+' / 평균 가구원 수 : '+data[1]['value']);
 
         break;
 
@@ -594,14 +614,14 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
+        // console.log(data);
         console.log(name);
         console.log(value);
 
         // customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
         //   stcs_additag(STCSwindow,data,stcsAggList[i],polygons[0].Bb[0][3]);
 
-        nowcht = new Chart($(target).find('#jobsChart'),{
+        new Chart($(target).find('#jobsChart'),{
             'type': 'radar',
             'data': {
                   'labels': name,
@@ -616,8 +636,8 @@ var stcs_additag = function(target,data,addiType,code){
             'options': 'options'
         });
 
-        var temp = '<a onclick="changeStcsJchart()" name="종사자 수" style="position:absolute;z-index:1" class="btn btn-sm btn-primary mr-1"><i class="icon-bar-chart"></i></a>';
-        $(target).find('.jobsToggle').append(temp);
+        // var temp = '<a onclick="changeStcsJchart()" name="종사자 수" style="position:absolute;z-index:1" class="btn btn-sm btn-primary mr-1"><i class="icon-bar-chart"></i></a>';
+        // $(target).find('.jobsToggle').append(temp);
 
         break;
 
@@ -648,79 +668,82 @@ var stcs_additag = function(target,data,addiType,code){
         for (var i = 0; i < data.length; i++) {
           if (data[i]['item']*1 < 60) {
             if (data[i]['item'] == '31' || data[i]['item'] == '32') {
-              dataset1[0] += data[i]['value'];
+              dataset1[0] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '33' || data[i]['item'] == '34') {
-              dataset1[1] += data[i]['value'];
+              dataset1[1] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '35' || data[i]['item'] == '36') {
-              dataset1[2] += data[i]['value'];
+              dataset1[2] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '37' || data[i]['item'] == '38') {
-              dataset1[3] += data[i]['value'];
+              dataset1[3] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '39' || data[i]['item'] == '40') {
-              dataset1[4] += data[i]['value'];
+              dataset1[4] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '41' || data[i]['item'] == '42') {
-              dataset1[5] += data[i]['value'];
+              dataset1[5] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '43' || data[i]['item'] == '44') {
-              dataset1[6] += data[i]['value'];
+              dataset1[6] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '45' || data[i]['item'] == '46') {
-              dataset1[7] += data[i]['value'];
+              dataset1[7] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '47' || data[i]['item'] == '48') {
-              dataset1[8] += data[i]['value'];
+              dataset1[8] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '49' || data[i]['item'] == '50') {
-              dataset1[9] += data[i]['value'];
+              dataset1[9] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '51') {
-              dataset1[10] += data[i]['value'];
+              dataset1[10] += data[i]['value']*1;
             }
           }
           else {
             if (data[i]['item'] == '61' || data[i]['item'] == '62') {
-              dataset2[0] += data[i]['value'];
+              dataset2[0] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '63' || data[i]['item'] == '64') {
-              dataset2[1] += data[i]['value'];
+              dataset2[1] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '65' || data[i]['item'] == '66') {
-              dataset2[2] += data[i]['value'];
+              dataset2[2] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '67' || data[i]['item'] == '68') {
-              dataset2[3] += data[i]['value'];
+              dataset2[3] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '69' || data[i]['item'] == '70') {
-              dataset2[4] += data[i]['value'];
+              dataset2[4] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '71' || data[i]['item'] == '72') {
-              dataset2[5] += data[i]['value'];
+              dataset2[5] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '73' || data[i]['item'] == '74') {
-              dataset2[6] += data[i]['value'];
+              dataset2[6] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '75' || data[i]['item'] == '76') {
-              dataset2[7] += data[i]['value'];
+              dataset2[7] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '77' || data[i]['item'] == '78') {
-              dataset2[8] += data[i]['value'];
+              dataset2[8] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '79' || data[i]['item'] == '80') {
-              dataset2[9] += data[i]['value'];
+              dataset2[9] += data[i]['value']*1;
             }
             else if (data[i]['item'] == '81') {
-              dataset2[10] += data[i]['value'];
+              dataset2[10] += data[i]['value']*1;
             }
           }
 
         }
+        console.log(dataset1);
+        console.log(dataset2);
+        console.log(data);
 
 
-        var ctx = document.getElementById('sexAgeChart').getContext('2d');
+        var ctx = $(target).find('#sexAgeChart').get(0).getContext('2d');
         ctx.canvas.width = 1000;
         ctx.canvas.height = 300;
         var cfg = {
@@ -778,7 +801,7 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
+        // console.log(data);
         $(target).find('#stcs-oldIndices').text(data[0]['value']);
         break;
 
@@ -788,7 +811,7 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
+        // console.log(data);
         $(target).find('#stcs-popDensity').text(data[0]['value']);
         break;
 
@@ -796,7 +819,7 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
+        // console.log(data);
         $(target).find('#stcs-supportYoung').text(data[0]['value']);
         break;
 
@@ -804,7 +827,7 @@ var stcs_additag = function(target,data,addiType,code){
         if (data.length == 0) {
           break;
         }
-        console.log(data);
+        // console.log(data);
         $(target).find('#stcs-supportOld').text(data[0]['value']);
         break;
 
@@ -816,7 +839,7 @@ var stcs_additag = function(target,data,addiType,code){
 };
 
 function changeStcsJchart(){
-  console.log(Jchartname,Jchartvalue);
+  // console.log(Jchartname,Jchartvalue);
   var jname = Jchartname;
   var jvalue = Jchartvalue;
   removeData(nowcht);

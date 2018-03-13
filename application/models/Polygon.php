@@ -7,6 +7,25 @@ Class Polygon extends CI_Model {
 
   function getPolyInfo($values){
     $type = $values['type'];
+    if($type === 'aptSil'){
+      $sigunguCd = substr($values['bjdongCd'], 0, 5);
+      $bjdongCd = substr($values['bjdongCd'], 5, 5);
+      // return json_encode($values, JSON_UNESCAPED_UNICODE);
+      $query = $this->db->query(
+                "SELECT b.년, b.월, b.일, b.아파트, b.지번, b.전용면적, b.층, b.거래금액, st_asText(st_centroid(geomfromtext(a.polygon))) as point
+                FROM  getLandPolygonText as a, getRTMSDataSvcAptTrade as b
+                WHERE a.sigunguCd = $sigunguCd
+                AND   a.bjdongCd = $bjdongCd
+                AND 	b.지역코드 = $sigunguCd
+                AND   b.법정동코드 = $bjdongCd
+                AND   a.bun = b.번
+                AND   a.ji = b.지
+                ");
+
+      $result = $query->result_array();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+
+    }
     if($type === 'single'){
       $sigunguCd = substr($values['bjdongCd'], 0, 5);
       $bjdongCd = substr($values['bjdongCd'], 5, 5);

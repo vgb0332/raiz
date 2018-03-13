@@ -29,6 +29,8 @@ var ajax_type = 'toji';
 var currHjstcs = '';
 var aggr_poly = [];
 
+var currentCode;
+
 var search_result = function(data){
   var $container = $(document.createElement('li'));
   $container.append(  "<h4 class='place_name'>"
@@ -92,14 +94,18 @@ var raiz_window = function(title){
                     +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-left-click.png' title='mouse_left_click'>"
                     +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-right-click.png' title='mouse_left_click'>"
                     +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-scroll.png' title='mouse_left_click'>"
-                    +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-double-click.png' title='mouse_left_click'>"
+                    // +           "<img alt='mouse left click' width=40 height=40 src='./assets/img/mouse-double-click.png' title='mouse_left_click'>"
                     +         "</div>"
                     +         "<div class=raiz-mouse-control-text>"
                     +            "<p> 회전 </p>"
                     +            "<p> 이동 </p>"
                     +            "<p> 확대/축소 </p>"
-                    +            "<p> 초기화 </p>"
+                    // +            "<p> 초기화 </p>"
                     +         "</div>"
+                    +     "</div>"
+
+                    +     "<div class='raiz-info-icon raiz-reset'>"
+                    +       "<span class='ti-reload'></span>"
                     +     "</div>"
 
                     +     "<div class='raiz-compass'>"
@@ -224,18 +230,6 @@ var building_titleInfo = function(data){
                     + "</div>"
                   );
 
-  // var data_attr = [ "bldNm", "mainPurpsCdNm", "heit", "strctCdNm",
-  //                   "hoCnt", "archArea", "fmlyCnt", "totArea",
-  //                   "hhldCnt", "bcRat", "etcPurps", "vlRat", "engrGrade",
-  //                   "gnBldGrade", "pmsDay", "useAprDay"
-  //                 ];
-
-  // var data_index = [ "건물이름", "주용도", "높이", "구조명",
-  //                   "호수" , "건축면적", "가구수","연면적",
-  //                   "세대수", "건폐율", "기타용도", "용적률",
-  //                   "에너지효율등급", "친환경건축물등급", "허가일", "사용승인일"
-  //                 ];
-
   var data_attr = [ "bldNm", "mainPurpsCdNm","etcPurps",
                     "strctCdNm", "archArea", "totArea",
                     "bcRat", "vlRat", "useAprDay"
@@ -284,25 +278,28 @@ var building_titleInfo = function(data){
            +      "<div class='flrInfo'>"
 
            +      "</div>"
-           +   "</div>"
+           +   "</div>" ;
 
-           ;
+    if(value['regstrGbCd'] === '2'){
+      //집합정보는 전유부 필!
+      inside += "<div class='pubInfo-lookup' data-buildingId=" + value['mgmBldrgstPk'] + ">"
+             +      "<div class='pubInfo-header'>"
+             +          "전유부"
+             +          "<span class='ti-arrow-down'></span>"
+             +      "</div>"
+             +      "<div class='pubInfo'>"
 
+             +      "</div>"
+             +   "</div>" ;
+    }
 
+    console.log(value);
     $container.find(".building-titleInfo-body").append(
-        "<div href=#building-info-" + index + " data-toggle=collapse class='building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
-      +    ( (value['dongNm'] === null) ? ( value['bldNm'] + '-' + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
+        "<div href=#building-info-" + index + " class='building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
+      +    ( (value['dongNm'] === null) ? ( ( value['bldNm']=== null ? value['mgmBldrgstPk'].split('-')[0] + '-' : value['bldNm'] ) + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )
       +    "<span class='ti-angle-double-down'></span>"
       + "</div>"
-      + "<div id=building-info-" + index + " class='collapse building-titleInfo-body-info'>"
-        // + "<div href='#demo' data-toggle='collapse'>"
-        // +  "<img src='bandmember.jpg' class='img-circle person' alt='Random Name' width='255' height='255'>"
-        // + "</div>"
-        // + "<div id='demo' class='collapse'>"
-        // +   "<p>Guitarist and Lead Vocalist</p>"
-        // +   "<p>Loves long walks on the beach</p>"
-        // +   "<p>Member since 1988</p>"
-        // + "</div>"
+      + "<div id=building-info-" + index + " class='building-titleInfo-body-info' style='display:none;'>"
       +     inside
       + "</div>"
     );
@@ -316,6 +313,148 @@ var building_titleInfo = function(data){
       'buildingID' : value['mgmBldrgstPk'],
     };
 
+    $container.find(".pubInfo-lookup[data-buildingId="+ value['mgmBldrgstPk'] + "]").find('.pubInfo-header').on('click', function(e){
+
+        var currentDom = $(this);
+        if(!currentDom.parent().find(".pubInfo").is(":visible")){
+
+          currentDom.find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+
+        }
+        else{
+
+          currentDom.find('span').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+
+        }
+        currentDom.parent().find(".pubInfo").toggle('fast', 'linear');
+
+        if(currentDom.parent().find(".pubInfo div").length < 1){
+          values.type = 'brPubInfo';
+          values.dongNm = value['dongNm'];
+          console.log(values);
+          customAjax($SITE_URL+'get/buildingPubInfo', values, function(data){
+
+            if(data.length <= 0){
+              currentDom.parent().find(".pubInfo").append($('<div>', {'text': '정보없음'}));
+              return;
+            }
+            data.sort(
+              function(a, b){
+                if(a['flrGbCd'] == '10'){
+                  return b['flrGbCd'] - a['flrGbCd'] || a['flrNo'] - b['flrNo'];
+                }
+                else{
+                  return b['flrGbCd'] - a['flrGbCd'] || b['flrNo'] - a['flrNo'];
+                }
+              }
+            );
+
+            currentDom.parent().find(".pubInfo").append($('<div>', {'text': '3D랑 같이 보기', 'class' : 'flr3d'}));
+
+            $.each(data, function(index, value){
+
+                  // var info = document.createElement('div', { style : 'border-bottom: 1px solid #333'});
+                  var info = $('<div>').css('border-bottom', '1px solid #333');
+                  var meter = $('<sup>', {'text' : '2'});
+
+                  info.append($('<p>')
+                      .append($('<strong>', {'text' : '호'}))
+                      .append($('<span>', {'text' : value['hoNm']} ))
+                      .css({'text-align' : 'left', 'margin' : '0'}));
+
+                  info.append($('<p>')
+                      .append($('<strong>', {'text' : '면적'}))
+                      .append($('<span>', {'text' : (value['area']*1).toFixed(2)+'m' }).append(meter))
+                      .css( {'text-align' : 'left', 'margin' : '0'} ));
+
+
+                  info.append($('<p>')
+                      .append($('<strong>', {'text' : '주/부속'}))
+                      .append($('<span>', {'text' : value['mainAtchGbCdNm']} ))
+                      .css({'text-align' : 'left', 'margin' : '0'}));
+
+                  info.append($('<p>')
+                      .append($('<strong>', {'text' : '전용/공유'}))
+                      .append($('<span>', {'text' : value['exposPubuseGbCdNm']} ))
+                      .css({'text-align' : 'left', 'margin' : '0'}));
+
+                  info.append($('<p>')
+                      .append($('<strong>', {'text' : '구조'}))
+                      .append($('<span>', {'text' : value['strctCdNm']} ))
+                      .css({'text-align' : 'left', 'margin' : '0'}));
+
+
+                  var checkDup = false;
+                  currentDom.parent().find(".pubInfo div").each(function(e){
+
+                    var flrGbCd = $(this).attr('data-flrGbCd');
+                    var flrNo = $(this).attr('data-flrNo');
+
+                    if(value['flrGbCd'] === flrGbCd && value['flrNo'] === flrNo){
+                        var target = $(this).siblings(  "[data-flrGbcd=" + flrGbCd + "][data-flrNo=" + flrNo + "]");
+                        target.append(info);
+                        checkDup = true;
+                        return false;
+                    };
+                  });
+                  if(!checkDup){
+                    var color = '#54ff9f';
+                    //지하는 블랙, 옥탑은 파랑색, 보통은 노랑색
+                    if(value['flrGbCd'] === '10'){
+                      color = '#8b8b83';
+                    }
+                    else if((value['flrGbCd']) === '30'){
+                      color = '#c9e1ff';
+                    }
+
+                    currentDom.parent().find(".pubInfo")
+                    .append($('<div>', {
+                        'class' : 'flr',
+                        'data-flrGbCd': value['flrGbCd'],
+                        'data-flrNo': value['flrNo'],
+                        'text': value['flrNo'].replace(/층/g,'').replace(/지/g,'B') + '층'
+                    })
+                    .on('click', function(e){
+                      e.preventDefault();
+                      var flrGbCd = $(e.target).attr('data-flrGbCd');
+                      var flrNo = $(e.target).attr('data-flrNo');
+
+                      $(e.target).siblings(
+                        "[data-flrGbcd=" + flrGbCd + "][data-flrNo=" + flrNo + "]"
+                      ).toggle('fast', 'linear');
+                    })
+                    .css('background-color', color)
+                    .tooltip({
+                        'animation': true,
+                        'title' :  value['hoNm'],
+                        'placement' : 'right'
+                    }))
+
+                    .append($('<div>', {
+                        'id' : value['mgmBldrgstPk']+'-'+value['flrGbCd']+'-'+value['flrNo'],
+                        'data-flrGbCd': value['flrGbCd'],
+                        'data-flrNo': value['flrNo'],
+                      }).css({ 'width' : '100%', 'display' : 'none' })
+                      .append(    info   )
+                    );
+
+                    currentDom.parent().find(".flrInfo").toggle('fast', 'linear');
+                  }
+                  else{
+
+                    currentDom.parent().find(".flrInfo").toggle('fast', 'linear');
+
+                  }
+
+            });
+
+            console.log(data);
+          });
+
+        }
+
+    });
+
     $container.find(".flrInfo-lookup[data-buildingId="+ value['mgmBldrgstPk'] + "]").find('.flrInfo-header').on('click', function(e){
         var currentDom = $(this);
         if(!currentDom.parent().find(".flrInfo").is(":visible")){
@@ -328,12 +467,16 @@ var building_titleInfo = function(data){
           currentDom.find('span').removeClass('ti-arrow-up').addClass('ti-arrow-down');
 
         }
-        console.log($(this).find(".flrInfo div").length);
-        if($(this).find(".flrInfo div").length < 1){
+
+
+        if(currentDom.parent().find(".flrInfo div").length < 1){
 
           customAjax($SITE_URL+'get/buildingFlrInfo', values, function(data){
-
-              console.log(data);
+              var t0 = performance.now();
+              if(data.length <= 0){
+                currentDom.parent().find(".flrInfo").append($('<div>', {'text': '정보없음'}));
+                return;
+              }
               data.sort(
                 function(a, b){
                   if(a['flrGbCd'] == '10'){
@@ -345,16 +488,35 @@ var building_titleInfo = function(data){
                 }
               );
 
-
+              currentDom.parent().find(".flrInfo").append($('<div>', {'text': '3D랑 같이 보기', 'class' : 'flr3d'}));
 
               $.each(data, function(index, value){
 
+                var info = $('<div>').css('border-bottom', '1px solid #333');
+                // info.append($('<p>')
+                //           .append($('<strong>', {'text' : '동명'}))
+                //           .append($('<span>', {'text' : value['dongNm']} )));
+                var meter = $('<sup>', {'text' : '2'});
+
+                info.append($('<p>')
+                    .append($('<strong>', {'text' : '면적'}))
+                    .append($('<span>', {'text' : value['area']+'m' }).append(meter))
+                    .css( {'text-align' : 'left', 'margin' : '0'} ));
+
+
+                info.append($('<p>')
+                    .append($('<strong>', {'text' : '구조'}))
+                    .append($('<span>', {'text' : value['strctCdNm']} ))
+                    .css({'text-align' : 'left', 'margin' : '0'}));
+
                 var checkDup = false;
-                currentDom.parent().find(".flrInfo div").each(function(){
+                currentDom.parent().find(".flrInfo div").each(function(e){
 
                   var flrGbCd = $(this).attr('data-flrGbCd');
                   var flrNo = $(this).attr('data-flrNo');
                   if(value['flrGbCd'] === flrGbCd && value['flrNo'] === flrNo){
+                    var target = $(this).siblings(  "[data-flrGbcd=" + flrGbCd + "][data-flrNo=" + flrNo + "]");
+                    target.append(info);
                     checkDup = true;
                     return false;
                   };
@@ -372,36 +534,46 @@ var building_titleInfo = function(data){
 
                   currentDom.parent().find(".flrInfo")
                   .append($('<div>', {
-                      'href' : '#' + value['mgmBldrgstPk']+'-'+value['flrGbCd']+'-'+value['flrNo'],
-                      'data-toggle' : 'collapse',
+                      'class' : 'flr',
                       'data-flrGbCd': value['flrGbCd'],
                       'data-flrNo': value['flrNo'],
                       'text': value['flrNoNm'].replace(/층/g,'').replace(/지/g,'B') + '층'
                   })
+                  .on('click', function(e){
+                    e.preventDefault();
+                    var flrGbCd = $(e.target).attr('data-flrGbCd');
+                    var flrNo = $(e.target).attr('data-flrNo');
+
+                    $(e.target).siblings(
+                      "[data-flrGbcd=" + flrGbCd + "][data-flrNo=" + flrNo + "]"
+                    ).toggle('fast', 'linear');
+                  })
                   .css('background-color', color)
                   .tooltip({
-                    'animation': true,
-                    'title' :  value['mainPurpsCdNm'],
-                    'placement' : 'right'
+                      'animation': true,
+                      'title' :  value['mainPurpsCdNm'],
+                      'placement' : 'right'
                   }))
 
                   .append($('<div>', {
                       'id' : value['mgmBldrgstPk']+'-'+value['flrGbCd']+'-'+value['flrNo'],
-                      'class' : 'collapse',
-                      'text' : 'test'
-                    }).css('width', '100%')
+                      'data-flrGbCd': value['flrGbCd'],
+                      'data-flrNo': value['flrNo'],
+                    }).css({ 'width' : '100%', 'display' : 'none' })
+                    .append(    info   )
                   );
                 }
-
               });
 
               currentDom.parent().find(".flrInfo").toggle('fast', 'linear');
+              var t1 = performance.now();
+              console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
               console.log(data);
-
           });
-
         }
-
+        else{
+          currentDom.parent().find(".flrInfo").toggle('fast', 'linear');
+        }
 
     });
 
@@ -418,7 +590,7 @@ var building_titleInfo = function(data){
       $(this).addClass('isOpen');
       $(this).find('span').removeClass('ti-angle-double-up').addClass('ti-angle-double-down');
     }
-    // $(this).next().toggle('fast', 'linear');
+    $(this).next().toggle('fast', 'linear');
   });
 
   // $container.find('.building-titleInfo-header').on('click', function(e){

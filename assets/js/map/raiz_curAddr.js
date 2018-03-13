@@ -9,7 +9,7 @@ daum.maps.event.addListener(map, 'idle', function() {
       if (status === daum.maps.services.Status.OK) {
 
           var targetDiv = $(".raiz-cur-addr");
-
+          currentCode = result[0]['code'];
           targetDiv.find('a').find('span').text(result[0]['address_name']);
           targetDiv.css('margin-left', -targetDiv.width()/2 - 10);
           targetDiv.fadeIn('normal');

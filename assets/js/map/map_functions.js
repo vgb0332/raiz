@@ -17,7 +17,7 @@ function mainActivity(data){
   param: data, points
 
 */
-var qwe = '';
+
 function drawPoly(data){
 
   var testPolygon;
@@ -117,12 +117,29 @@ function setRWindow(polygons, data){
   Rwindow.show('normal');
 }
 
-function setSTCSWindow(polygons, data){
+function setSTCSWindow(polygons, data, type){
   // console.log(data);
   if ( ! Detector.webgl ) alert('webGL needed');
 
   // RAIZ WINDOW SETUP
-  var header = $('#stat-side-sido').text() + ' ' + $('#stat-side-sgg').text() + ' ' + $('#stat-side-dong').text();
+  var header = type+' 통계 - '+$('#stat-side-sido').text() + ' ' + $('#stat-side-sgg').text() + ' ' + $('#stat-side-dong').text();
+
+  var stcsAggList = ['stcsTotaljobs','stcsPopdens','stcsHouseType','stcsTotalHouse','stcsHouseSize'
+                    ,'stcsHouseHold','stcsTotalFamily','stcsJobsPop','stcsJobsBiz','stcsSexAge','stcsOldind','stcsPopdens','stcsSupportY','stcsSupportO'];
+
+  if (type == '집계구') {
+    var code = data[3];
+  }
+  else if (type == '읍면동') {
+    var code = data[0];
+    header += ' '+data[1];
+  }
+  else if (type == '시군구') {
+    var code = data[0];
+    header += ' '+data[1];
+  }
+
+
   var STCSwindow = raiz_StcsWindow(header);
   $(document.body).append(STCSwindow);
 
@@ -133,26 +150,32 @@ function setSTCSWindow(polygons, data){
     STCSwindow.find('.stcs-initdata').append(stcs_initTag(i));
   }
 
-  console.log(STCSwindow);
   // testFunc(data,STCSwindow);
-  stcs_additag(STCSwindow,data,'initdata');
-  console.log(polygons[0].Bb[0][3]);
-
-  var stcsAggList = ['stcsTotaljobs','stcsPopdens','stcsHouseType','stcsTotalHouse','stcsHouseSize'
-                    ,'stcsHouseHold','stcsTotalFamily','stcsJobsPop','stcsJobsBiz','stcsSexAge','stcsOldind','stcsPopdens','stcsSupportY','stcsSupportO'];
+  if (type == '집계구') {
+    stcs_additag(STCSwindow,data,'initdata',code);
+  }
+  else if (type == '읍면동') {
+    customAjax($SITE_URL+'getStcs/stcsAggrSum', {currHjstcs:code}, function(data){
+      stcs_additag(STCSwindow,[data[0]['SHAPE_AREA'],data[0]['TOTAL_POP'],data[0]['MEDIUM_AGE']],'initdata',code);
+    });
+  }
+  else if (type == '시군구') {
+    customAjax($SITE_URL+'getStcs/stcsAggrSum', {currHjstcs:code}, function(data){
+      stcs_additag(STCSwindow,[data[0]['SHAPE_AREA'],data[0]['TOTAL_POP'],data[0]['MEDIUM_AGE']],'initdata',code);
+    });
+  }
 
   STCSwindow.resize(function(e){
     STCSwindow.find('.stcsNlabel').height(STCSwindow.find('#houseSizeChart').height());
   });
   for (var i = 0; i < stcsAggList.length; i++) {
     (function(i){
-      console.log(stcsAggList[i]);
-      customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
-        stcs_additag(STCSwindow,data,stcsAggList[i],polygons[0].Bb[0][3]);
+      // console.log(stcsAggList[i]);
+      customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:code,type:type}, function(data){
+        stcs_additag(STCSwindow,data,stcsAggList[i],data[3]);
       });
     })(i)
   }
-
   STCSwindow.show('normal');
 }
 
@@ -284,12 +307,17 @@ function setPoly(type, polygon, data){
       // console.log('polygon mouseover activated! : ' , polygon );
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-      getStcsdong(polygon.Bb[0])
-      $('#stat-side-sgg').text(polygon.Bb[1]);
-      $('#stat-side-sgg').attr("name", polygon.Bb[0]);
+      if ($('#stcsToggle').val() == 0) {
+        getStcsdong(polygon.Bb[0])
+        $('#stat-side-sgg').text(polygon.Bb[1]);
+        $('#stat-side-sgg').attr("name", polygon.Bb[0]);
 
-      $('.stcs-item').remove();
-      $('.stcs_label').remove();
+        $('.stcs-item').remove();
+        $('.stcs_label').remove();
+      }
+      else {
+        setSTCSWindow([polygon],polygon.Bb,"시군구");
+      }
     });
   }
 
@@ -308,12 +336,17 @@ function setPoly(type, polygon, data){
       // console.log('polygon mouseover activated! : ' , polygon );
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-      getStcsaggr(polygon.Bb[0])
-      $('#stat-side-dong').text(polygon.Bb[1]);
-      $('#stat-side-dong').attr("name", polygon.Bb[0]);
+      if ($('#stcsToggle').val() == 0) {
+        getStcsaggr(polygon.Bb[0])
+        $('#stat-side-dong').text(polygon.Bb[1]);
+        $('#stat-side-dong').attr("name", polygon.Bb[0]);
 
-      $('.stcs-item').remove();
-      $('.stcs_label').remove();
+        $('.stcs-item').remove();
+        $('.stcs_label').remove();
+      }
+      else {
+        setSTCSWindow([polygon],polygon.Bb,"읍면동");
+      }
     });
   }
   if(type === 'stcsAggr'){
@@ -353,7 +386,7 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener(polygon, 'click', function(mouseEvent) {
 
-      setSTCSWindow([polygon], polygon.Bb[0]);
+      setSTCSWindow([polygon], polygon.Bb[0],"집계구");
       // console.log(aggr_poly);
       // $('.stcs-polygon').remove();
       // $('.stcs_ol').remove();
@@ -376,7 +409,7 @@ function parseShape(shape){
   $.each(shapes, function(index, value){
     shapes[index] = value.replace('(', '').replace(')', '');
   });
-  qwe = shapes;
+
   return shapes;
 }
 
