@@ -146,7 +146,7 @@ function setSTCSWindow(polygons, data, type){
   // insert3D(STCSwindow, polygon);
   // THREE_init(polygons, data, STCSwindow);
 
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 6; i++) {
     STCSwindow.find('.stcs-initdata').append(stcs_initTag(i));
   }
 
@@ -165,9 +165,9 @@ function setSTCSWindow(polygons, data, type){
     });
   }
 
-  STCSwindow.resize(function(e){
-    STCSwindow.find('.stcsNlabel').height(STCSwindow.find('#houseSizeChart').height());
-  });
+  // STCSwindow.resize(function(e){
+  //   STCSwindow.find('.stcsNlabel').height(STCSwindow.find('#houseSizeChart').height());
+  // });
   for (var i = 0; i < stcsAggList.length; i++) {
     (function(i){
       // console.log(stcsAggList[i]);

@@ -122,10 +122,10 @@
                 </div>
               </div>
               <ul class="sil-result-list">
-                <li>결과 1</li>
+                <!-- <li>결과 1</li>
                 <li>결과 2</li>
                 <li>결과 3</li>
-                <li>결과 4</li>
+                <li>결과 4</li> -->
               </ul>
             </div>
             <!-- <div class="" id="slider-3" style="width:50%;"></div>

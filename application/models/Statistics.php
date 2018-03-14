@@ -199,16 +199,17 @@ Class Statistics extends CI_Model {
   function getStcsHouseType($code,$type){
     if ($type == '집계구') {
       $query = $this->db->query(
-                "SELECT item,value
-                FROM raiz2.2016HouseType
-                WHERE tot_oa_cd = $code
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a, (select * from raiz2.2016HouseType where tot_oa_cd = $code) as b
+                WHERE a.item = b.item
                 ");
     }
     elseif ($type == '읍면동' || $type == '시군구') {
       $query = $this->db->query(
-                "SELECT item,sum(value) as value
-                FROM raiz2.2016HouseType
-                WHERE tot_oa_cd like '$code%' group by item
+                "SELECT a.name,b.value
+                FROM raiz2.stcsCd as a,
+                (select base_year, tot_oa_cd, item, sum(value) as value from raiz2.2016HouseType where tot_oa_cd like '$code%' group by item) as b
+                WHERE a.item = b.item
                 ");
     }
 

@@ -30,6 +30,8 @@ var currHjstcs = '';
 var aggr_poly = [];
 
 var currentCode;
+var currentAddress;
+var sil_first_time = true;
 
 var search_result = function(data){
   var $container = $(document.createElement('li'));

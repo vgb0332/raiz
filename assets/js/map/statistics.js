@@ -1,38 +1,46 @@
 var beforeNm = '';
-var Jchartname = [];
-var Jchartvalue = [];
-var nowcht;
 
+$('#stcsOnOff').click(function() {
+  $(this).toggleClass('btn-outline-info');
+  if( $(this).text() == '통계 Layer 켜기' ) {
+  $(this).text('통계 Layer 끄기');
+  }
+  else {
+    $(this).text('통계 Layer 켜기');
+  }
+});
+
+$('.btn-toggle').click(function() {
+  if ($('#stcsToggle').val() == 0) {          //통계보기 on
+    console.log('hello');
+    $('#stcsToggle').val(1);
+    $('.stcs-polygon').css('fill','#4285f48f')
+  }
+  else {                                      //통계보기 off
+    $('#stcsToggle').val(0);
+    $('.stcs-polygon').css('fill','#404040')
+  }
+  // $(this).find('.btn').toggleClass('active');
+  $(this).find('.btn').toggleClass('btn-default');
+});
 
 function initStcs() {
   console.log('called');
+  map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
+  map.setLevel(12);
+
   ajax_type = 'stcsSido';
   $('.stcs-item').remove();
   $('.stcs_label').remove();
   customAjax($SITE_URL+'getStcs/statscSido',0,
             processStcs);
-  map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
 
-  map.setLevel(12);
   // map.setLevel(12, {
   //   animate: {
   //       duration: 2000
   //   }
   // });
 
-  $('.btn-toggle').click(function() {
-    if ($('#stcsToggle').val() == 0) {          //통계보기 on
-      console.log('hello');
-      $('#stcsToggle').val(1);
-      $('.stcs-polygon').css('fill','#4285f48f')
-    }
-    else {                                      //통계보기 off
-      $('#stcsToggle').val(0);
-      $('.stcs-polygon').css('fill','#404040')
-    }
-    // $(this).find('.btn').toggleClass('active');
-    $(this).find('.btn').toggleClass('btn-default');
-  });
 }
 
 function processStcs(data) {
@@ -168,14 +176,13 @@ function changePolyFill(key,val,type) {
         $("#" + aggr_poly[i].wc[0].id).css("fill", "rgb("+r+","+g+","+b+")")
         break;
       }
-
     }
   }
 }
 
 
 var raiz_StcsWindow = function(title){
-  var $container = $(document.createElement('div')).addClass("raiz-window-container");
+  var $container = $(document.createElement('div')).addClass("raiz-window-container stcs-window");
   $container.append("<div class='raiz-window-top'>"
                     +  "<div class='column controller'>"
                     +     "<span class='ti-minus point-cursor'></span>"
@@ -272,78 +279,9 @@ var stcs_initTag = function(target){
 
       break;
 
-    case 1:
-      $container = $(document.createElement('div')).addClass("row");
-      $container.append('<div class="col-lg-4 col-md-4" col-sm-4>'
-                    +'<div class="card">'
-                    +    '<div class="card-header">'
-                    +        '<h4 class="card-title">유형별 주택</h4>'
-                    +    '</div>'
-                    +    '<div class="card-content px-4 stcsNlabel">'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">아파트<span id="ho_gb_003" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">단독 주택<span id="ho_gb_002" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">다세대<span id="ho_gb_001" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">연립 주택<span id="ho_gb_004" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">주택 이외 거처<span id="ho_gb_006" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">영업용 건물 내 주택<span id="ho_gb_005" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +        '<div class="media-list">'
-                    +             '<div class="media-body w-100">'
-                    +                 '<h6 class="list-group-item-heading">자료 없는 집계구<span id="ho_gb_999" class="font-medium-4 float-right pt-1"></span></h6>'
-                    +             '</div>'
-                    +         '</div>'
-                    +    '</div>'
-                    +'</div>'
-                    +'</div>'
-                    +'<div class="col-lg-8 col-md-8" col-sm-8">'
-                    +'<div class="card">'
-                    +    '<div class="card-header">'
-                    +        '<h4 class="card-title">연건평별 주택</h4>'
-                    +    '</div>'
-                    +    '<div class="card-content px-4">'
-                    +         '<canvas id="houseSizeChart" class="stchart"></canvas>'
-                    +    '</div>'
-                    +'</div>'
-                    +'</div>'
-                  );
-      break;
-
-      case 2:
+      case 1:
         $container = $(document.createElement('div')).addClass("row");
         $container.append('<div class="col-lg-6 col-md-6" col-sm-6">'
-                      +'<div class="card">'
-                      +    '<div class="card-header jobsToggle">'
-                      +        '<h4 class="card-title">산업분류별 사업체 수 / 종사자 수</h4>'
-                      +    '</div>'
-                      +    '<div class="card-content px-4">'
-                      +         '<canvas id="jobsChart" class="stchart"></canvas>'
-                      +    '</div>'
-                      +'</div>'
-                      +'</div>'
-                      +'<div class="col-lg-6 col-md-6" col-sm-6">'
                       +'<div class="card">'
                       +    '<div class="card-header">'
                       +        '<h4 id="stcs-totalFaily" class="card-title">세대 구성별 가구 / 총 가구 수 : 300</h4>'
@@ -353,10 +291,61 @@ var stcs_initTag = function(target){
                       +    '</div>'
                       +'</div>'
                       +'</div>'
+                      +'<div class="col-lg-6 col-md-6" col-sm-6">'
+                      +'<div class="card">'
+                      +    '<div class="card-header jobsToggle">'
+                      +        '<h4 class="card-title">유형별 주택</h4>'
+                      +    '</div>'
+                      +    '<div class="card-content px-4">'
+                      +         '<canvas id="houseTypeChart" class="stchart"></canvas>'
+                      +    '</div>'
+                      +'</div>'
+                      +'</div>'
+
+                    );
+      break;
+
+      case 2:
+        $container = $(document.createElement('div')).addClass("row");
+        $container.append('<div class="col-lg-12 col-md-12" col-sm-12">'
+                      +'<div class="card">'
+                      +    '<div class="card-header">'
+                      +        '<h4 class="card-title">연건평별 주택</h4>'
+                      +    '</div>'
+                      +    '<div class="card-content px-4">'
+                      +         '<canvas id="houseSizeChart" class="stchart"></canvas>'
+                      +    '</div>'
+                      +'</div>'
+                      +'</div>'
                     );
         break;
 
         case 3:
+          $container = $(document.createElement('div')).addClass("row");
+          $container.append('<div class="col-lg-6 col-md-6" col-sm-6">'
+                        +'<div class="card">'
+                        +    '<div class="card-header jobsToggle">'
+                        +        '<h4 class="card-title">산업분류별 종사자 수</h4>'
+                        +    '</div>'
+                        +    '<div class="card-content px-4">'
+                        +         '<canvas id="jobsPopChart" class="stchart"></canvas>'
+                        +    '</div>'
+                        +'</div>'
+                        +'</div>'
+                        +'<div class="col-lg-6 col-md-6" col-sm-6">'
+                        +'<div class="card">'
+                        +    '<div class="card-header jobsToggle">'
+                        +        '<h4 class="card-title">산업분류별 사업체 수</h4>'
+                        +    '</div>'
+                        +    '<div class="card-content px-4">'
+                        +         '<canvas id="jobsBizChart" class="stchart"></canvas>'
+                        +    '</div>'
+                        +'</div>'
+                        +'</div>'
+                      );
+          break;
+
+        case 4:
           $container = $(document.createElement('div')).addClass("row");
           $container.append('<div class="col-lg-12 col-md-12" col-sm-12">'
                         +'<div class="card">'
@@ -371,7 +360,7 @@ var stcs_initTag = function(target){
                       );
           break;
 
-          case 4:
+          case 5:
             $container = $(document.createElement('div')).addClass("row");
             $container.append('<div class="col-md-12">'
                           +'<div class="card">'
@@ -475,7 +464,7 @@ var stcs_additag = function(target,data,addiType,code){
   var name = [];
   var value = [];
 
-  if (addiType == 'stcsHouseSize' || addiType == 'stcsHouseHold' || addiType == 'stcsJobsPop' || addiType == 'stcsJobsBiz')
+  if (addiType == 'stcsHouseSize' || addiType == 'stcsHouseType' || addiType == 'stcsHouseHold' || addiType == 'stcsJobsPop' || addiType == 'stcsJobsBiz')
   {
     for (var i = 0; i < data.length; i++) {
       if (data[i]['value'] == "0") {
@@ -517,9 +506,18 @@ var stcs_additag = function(target,data,addiType,code){
       if (data.length == 0) {
         break;
       }
-      for (var i = 0; i < data.length; i++) {
-        $(target).find('#'+data[i]['item']).text(data[i]['value']);
-      }
+      new Chart($(target).find('#houseTypeChart'),{
+          'type': 'doughnut',
+          'data': {
+                'labels': name,
+                'datasets': [{
+                    'data': value,
+                    'backgroundColor':colorarr_border
+                }]
+            },
+          'options': 'options'
+      });
+
       // console.log(data);
       // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsHouseType");
       // for (var i = 0; i < data.length; i++) {
@@ -621,7 +619,7 @@ var stcs_additag = function(target,data,addiType,code){
         // customAjax($SITE_URL+'getStcs/'+stcsAggList[i], {currHjstcs:polygons[0].Bb[0][3]}, function(data){
         //   stcs_additag(STCSwindow,data,stcsAggList[i],polygons[0].Bb[0][3]);
 
-        new Chart($(target).find('#jobsChart'),{
+        new Chart($(target).find('#jobsPopChart'),{
             'type': 'radar',
             'data': {
                   'labels': name,
@@ -636,23 +634,26 @@ var stcs_additag = function(target,data,addiType,code){
             'options': 'options'
         });
 
-        // var temp = '<a onclick="changeStcsJchart()" name="종사자 수" style="position:absolute;z-index:1" class="btn btn-sm btn-primary mr-1"><i class="icon-bar-chart"></i></a>';
-        // $(target).find('.jobsToggle').append(temp);
-
         break;
 
       case 'stcsJobsBiz' :
         if (data.length == 0) {
           break;
         }
-        Jchartname = name;
-        Jchartvalue = value;
-        // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsJobsBiz");
-        // for (var i = 0; i < data.length; i++) {
-        //   $container.append(
-        //                      "</br>산업 분류별 사업체수 : "+data[i]['name']+" / "+data[i]['value']+" 개"
-        //   );
-        // }
+        new Chart($(target).find('#jobsBizChart'),{
+            'type': 'radar',
+            'data': {
+                  'labels': name,
+                  'datasets': [{
+                      'label': '사업체 수',
+                      'data': value,
+                      'backgroundColor': "rgba(255, 99, 132, 0.2)",
+            					'borderColor': "rgb(255, 99, 132)",
+            					'pointBackgroundColor': 'red',
+                  }]
+              },
+            'options': 'options'
+        });
 
         break;
 
@@ -837,30 +838,3 @@ var stcs_additag = function(target,data,addiType,code){
 
   }
 };
-
-function changeStcsJchart(){
-  // console.log(Jchartname,Jchartvalue);
-  var jname = Jchartname;
-  var jvalue = Jchartvalue;
-  removeData(nowcht);
-
-  addData(nowcht,Jchartname,Jchartvalue);
-}
-
-function addData(chart, label, data) {
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-    });
-    chart.update();
-}
-
-function removeData(chart) {
-    var temp = [];
-    Jchartname = chart.data.labels.pop();
-    chart.data.datasets.forEach((dataset) => {
-        temp.push(dataset.data.pop());
-    });
-    Jchartvalue = temp;
-    chart.update();
-}

@@ -796,7 +796,7 @@ body {
 /* sil side tab */
 .sil-location-name{
   font-size: 1.8em;
-  border-bottom: 1px solid #e2d7d7;
+  /* border-bottom: 1px solid #e2d7d7; */
   margin-left: 5px;
   margin-right: 5px;
   text-align: center;
@@ -832,6 +832,22 @@ body {
 
 .sil-result-container{
   border-top: 1px solid #e2d7d7;
+}
+
+.sil-result-container .sil-result-list li{
+  padding-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-bottom: 1px solid #d4c8c8;
+  cursor: pointer;
+}
+
+.sil-result-container .sil-result-list li:hover{
+  -webkit-transition: background-color 0.35s ease, font-size 0.35s ease;
+  -moz-transition: background-color 0.35s ease, font-size 0.35s ease;
+  -o-transition:background-color 0.35s ease, font-size 0.35s ease;
+  transition: background-color 0.35s ease, font-size 0.35s ease;
+  background-color: #effaee;
 }
 
 
