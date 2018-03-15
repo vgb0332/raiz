@@ -18,6 +18,7 @@ $(".raiz-side-tab-return").on('click', function(){
 
 $(".raiz-search-button").on('click', function(){
   console.log('검색');
+  $(".raiz-side-tab-container").removeClass("stcs-container");
   $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-search-tab").hide(function(){
 
@@ -29,6 +30,7 @@ $(".raiz-search-button").on('click', function(){
 
 $(".raiz-sil-button").on('click', function(){
   console.log('실거래');
+  $(".raiz-side-tab-container").removeClass("stcs-container");
   $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-sil-tab").hide(function(){
 
@@ -39,6 +41,7 @@ $(".raiz-sil-button").on('click', function(){
 
 $(".raiz-junwal-button").on('click', function(){
   console.log('전월');
+  $(".raiz-side-tab-container").removeClass("stcs-container");
   $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-junwal-tab").hide(function(){
 
@@ -49,6 +52,7 @@ $(".raiz-junwal-button").on('click', function(){
 
 $(".raiz-stat-button").on('click', function(){
   console.log('통계');
+  $(".raiz-side-tab-container").addClass("stcs-container");
   $(".raiz-side-tab-container:hidden").show("slide", {direction : "left"}, 200);
   $(".raiz-side-tab ").not(".raiz-stat-tab").hide(function(){
 

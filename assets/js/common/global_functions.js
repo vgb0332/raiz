@@ -54,14 +54,14 @@ function price_format(value, scale) {
           return p + "만원";
       } else if (p.length >= 5 && p.length <= 8) {
           if (parseInt(p.slice(p.length - 4, p.length)) == 0)
-              return p.slice(0, p.length - 4) + "억 ";
+              return p.slice(0, p.length - 4) + "억원 ";
           else
               return p.slice(0, p.length - 4) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
       } else if (p.length > 8 && p.length <= 11) {
           if (parseInt(p.slice(p.length - 8, p.length)) == 0)
-              return p.slice(0, p.length - 8) + "조 ";
+              return p.slice(0, p.length - 8) + "조원 ";
           else if (parseInt(p.slice(p.length - 4, p.length)) == 0)
-              return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억";
+              return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억원";
           else
               return p.slice(0, p.length - 8) + "조 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
       }

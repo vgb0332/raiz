@@ -645,17 +645,19 @@ body {
   position: fixed;
   width: 350px;
   height: calc(100% - 120px);
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.7);
   z-index: 11;
   top: 90px;
   left: 0;
   box-shadow: 0 15px 15px rgba(0,0,0,0.3);
   z-index : 49;
   display: none;
+  overflow-y: auto;
   -webkit-transition: width 0.35s ease;
   -moz-transition: width 0.35s ease;
   -o-transition: width 0.35s ease;
   transition: width 0.35s ease;
+
 }
 
 .side-tab-header{
@@ -727,13 +729,15 @@ body {
   border-bottom: 1px solid #32d38d;
 }
 
-.raiz-side-tab-content span{
+.raiz-side-tab-content > span,
+#keyword-input-group > span,
+#jibun-input-group > span {
   padding: 6px 20px;
   cursor: pointer;
   background-color : #32d38d;
 }
 
-.raiz-side-tab-content span:hover{
+.raiz-side-tab-content > span:hover{
   -webkit-transition: background-color 0.35s ease, color 0.35s ease;
   -moz-transition: background-color 0.35s ease, color 0.35s ease;
   -o-transition: background-color 0.35s ease, color 0.35s ease;
@@ -838,17 +842,40 @@ body {
   padding-top: 10px;
   margin-left: 10px;
   margin-right: 10px;
+  margin-top: 10px;
   border-bottom: 1px solid #d4c8c8;
   cursor: pointer;
 }
 
-.sil-result-container .sil-result-list li:hover{
+.sil-result-container .sil-result-list .sil-result-item-title:hover,
+.sil-result-container .sil-result-list .sil-result-item:hover{
   -webkit-transition: background-color 0.35s ease, font-size 0.35s ease;
   -moz-transition: background-color 0.35s ease, font-size 0.35s ease;
   -o-transition:background-color 0.35s ease, font-size 0.35s ease;
   transition: background-color 0.35s ease, font-size 0.35s ease;
   background-color: #effaee;
 }
+
+.sil-result-container .sil-result-list li div{
+  padding-bottom: 5px;
+  border-bottom: 1px solid #d4c8c8;
+}
+
+.sil-result-item .ti-arrow-down,
+.sil-result-item .ti-arrow-up {
+  float:right;
+  padding: 0;
+  /* background-color : #ffffff; */
+}
+/*
+.sil-result-item span:hover{
+  -webkit-transition: color 0.35s ease, font-size 0.35s ease;
+  -moz-transition: color 0.35s ease, font-size 0.35s ease;
+  -o-transition:color 0.35s ease, font-size 0.35s ease;
+  transition: color 0.35s ease, font-size 0.35s ease;
+  color: #32d38d;
+  background-color : #ffffff;
+} */
 
 
 /* map footer */

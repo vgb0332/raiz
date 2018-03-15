@@ -16,6 +16,7 @@
 <link href="<?php echo base_url();?>assets/css/map.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/css/polygon.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/css/themify-icons.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/css/simple-line-icon.css" rel="stylesheet">
 
 <!-- GHUNCSS -->
 <link href="<?php echo base_url();?>assets/css/ghun.css" rel="stylesheet">

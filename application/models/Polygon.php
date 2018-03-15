@@ -20,6 +20,7 @@ Class Polygon extends CI_Model {
                 AND   b.법정동코드 = $bjdongCd
                 AND   a.bun = b.번
                 AND   a.ji = b.지
+                ORDER BY b.지번, b.아파트
                 ");
 
       $result = $query->result_array();

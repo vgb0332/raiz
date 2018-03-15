@@ -31,7 +31,6 @@ var aggr_poly = [];
 
 var currentCode;
 var currentAddress;
-var sil_first_time = true;
 
 var search_result = function(data){
   var $container = $(document.createElement('li'));
@@ -902,7 +901,7 @@ var toji_indivPrice = function(data){
                       if (value == 0)
                           return "0원";
                       else
-                          return price_format(value, '일원')+'원';
+                          return price_format(value, '일원');
                   }
               }
             }]

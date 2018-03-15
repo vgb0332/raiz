@@ -1,41 +1,58 @@
-.toji-polygon{
+.toji-polygon {
     fill : #725428;
     fill-opacity: 0.8;
     stroke : #725428;
     stroke-width: 3px;
-    stroke-opacity : 0.6;
+    stroke-opacity : 0.4;
     color : black;
     stroke-linecap: round;
     display: block;
 }
 
-.toji-polygon:hover{
-    fill-opacity: 0.6;
-    -ms-animation: 20s toji-hover linear forwards infinite;
-    -moz-animation: 20s toji-hover linear forwards infinite;
-    -o-animation: 20s toji-hover linear forwards infinite;
-    -webkit-animation: 20s toji-hover linear forwards infinite;
-    animation: 20s toji-hover linear forwards infinite;
-}
-
-.building-polygon{
-    fill : #dedede;
-    fill-opacity: 0.5;
-    stroke : #dedede;
+.sil-toji-polygon {
+    fill : #84ec8e;
+    fill-opacity: 0.8;
+    stroke : #84ec8e;
     stroke-width: 3px;
-    stroke-opacity : 0.6;
+    stroke-opacity : 0.4;
     color : black;
     stroke-linecap: round;
     display: block;
 }
 
-.building-polygon:hover{
+.toji-polygon:hover,
+.sil-toji-polygon:hover {
     fill-opacity: 0.4;
     -ms-animation: 20s toji-hover linear forwards infinite;
     -moz-animation: 20s toji-hover linear forwards infinite;
     -o-animation: 20s toji-hover linear forwards infinite;
     -webkit-animation: 20s toji-hover linear forwards infinite;
     animation: 20s toji-hover linear forwards infinite;
+}
+
+.sil-apt-building-polygon{
+    fill : #4c8ce9;
+    fill-opacity: 0.4;
+    stroke : #4c8ce9;
+    stroke-width: 3px;
+    stroke-opacity : 0.6;
+    color : black;
+    stroke-linecap: round;
+    display: block;
+}
+
+.sil-apt-building-polygon:hover{
+    -ms-animation: 1s polygon-blink linear forwards infinite;
+    -moz-animation: 1s polygon-blink linear forwards infinite;
+    -o-animation: 1s polygon-blink linear forwards infinite;
+    -webkit-animation: 1s polygon-blink linear forwards infinite;
+    animation: 1s polygon-blink linear forwards infinite;
+}
+
+@keyframes polygon-blink {
+  0% {fill-opacity: 0}
+	49%{fill-opacity: 0}
+	50% {fill-opacity: 1}
 }
 
 @keyframes toji-hover {

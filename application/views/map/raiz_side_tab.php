@@ -192,50 +192,22 @@
         <span class="raiz-side-tab-return ti-angle-left"></span>
       </div>
       <div class="stat-body" style="text-align:center;">
-
+        <div>
+          <button type="button" onclick="initStcs();" id="stcsOnOff" class="btn-outline-success btn waves-effect">통계 Layer 켜기</button>
+          <a onclick="initStcs();" class="icon-reload"></a>
+        </div>
+        <div>
           <a onclick="stat_side_btn(this.name)" id="stat-side-sido" name="">a</a></br>
           <a onclick="stat_side_btn(this.name)" id="stat-side-sgg" name="">b</a></br>
           <a onclick="stat_side_btn(this.name)" id="stat-side-dong" name="">c</a></br>
-
-          <h4>통계보기</h4>
+        </div>
+        <div>
+          <h4>통계지역 선택하기</h4>
           <div class="btn-group btn-toggle">
             <button class="btn btn-lg btn-default">OFF</button>
             <button id="stcsToggle" value="0" class="btn btn-lg">ON</button>
           </div>
-          <!-- <ul class="raiz-side-tab-list">
-              <li>
-                  <button class="btn" onclick="getStcsPopdens();">인구 밀도 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
-              </li>
-              <li>
-                  <button class="btn">유년 부양비 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
-              </li>
-              <li>
-                  <button class="btn" onclick="getStcsOldind();">노령화 지수&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
-              </li>
-              <li>
-                  <button class="btn">노년 부양비 x&nbsp;&nbsp;&nbsp;&nbsp;<span class="ti-angle-down"></span></button>
-              </li>
-          </ul> -->
-
-          <!-- 위의 리스트와 동일한 순서의 컨텐츠가 들어가야합니다. -->
-          <!-- <ul class="raiz-side-tab-content">
-            <li>
-              인구 밀도
-            </li>
-            <li>
-              유년 부양비
-            </li>
-            <li>
-              노령화 지수
-            </li>
-            <li>
-              노년 부양비
-              <button class="offset">Offset</button>
-              <button class="offset">Offset</button>
-              <button class="offset">Offset</button>
-              <button class="offset">Offset</button>
-            </li>
-          </ul> -->
+        </div>
       </div>
       <div class="search-footer">
 

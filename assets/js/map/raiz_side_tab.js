@@ -414,14 +414,7 @@ daum.maps.event.addListener(map, 'idle', function() {
 
       geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
         if (status === daum.maps.services.Status.OK) {
-           console.log(sil_first_time);
            if(address[0]['code'] === currentCode){
-             sil_first_time = false;
-             return false;
-           }
-
-           if(sil_first_time){
-             sil_first_time = false;
              return false;
            }
 
@@ -440,18 +433,19 @@ daum.maps.event.addListener(map, 'idle', function() {
 });
 
 function sortByJibun(data){
+
   var cur_jibun =data[0]['지번'];
   var prev_jibun = cur_jibun;
   var sorted_data = {};
   $.each(data, function(index, value){
-    var apt_name = value['아파트'];
+    var apt_name = value['지번'];
     if(index == 0){
       sorted_data[apt_name] = [];
     }
     cur_jibun = value['지번'];
 
     if(cur_jibun !== prev_jibun){
-      var new_label = value['아파트'];
+      var new_label = value['지번'];
       sorted_data[new_label] = [];
       prev_jibun = cur_jibun;
     }
@@ -461,67 +455,88 @@ function sortByJibun(data){
     }
     sorted_data[apt_name].push(value);
   });
+
   return sorted_data;
 }
 
 function fillAptSilTab(result){
   var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
-  console.log(result);
-  if(result.length <= 0){
-    //결과없음
-    target_dom.find(".cs-loader").fadeOut('slow');
-    return false;
-  }
-
-  var lists = sortByJibun(result);
-
   var li = '';
 
-  console.log(lists);
-  $.each(Object.keys(lists), function(index, key){
-     li += "<li>"
-        +     "<h4>" + key + "(" + lists[key][0]['지번'] + "번지)" + "</h4>"
-        +     "<div style=display:none;>" ;
+  if(result.length <= 0){
+    //결과없음
+    li += "<li>"
+       +     "<h4> 결과 없음 </h4>"
+       +  "</li>";
+    target_dom.find(".cs-loader").fadeOut('slow');
+  }
+  else{
+    var lists = sortByJibun(result);
 
-     // $.each(lists, function(index, value){
-     //   for(var i = value.length-1; i >= 0 ; i--){
-     //      li += "<h6>" + value[i]['년'] + value[i]['월'] + value[i]['일'] + "</h6>"
-     //   }
-     //
-     // });
+    $.each(Object.keys(lists), function(index, key){
+       li += "<li class=sil-result-item>"
+          +     "<div class=sil-result-item-title>"
+          +          "<p style=font-size:17px;font-weight=bold;>" + lists[key][0]['아파트']
+          +             "<span style=font-size:14px;float:none;>" + "(" + key + "번지)" + "</span>"
+          +             "<span class=ti-arrow-down></span>"
+          +          "</p>"
+          +     "</div>";
 
-     for(var i = lists[key].length - 1; i >= 0; i--){
-       li += "<h6>" + lists[key][i]['년'] + lists[key][i]['월'] + lists[key][i]['일'] + "</h6>"
-     }
 
-     li += "</div></li>";
+       for(var i = lists[key].length - 1; i >= 0; i--){
+         li +="<div class=sil-result-item-content style=display:none;>"
+            +   "<h5>"  + "거래날짜: "
+                      + lists[key][i]['년'] + "년 "
+                      + lists[key][i]['월'] + "월 "
+                      + lists[key][i]['일'] + "일"
+            +   "</h5>"
+            +   "<h5>"  + "전용면적: "
+                      + lists[key][i]['전용면적'] + "m<sup>2</sup>("
+                      + (lists[key][i]['전용면적']/3.3).toFixed(0) + "평, "
+                      + lists[key][i]['층'] + "층" + ")"
+            +   "</h5>"
+            +   "<h5>"  + "거래금액: "
+                      + price_format(lists[key][i]['거래금액'], '만원')
+            +   "</h5>"
+            + "</div>";
 
-     var point = parsePoint(lists[key][0]['point']);
+       }
 
-     customAjax($SITE_URL+'get/singlePolygon',
-                     {
-                       bjdongCd : currentCode,
-                       lat : point[0],
-                       lng : point[1]
-                     },
-                     mainActivity);
-  });
+       li += "</li>";
+
+       var point = parsePoint(lists[key][0]['point']);
+
+       customAjax($SITE_URL+'get/singlePolygon',
+                       {
+                         bjdongCd : currentCode,
+                         lat : point[0],
+                         lng : point[1]
+                       },
+                       silActivity);
+    });
+  }
+
 
   target_dom.find(".sil-result-list").fadeOut(function(){
 
     target_dom.find(".sil-result-list li").remove();
 
-    $(li).appendTo(target_dom.find(".sil-result-list"))
-         .on("click", function(e){
-           $(this).children('div').toggle('fast', 'linear');
-         });
+    $(li).appendTo(target_dom.find(".sil-result-list"));
+    target_dom.find(".sil-result-item-title").on("click", function(e){
+
+      if( $(this).siblings().is(":visible")){
+        $(this).find('span').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+      }
+      else{
+        $(this).find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+      }
+
+      $(this).siblings().toggle('fast', 'linear');
+
+    });
 
     target_dom.find(".sil-result-list").fadeIn();
   });
   target_dom.find(".cs-loader").fadeOut('slow');
 
-}
-
-function parsePoint(point){
-  return point.replace(/POINT+(+)/g,'');
 }
