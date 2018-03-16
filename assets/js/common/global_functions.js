@@ -86,3 +86,16 @@ function price_format(value, scale) {
     }
 
 }
+
+function lpad(s, padLength, padString){
+
+    while(s.length < padLength)
+        s = padString + s;
+    return s;
+}
+
+function rpad(s, padLength, padString){
+    while(s.length < padLength)
+        s += padString;
+    return s;
+}

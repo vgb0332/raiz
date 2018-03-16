@@ -406,30 +406,65 @@ daum.maps.event.addListener(map, 'idle', function() {
     if(target.attr('id') === undefined) return false;
 
     if(map.getLevel() > 5){
-        target.find(".sil-result-list > li").text('조금만 확대해주세요^^;;');
-        return false;
+        target.find(".sil-result-list li").remove();
+        target.find(".sil-result-list").append('<li>조금만 확대해주세요^^;;</li>');
+        needSilRefresh = false;
+    }
+    else{
+        needSilRefresh = true;
     }
 
     if(target.attr('id') === 'apt-sil'){
 
       geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
         if (status === daum.maps.services.Status.OK) {
-           if(address[0]['code'] === currentCode){
-             return false;
+           if(sil_currentCode === currentCode){
+             if(sil_currentCode === undefined) needSilRefresh = true;
+             else needSilRefresh = false;
+
+           }
+           else{
+             sil_currentCode = address[0]['code'];
+             needSilRefresh = true;
            }
 
-           target.find(".sil-location-name").text(address[0]['address_name']);
-           target.find(".cs-loader").fadeIn('slow');
-           customAjax($SITE_URL+'get/aptSilPolygon',
-                     {
-                       bjdongCd : address[0]['code'],
-                     },
-                     fillAptSilTab);
+           if(needSilRefresh){
 
+             $.each(sil_buildingPolygons, function(index, polygon){
+               polygon.setMap(null);
+               sil_buildingPolygons = [];
+             });
+
+             $.each(sil_landPolygons, function(index, polygon){
+               polygon.setMap(null);
+               sil_landPolygons = [];
+             });
+
+             target.find(".sil-location-name").text(address[0]['address_name']);
+             target.find(".cs-loader").fadeIn('slow');
+             sil_ajax = customAjax($SITE_URL+'get/aptSilPolygon',
+                       {
+                         bjdongCd : address[0]['code'],
+                       },
+                       fillAptSilTab);
+
+           }
         }
       });
     }
 
+});
+
+daum.maps.event.addListener(map, 'drag', function() {
+    if(sil_ajax){
+      sil_ajax.abort();
+      sil_ajax = null;
+    }
+    needSilRefresh = false;
+});
+
+daum.maps.event.addListener(map, 'dragend', function() {
+    needSilRefresh = true;
 });
 
 function sortByJibun(data){
@@ -455,11 +490,12 @@ function sortByJibun(data){
     }
     sorted_data[apt_name].push(value);
   });
-
+  console.log(sorted_data);
   return sorted_data;
 }
 
 function fillAptSilTab(result){
+  console.log(result);
   var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
   var li = '';
 
@@ -474,10 +510,11 @@ function fillAptSilTab(result){
     var lists = sortByJibun(result);
 
     $.each(Object.keys(lists), function(index, key){
-       li += "<li class=sil-result-item>"
+
+       li += "<li class=sil-result-item data-bunji=" + lists[key][0]['지번'] + ">"
           +     "<div class=sil-result-item-title>"
           +          "<p style=font-size:17px;font-weight=bold;>" + lists[key][0]['아파트']
-          +             "<span style=font-size:14px;float:none;>" + "(" + key + "번지)" + "</span>"
+          +             "<span class='' style=font-size:14px;float:none;>" + "(" + key + "번지)" + "</span>"
           +             "<span class=ti-arrow-down></span>"
           +          "</p>"
           +     "</div>";
@@ -485,19 +522,26 @@ function fillAptSilTab(result){
 
        for(var i = lists[key].length - 1; i >= 0; i--){
          li +="<div class=sil-result-item-content style=display:none;>"
-            +   "<h5>"  + "거래날짜: "
-                      + lists[key][i]['년'] + "년 "
-                      + lists[key][i]['월'] + "월 "
-                      + lists[key][i]['일'] + "일"
-            +   "</h5>"
-            +   "<h5>"  + "전용면적: "
-                      + lists[key][i]['전용면적'] + "m<sup>2</sup>("
-                      + (lists[key][i]['전용면적']/3.3).toFixed(0) + "평, "
-                      + lists[key][i]['층'] + "층" + ")"
-            +   "</h5>"
-            +   "<h5>"  + "거래금액: "
-                      + price_format(lists[key][i]['거래금액'], '만원')
-            +   "</h5>"
+            +    "<div class=dropdown>"
+            +       "<button class=btn btn-primary dropdown-toggle type=button data-toggle=dropdown>"
+            +       "<span class=caret></span></button>"
+            +       "<ul class=dropdown-menu>"
+            +         "<li>HTML</li>"
+            +       "</ul>"
+            +     "</div>"
+            // +   "<h5>"  + "거래날짜: "
+            //           + lists[key][i]['년'] + "년 "
+            //           + lists[key][i]['월'] + "월 "
+            //           + lists[key][i]['일'] + "일"
+            // +   "</h5>"
+            // +   "<h5>"  + "전용면적: "
+            //           + lists[key][i]['전용면적'] + "m<sup>2</sup>("
+            //           + (lists[key][i]['전용면적']/3.3).toFixed(0) + "평, "
+            //           + lists[key][i]['층'] + "층" + ")"
+            // +   "</h5>"
+            // +   "<h5>"  + "거래금액: "
+            //           + price_format(lists[key][i]['거래금액'], '만원')
+            // +   "</h5>"
             + "</div>";
 
        }
@@ -507,12 +551,8 @@ function fillAptSilTab(result){
        var point = parsePoint(lists[key][0]['point']);
 
        customAjax($SITE_URL+'get/singlePolygon',
-                       {
-                         bjdongCd : currentCode,
-                         lat : point[0],
-                         lng : point[1]
-                       },
-                       silActivity);
+                  { bjdongCd : currentCode, lat : point[0], lng : point[1] },
+                  silActivity);
     });
   }
 
@@ -522,13 +562,82 @@ function fillAptSilTab(result){
     target_dom.find(".sil-result-list li").remove();
 
     $(li).appendTo(target_dom.find(".sil-result-list"));
+    target_dom.find(".sil-result-list li p").on("mouseover", function(e){
+      var target = $(this).parent().parent();
+
+      var polygons = $('.sil-apt-building-polygon');
+      $.each( polygons, function(index, polygon) {
+
+          var bunji = $(polygon).attr('data-bun') + ( ($(polygon).attr('data-ji') === '') ? '' : '-' + $(polygon).attr('data-ji') );
+
+          if(target.attr('data-bunji') === bunji){
+            $(polygon).addClass('sil-apt-building-polygon-hover');
+          }
+
+      });
+
+      polygons = $('.sil-toji-polygon');
+      $.each( polygons, function(index, polygon) {
+          var polygon_bunji = $(polygon).attr('name').substr($(polygon).attr('name').length - 8);
+
+          var bun = polygon_bunji.substr(0, 4);
+          var ji = polygon_bunji.substr(polygon_bunji.length - 4);
+
+          var bunji = bun + ji;
+
+          var target_bun = target.attr('data-bunji').split('-')[0];
+          var target_ji = (target.attr('data-bunji').split('-')[1] === undefined) ? '' : target.attr('data-bunji').split('-')[1];
+          var target_bunji = lpad(target_bun, 4, 0)
+                           + lpad(target_ji, 4, 0);
+
+          if(polygon_bunji === target_bunji){
+            $(polygon).addClass('sil-toji-polygon-hover');
+          }
+
+      });
+
+      // $.each( sil_buildingPolygons, function(index, polygon) {
+      //
+      //     $.each(polygon.wc, function(index, polygon_attr){
+      //
+      //         var id = polygon_attr.id;
+      //         var target_polygon = $("#" + id);
+      //         var bunji = $(target_polygon).attr('data-bun') + ( ($(target_polygon).attr('data-ji') === '') ? '' : '-' + $(target_polygon).attr('data-ji') );
+      //         if(target.attr('data-bunji') === bunji){
+      //           daum.maps.event.trigger(polygon, 'mouseover');
+      //           console.log(polygon);
+      //         }
+      //
+      //     });
+      //
+      // });
+
+    });
+
+    target_dom.find(".sil-result-list li p").on("mouseout", function(e){
+
+      var polygons = $('.sil-apt-building-polygon');
+      $.each( polygons, function(index, polygon) {
+
+          $(polygon).removeClass('sil-apt-building-polygon-hover');
+
+      });
+
+      polygons = $('.sil-toji-polygon');
+      $.each( polygons, function(index, polygon) {
+
+            $(polygon).removeClass('sil-toji-polygon-hover');
+
+      });
+
+    });
     target_dom.find(".sil-result-item-title").on("click", function(e){
 
       if( $(this).siblings().is(":visible")){
-        $(this).find('span').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+        $(this).find('.ti-arrow-up').removeClass('ti-arrow-up').addClass('ti-arrow-down');
       }
       else{
-        $(this).find('span').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+        $(this).find('.ti-arrow-down').removeClass('ti-arrow-down').addClass('ti-arrow-up');
       }
 
       $(this).siblings().toggle('fast', 'linear');

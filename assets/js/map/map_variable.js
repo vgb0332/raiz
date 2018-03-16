@@ -31,6 +31,9 @@ var aggr_poly = [];
 
 var currentCode;
 var currentAddress;
+var needSilRefresh = true;
+var sil_currentCode;
+var sil_ajax;
 
 var search_result = function(data){
   var $container = $(document.createElement('li'));
@@ -294,7 +297,6 @@ var building_titleInfo = function(data){
              +   "</div>" ;
     }
 
-    console.log(value);
     $container.find(".building-titleInfo-body").append(
         "<div href=#building-info-" + index + " class='building-titleInfo-body-title' data-buildingID = " + value['mgmBldrgstPk'] + ">"
       +    ( (value['dongNm'] === null) ? ( ( value['bldNm']=== null ? value['mgmBldrgstPk'].split('-')[0] + '-' : value['bldNm'] ) + value['mgmBldrgstPk'].split('-')[1] ) : value['dongNm']  )

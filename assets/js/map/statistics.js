@@ -3,10 +3,15 @@ var beforeNm = '';
 $('#stcsOnOff').click(function() {
   $(this).toggleClass('btn-outline-info');
   if( $(this).text() == '통계 Layer 켜기' ) {
+    $(this).val(1);
     $(this).text('통계 Layer 끄기');
+
   }
   else {
     $(this).text('통계 Layer 켜기');
+    for (var i = 0; i < stcs_landPolygons.length; i++) {
+      stcs_landPolygons[i].addClass("stcsHide");
+    }
   }
 });
 
@@ -23,16 +28,27 @@ $('.btn-toggle').click(function() {
   $(this).find('.btn').toggleClass('btn-default');
 });
 
+function startStcs() {
+  if ($('#stcsOnOff').val() == '1') {
+    for (var i = 0; i < stcs_landPolygons.length; i++) {
+      stcs_landPolygons[i].removeClass("stcsHide");
+    }
+  }
+  else {
+    initStcs();
+  }
+}
+
 function initStcs() {
+    stcs_landPolygons = [];
+    map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
+    map.setLevel(12);
 
-  map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
-  map.setLevel(12);
-
-  ajax_type = 'stcsSido';
-  $('.stcs-item').remove();
-  $('.stcs_label').remove();
-  customAjax($SITE_URL+'getStcs/statscSido',0,
-  processStcs);
+    ajax_type = 'stcsSido';
+    $('.stcs-item').remove();
+    $('.stcs_label').remove();
+    customAjax($SITE_URL+'getStcs/statscSido',0,
+    processStcs);
 
 }
 

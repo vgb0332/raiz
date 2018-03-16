@@ -1,4 +1,8 @@
 /* test css */
+.stcsHide{
+  display: none;
+}
+
 
 .stcs_ol{
   position: absolute;

@@ -1,6 +1,9 @@
 "use strict";
 var landPolygons = []; //토지 폴리곤
 var buildingPolygons = []; //건물 폴리곤
+var sil_landPolygons = []; //실토지 폴리곤
+var sil_buildingPolygons = []; //실건물 폴리곤
+var stcs_landPolygons = []; //통계 지역 폴리곤
 
 function mainActivity(data){
   console.log(data);
@@ -202,9 +205,33 @@ function setPoly(type, polygon, data){
     polygon.setMap(map);
     var target = polygon.wc;
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('sil-toji-polygon').attr('name', data['pnu']);
+      $("#" + path.id).removeAttr('style').addClass('toji-polygon').addClass('sil-toji-polygon').attr('name', data['pnu']);
     });
 
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      console.log('polygon click activated! : ' , polygon );
+      var target_id = polygon.wc[0].id;
+      var land_target_name = $("#" + target_id).attr('name');
+
+      var polygons = [];
+      polygons.push(polygon);
+      //find all bulilding polygons that correspond to their toji.
+      $.each(sil_buildingPolygons, function(index, polygon){
+
+         $.each(polygon.wc, function(index, polygon_attr){
+
+           var building_target_id = polygon_attr.id;
+           var building_target_name = $("#" + building_target_id).attr('name');
+           if(building_target_name === land_target_name){
+             polygons.push(polygon);
+           }
+         });
+      });
+      console.log(polygons);
+      setRWindow(polygons, data);
+    });
+
+    sil_landPolygons.push(polygon);
   }
 
   if(type === 'sil-apt-building'){
@@ -213,7 +240,7 @@ function setPoly(type, polygon, data){
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id)
-      .removeAttr('style').addClass('sil-apt-building-polygon')
+      .removeAttr('style').addClass('building-polygon').addClass('sil-apt-building-polygon')
       .attr('name', data['pnu'])
       .attr('data-buildingID',  data['buildingID'])
       .attr('data-sigunguCd' , data['sigunguCd'])
@@ -226,7 +253,7 @@ function setPoly(type, polygon, data){
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       var building_target_name = $("#" + polygon.wc[0].id).attr('name');
 
-      $.each(landPolygons, function(index, polygon){
+      $.each(sil_landPolygons, function(index, polygon){
 
         $.each(polygon.wc, function(index, polygon_attr){
 
@@ -240,13 +267,7 @@ function setPoly(type, polygon, data){
       });
     });
 
-    var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
-    target_dom.find('.sil-result-container .sil-result-list .sil-result-item .sil-result-item-title').on("mouseover", function(e){
-
-            console.log('plz lemeeknow');
-
-    });
-
+    sil_buildingPolygons.push(polygon);
   }
 
   if(type === 'toji'){
@@ -329,10 +350,14 @@ function setPoly(type, polygon, data){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
     // console.log(data);
+
+    stcs_landPolygons.push(polygon);
+
     polygon.Bb[0] = data['sidoCd'];
     polygon.Bb[1] = data['sidoNm'];
 
-    // console.log(polygon);
+    // console.log(polygon.wc[0].outerHTML);
+    // $("#side-tab-svg").append(polygon.wc[0].outerHTML)
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
@@ -343,6 +368,7 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       // console.log(polygon.Bb);
+      stcs_landPolygons = [];
       beforeNm = polygon.Bb[1];
       getStcsSgg(polygon.Bb[0]);
       $('#stat-side-sido').text(polygon.Bb[1]);
@@ -357,6 +383,9 @@ function setPoly(type, polygon, data){
   if(type === 'stcsSgg'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
+
+    stcs_landPolygons.push(polygon);
+
     polygon.Bb[0] = data['sigunguCd'];
     polygon.Bb[1] = data['sigunguNm'];
     // console.log(polygon);
@@ -370,6 +399,7 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       if ($('#stcsToggle').val() == 0) {
+        stcs_landPolygons = [];
         getStcsdong(polygon.Bb[0])
         $('#stat-side-sgg').text(polygon.Bb[1]);
         $('#stat-side-sgg').attr("name", polygon.Bb[0]);
@@ -386,6 +416,9 @@ function setPoly(type, polygon, data){
   if(type === 'stcsDong'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
+
+    stcs_landPolygons.push(polygon);
+
     polygon.Bb[0] = data['dongCd'];
     polygon.Bb[1] = data['dongNm'];
     // console.log(polygon);
@@ -399,6 +432,7 @@ function setPoly(type, polygon, data){
     });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       if ($('#stcsToggle').val() == 0) {
+        stcs_landPolygons = [];
         getStcsaggr(polygon.Bb[0])
         $('#stat-side-dong').text(polygon.Bb[1]);
         $('#stat-side-dong').attr("name", polygon.Bb[0]);
@@ -414,6 +448,9 @@ function setPoly(type, polygon, data){
   if(type === 'stcsAggr'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
+
+    stcs_landPolygons.push(polygon);
+
     // console.log(polygon);
     polygon.Bb[0] = [
       data['SHAPE_AREA'],
@@ -447,7 +484,7 @@ function setPoly(type, polygon, data){
       customOverlay.setMap(null);
     });
     daum.maps.event.addListener(polygon, 'click', function(mouseEvent) {
-
+      
       setSTCSWindow([polygon], polygon.Bb[0],"집계구");
       // console.log(aggr_poly);
       // $('.stcs-polygon').remove();
