@@ -405,53 +405,76 @@ daum.maps.event.addListener(map, 'idle', function() {
     var target = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
     if(target.attr('id') === undefined) return false;
 
-    if(map.getLevel() > 5){
+    if(map.getLevel() > 4){
         target.find(".sil-result-list li").remove();
         target.find(".sil-result-list").append('<li>조금만 확대해주세요^^;;</li>');
         needSilRefresh = false;
+        return;
     }
     else{
         needSilRefresh = true;
     }
 
-    if(target.attr('id') === 'apt-sil'){
 
-      geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
-        if (status === daum.maps.services.Status.OK) {
-           if(sil_currentCode === currentCode){
-             if(sil_currentCode === undefined) needSilRefresh = true;
-             else needSilRefresh = false;
 
+    geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
+      if (status === daum.maps.services.Status.OK) {
+         if(sil_currentCode === currentCode){
+           if(sil_currentCode === undefined) needSilRefresh = true;
+           else needSilRefresh = false;
+
+         }
+         else{
+           sil_currentCode = address[0]['code'];
+           needSilRefresh = true;
+         }
+
+
+         if(currentSilTab !== target.attr('id')){
+           needSilRefresh = true;
+           currentSilTab = target.attr('id');
+         }
+
+         if(needSilRefresh){
+
+           $.each(sil_buildingPolygons, function(index, polygon){
+             polygon.setMap(null);
+             sil_buildingPolygons = [];
+           });
+
+           $.each(sil_landPolygons, function(index, polygon){
+             polygon.setMap(null);
+             sil_landPolygons = [];
+           });
+
+           target.find(".sil-location-name").text(address[0]['address_name']);
+           target.find(".cs-loader").fadeIn('slow');
+           var request_name, callback_function;
+
+           if(target.attr('id') === 'apt-sil'){
+             request_name = 'aptSilPolygon';
            }
-           else{
-             sil_currentCode = address[0]['code'];
-             needSilRefresh = true;
+           else if(target.attr('id') === 'rhouse-sil'){
+             request_name = 'rhouseSilPolygon';
+           }
+           else if(target.attr('id') === 'store-sil'){
+             request_name = 'storeSilPolygon';
+           }
+           else if(target.attr('id') === 'toji-sil'){
+             request_name = 'tojiSilPolygon';
            }
 
-           if(needSilRefresh){
+           sil_ajax = customAjax($SITE_URL+'get/' + request_name,
+                     {
+                       bjdongCd : address[0]['code'],
+                       filter_type : 'year',
+                       filter_value : 1
+                     },
+                     fillSilTab);
 
-             $.each(sil_buildingPolygons, function(index, polygon){
-               polygon.setMap(null);
-               sil_buildingPolygons = [];
-             });
-
-             $.each(sil_landPolygons, function(index, polygon){
-               polygon.setMap(null);
-               sil_landPolygons = [];
-             });
-
-             target.find(".sil-location-name").text(address[0]['address_name']);
-             target.find(".cs-loader").fadeIn('slow');
-             sil_ajax = customAjax($SITE_URL+'get/aptSilPolygon',
-                       {
-                         bjdongCd : address[0]['code'],
-                       },
-                       fillAptSilTab);
-
-           }
-        }
-      });
-    }
+         }
+      }
+    });
 
 });
 
@@ -494,7 +517,7 @@ function sortByJibun(data){
   return sorted_data;
 }
 
-function fillAptSilTab(result){
+function fillSilTab(result){
   console.log(result);
   var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
   var li = '';
@@ -512,40 +535,45 @@ function fillAptSilTab(result){
     $.each(Object.keys(lists), function(index, key){
 
        li += "<li class=sil-result-item data-bunji=" + lists[key][0]['지번'] + ">"
-          +     "<div class=sil-result-item-title>"
-          +          "<p style=font-size:17px;font-weight=bold;>" + lists[key][0]['아파트']
-          +             "<span class='' style=font-size:14px;float:none;>" + "(" + key + "번지)" + "</span>"
-          +             "<span class=ti-arrow-down></span>"
-          +          "</p>"
-          +     "</div>";
+          +     "<div class=sil-result-item-title>";
+          if(currentSilTab === 'apt-sil' || currentSilTab === 'rhouse-sil'){
+            li +=   "<p style=font-size:17px;font-weight=bold;>" + lists[key][0]['이름']
+               +        "<span class='' style=font-size:14px;float:none;>" + "(" + key + "번지)" + "</span>"
+               +        "<span class=ti-arrow-down></span>"
+               +    "</p>";
+          }
+          else{
+            li +=   "<p style=font-size:17px;font-weight=bold;>" + key + "번지"
+               +        "<span class=ti-arrow-down></span>"
+               +    "</p>";
+          }
+
+       li +=    "</div>";
 
 
+       li +=  "<div class=sil-result-item-content style=display:none;>"
+          +     "<div class=sil-dropdown>"
+          +        "<button class=btn btn-primary dropdown-toggle type=button data-toggle=dropdown>" + "평형 선택"
+          +        "<span class=caret></span></button>"
+          +        "<ul class=dropdown-menu sil-dropdown-menu>";
+
+       var area_dup_check = [];
        for(var i = lists[key].length - 1; i >= 0; i--){
-         li +="<div class=sil-result-item-content style=display:none;>"
-            +    "<div class=dropdown>"
-            +       "<button class=btn btn-primary dropdown-toggle type=button data-toggle=dropdown>"
-            +       "<span class=caret></span></button>"
-            +       "<ul class=dropdown-menu>"
-            +         "<li>HTML</li>"
-            +       "</ul>"
-            +     "</div>"
-            // +   "<h5>"  + "거래날짜: "
-            //           + lists[key][i]['년'] + "년 "
-            //           + lists[key][i]['월'] + "월 "
-            //           + lists[key][i]['일'] + "일"
-            // +   "</h5>"
-            // +   "<h5>"  + "전용면적: "
-            //           + lists[key][i]['전용면적'] + "m<sup>2</sup>("
-            //           + (lists[key][i]['전용면적']/3.3).toFixed(0) + "평, "
-            //           + lists[key][i]['층'] + "층" + ")"
-            // +   "</h5>"
-            // +   "<h5>"  + "거래금액: "
-            //           + price_format(lists[key][i]['거래금액'], '만원')
-            // +   "</h5>"
-            + "</div>";
+
+          if( jQuery.inArray(lists[key][i]['전용면적'], area_dup_check) === -1 ){
+              area_dup_check.push(lists[key][i]['전용면적']);
+              li += "<li name="+ lists[key][i]['지번']
+                    + " data-area=" + lists[key][i]['전용면적'] + ">"
+                    + lists[key][i]['전용면적'] + "m<sup>2</sup>("
+                           + (lists[key][i]['전용면적']/3.3).toFixed(0) + "평)";
+          }
 
        }
+       li +=      "</ul>"
+          +    "</div>"; //end of dropdown
 
+       //chart graph
+       li += "<canvas class=sil-chart width=300 height=300 style=display:none;></canvas>";
        li += "</li>";
 
        var point = parsePoint(lists[key][0]['point']);
@@ -556,22 +584,229 @@ function fillAptSilTab(result){
     });
   }
 
+  target_dom.find(".sil-filter-dropdown-menu li").on("click", function(e){
+    $(this).parent().siblings('.btn').text($(this).text())
+                                     .attr('data-type', $(this).attr('data-type'))
+                                     .val($(this).val());
+  });
 
+
+  target_dom.find(".sil-filter-dropdown .filter-search-btn .ti-reload").on("click", function(e){
+
+    console.log('lets filter');
+    console.log($(this).parent().parent().parent().attr('id'));
+    var target_sil_type = $(this).parent().parent().parent().attr('id');
+    var filter_type = $(this).parent().siblings('button').attr('data-type');
+    var filter_value = $(this).parent().siblings('button').val();
+
+    if(target_sil_type === 'apt-sil-filter'){
+      request_name = 'aptSilPolygon';
+    }
+    else if(target_sil_type === 'rhouse-sil-filter'){
+      request_name = 'rhouseSilPolygon';
+    }
+    else if(target_sil_type === 'store-sil-filter'){
+      request_name = 'storeSilPolygon';
+    }
+    else if(target_sil_type === 'toji-sil-filter'){
+      request_name = 'tojiSilPolygon';
+    }
+
+    sil_ajax = customAjax($SITE_URL+'get/' + request_name,
+              {
+                bjdongCd : address[0]['code'],
+                filter_type : filter_type,
+                filter_value : filter_value
+              },
+              fillSilTab);
+
+    console.log(filter_type, filter_value);
+
+  });
   target_dom.find(".sil-result-list").fadeOut(function(){
 
     target_dom.find(".sil-result-list li").remove();
 
     $(li).appendTo(target_dom.find(".sil-result-list"));
+
+    //this is where chart is dyanmially created triggered by dropdown
+    target_dom.find(".sil-dropdown-menu li").on("click", function(e){
+        $(this).parent().siblings('.btn').text($(this).text());
+        var target_index = $(this).attr('name');
+        var target_area = $(this).attr('data-area');
+
+        console.log(target_index, target_area, lists);
+        var data_object = {};
+        for(var i = 0; i < lists[target_index].length; i++){
+          // console.log(lists[target_index][i]);
+          if(lists[target_index][i]['전용면적'] === target_area){
+            // console.log(i);
+
+            var date = lists[target_index][i]['년'] + '/' + lists[target_index][i]['월'];
+
+            if(data_object[ date ] === undefined){
+                data_object[ date ] = [];
+                data_object[ date ].push(lists[target_index][i]['거래금액']);
+            }
+            else{
+                data_object[ date ].push(lists[target_index][i]['거래금액']);
+            }
+
+          }
+        }
+
+        var data = [];
+        $.each(Object.keys(data_object), function(index, key){
+          var sum = 0;
+          for(var i = 0; i < data_object[key].length; ++i){
+            sum += data_object[key][i]*1;
+          }
+
+          data.push( (sum / data_object[key].length).toFixed(0) );
+        });
+
+        var ctx = $(this).parent().parent().parent().find('.sil-chart')[0].getContext('2d');
+        //beginning of chart
+        var sil_chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: Object.keys(data_object),
+              datasets: [{
+                  label: '실거래가',
+                  data: data,
+                  backgroundColor: '#41c980',
+                  borderColor: '#41c980',
+                  fill: false,
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              layout: {
+                padding : {
+                  top: 30,
+                  left: 20
+                }
+              },
+              legend: {
+                display: false
+              },
+              responsive: true,
+              hover: {
+                mode: false,
+                intersect: false
+              },
+              tooltips: {
+                callbacks: {
+                     label: function(tooltipItem, data) {
+                         return price_format(tooltipItem.yLabel, '만원').replace('원', '');
+                     },
+                 }
+              },
+              scales: {
+                  yAxes: [{
+                    ticks: {
+                        fontSize: 12,
+                        beginAtZero: false,
+                        padding: 0,
+                        userCallback: function(value, index, values) {
+                            if (value == 0)
+                                return "0원";
+                            else
+                                return price_format(value.toFixed(0), '만원').replace('원', '');
+                        }
+                    }
+                  }]
+              },
+              animation: {
+                onComplete: function(e){
+                  var ctx = this.chart.ctx;
+                  ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+                  ctx.fillStyle = this.chart.config.options.defaultFontColor;
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'bottom';
+
+                  this.data.datasets.forEach(function (dataset) {
+                    // console.log(dataset);
+                    var percentage = [];
+                    for(var i = 1; i < dataset['data'].length; ++i){
+                      percentage.push( (dataset['data'][i] - dataset['data'][i-1])/dataset['data'][i-1] * 100 );
+                    }
+                      var index = Object.keys(dataset['_meta']);
+                      var points = dataset['_meta'][index]['dataset']['_children'];
+                      for(var i = 1; i < points.length; ++i){
+                        var x = points[i]['_view']['x'];
+                        var y = points[i]['_view']['y'];
+                        if(percentage[i-1] > 0) {
+                          ctx.fillText('+' + percentage[i-1].toFixed(1) + '%', x, y);
+                        }
+                        else{
+                          ctx.fillText(percentage[i-1].toFixed(1) + '%', x, y);
+                        }
+                      }
+                  });
+                }
+              }
+          }
+        });
+
+        //end of chart
+        var canvas = $(this).parent().parent().parent().find('.sil-chart');
+        canvas.show('normal');
+
+        //show content
+        var li = '';
+        for(var i = lists[target_index].length - 1; i >= 0; i--){
+          if( lists[target_index][i]['전용면적'] === target_area ){
+            li +="<div class=sil-result-item-content style=display:none;>"
+               +   "<h5>"  + "거래날짜: "
+                         + lists[target_index][i]['년'] + "년 "
+                         + lists[target_index][i]['월'] + "월 "
+                         + lists[target_index][i]['일'] + "일"
+               +   "</h5>"
+               +   "<h5>"  + "전용면적: "
+                         + lists[target_index][i]['전용면적'] + "m<sup>2</sup>("
+                         + (lists[target_index][i]['전용면적']/3.3).toFixed(0) + "평";
+                   if(currentSilTab == 'apt-sil' || currentSilTab === 'rhouse-sil'){
+                     li += ", " + lists[target_index][i]['층'] + "층";
+                   }
+            li +=         ")";
+            li +=   "</h5>"
+               +   "<h5>"  + "거래금액: "
+                         + price_format(lists[target_index][i]['거래금액'], '만원')
+               +   "</h5>"
+               + "</div>";
+          }
+        }
+
+        $(this).parent().parent().parent().find('.sil-result-item-content').remove();
+        $(li).appendTo($(this).parent().parent().parent()).show();
+    });
+
     target_dom.find(".sil-result-list li p").on("mouseover", function(e){
       var target = $(this).parent().parent();
 
-      var polygons = $('.sil-apt-building-polygon');
+      if(currentSilTab === 'apt-sil'){
+        class_name = 'sil-apt-building-polygon';
+      }
+      else if(currentSilTab === 'rhouse-sil'){
+        class_name = 'sil-rhouse-building-polygon';
+
+      }
+      else if(currentSilTab === 'store-sil') {
+        class_name = 'sil-store-building-polygon';
+      }
+      else if(currentSilTab === 'toji-sil'){
+        class_name = 'sil-toji-building-polygon';
+      }
+
+      var polygons = $('.'+class_name);
+
       $.each( polygons, function(index, polygon) {
 
           var bunji = $(polygon).attr('data-bun') + ( ($(polygon).attr('data-ji') === '') ? '' : '-' + $(polygon).attr('data-ji') );
 
           if(target.attr('data-bunji') === bunji){
-            $(polygon).addClass('sil-apt-building-polygon-hover');
+              $(polygon).addClass(class_name+ '-hover');
           }
 
       });
@@ -596,30 +831,29 @@ function fillAptSilTab(result){
 
       });
 
-      // $.each( sil_buildingPolygons, function(index, polygon) {
-      //
-      //     $.each(polygon.wc, function(index, polygon_attr){
-      //
-      //         var id = polygon_attr.id;
-      //         var target_polygon = $("#" + id);
-      //         var bunji = $(target_polygon).attr('data-bun') + ( ($(target_polygon).attr('data-ji') === '') ? '' : '-' + $(target_polygon).attr('data-ji') );
-      //         if(target.attr('data-bunji') === bunji){
-      //           daum.maps.event.trigger(polygon, 'mouseover');
-      //           console.log(polygon);
-      //         }
-      //
-      //     });
-      //
-      // });
-
     });
 
     target_dom.find(".sil-result-list li p").on("mouseout", function(e){
 
-      var polygons = $('.sil-apt-building-polygon');
+      if(currentSilTab === 'apt-sil'){
+        class_name = 'sil-apt-building-polygon';
+      }
+      else if(currentSilTab === 'rhouse-sil'){
+        class_name = 'sil-rhouse-building-polygon';
+
+      }
+      else if(currentSilTab === 'store-sil') {
+        class_name = 'sil-store-building-polygon';
+      }
+      else if(currentSilTab === 'toji-sil'){
+        class_name = 'sil-toji-building-polygon';
+      }
+
+      var polygons = $('.'+class_name);
+
       $.each( polygons, function(index, polygon) {
 
-          $(polygon).removeClass('sil-apt-building-polygon-hover');
+          $(polygon).removeClass(class_name + '-hover');
 
       });
 

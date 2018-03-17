@@ -26,11 +26,49 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
+  public function storeSilPolygon(){
+    $this->load->model('Polygon');
+    $data = array (
+      'type' => 'storeSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('fitler_value')
+    );
+
+    echo $this->Polygon->getPolyInfo($data);
+  }
+
+  public function tojiSilPolygon(){
+    $this->load->model('Polygon');
+    $data = array (
+      'type' => 'tojiSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('fitler_value')
+    );
+
+    echo $this->Polygon->getPolyInfo($data);
+  }
+
+  public function rhouseSilPolygon(){
+    $this->load->model('Polygon');
+    $data = array (
+      'type' => 'rhouseSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('fitler_value')
+    );
+
+    echo $this->Polygon->getPolyInfo($data);
+  }
+
   public function aptSilPolygon(){
     $this->load->model('Polygon');
     $data = array (
       'type' => 'aptSil',
       'bjdongCd' => $this->input->post('bjdongCd'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('fitler_value')
     );
 
     echo $this->Polygon->getPolyInfo($data);

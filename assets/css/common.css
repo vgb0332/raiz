@@ -23,6 +23,15 @@
 .navbar .navbar-brand img{
     height: 30px;
 }
+
+.navbar .navbar-brand img:hover{
+    -webkit-transition: filter 0.35s ease, font-size 0.35s ease;
+    -moz-transition: filter 0.35s ease, font-size 0.35s ease;
+    -o-transition:filter 0.35s ease, font-size 0.35s ease;
+    transition: filter 0.35s ease, font-size 0.35s ease;
+    filter: contrast(160%);
+}
+
 .navbar-nav li a:hover {
     color: #46d78f !important;
     font-size: 16px !important;

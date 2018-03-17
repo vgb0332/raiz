@@ -1,17 +1,21 @@
 var beforeNm = '';
-
+var stcs_label = [];
 $('#stcsOnOff').click(function() {
   $(this).toggleClass('btn-outline-info');
   if( $(this).text() == '통계 Layer 켜기' ) {
-    $(this).val(1);
+    if ($(this).val() == 1) {
+      showStcsItem();
+    }
+    else {
+      $(this).val(1);
+      initStcs();
+    }
     $(this).text('통계 Layer 끄기');
 
   }
   else {
     $(this).text('통계 Layer 켜기');
-    for (var i = 0; i < stcs_landPolygons.length; i++) {
-      stcs_landPolygons[i].addClass("stcsHide");
-    }
+    hideStcsItem();
   }
 });
 
@@ -28,17 +32,6 @@ $('.btn-toggle').click(function() {
   $(this).find('.btn').toggleClass('btn-default');
 });
 
-function startStcs() {
-  if ($('#stcsOnOff').val() == '1') {
-    for (var i = 0; i < stcs_landPolygons.length; i++) {
-      stcs_landPolygons[i].removeClass("stcsHide");
-    }
-  }
-  else {
-    initStcs();
-  }
-}
-
 function initStcs() {
     stcs_landPolygons = [];
     map.setCenter(new daum.maps.LatLng(36.28176087772557, 127.38463706757949));
@@ -53,6 +46,8 @@ function initStcs() {
 }
 
 function processStcs(data) {
+  removeStcsPolygon();
+  removeStcsLabel();
   drawPoly(data);
   if (ajax_type === 'stcsSido') {
     $.each(data, function(index, target){
@@ -68,6 +63,42 @@ function processStcs(data) {
     $.each(data, function(index, target){
       createOverlay(beforeNm+' '+target['dongNm']);
     });
+  }
+}
+
+function removeStcsLabel() {
+  for (var i = 0; i < stcs_label.length; i++) {
+    stcs_label[i].setMap(null);
+  }
+  stcs_label = [];
+}
+
+function removeStcsPolygon() {
+  for (var i = 0; i < stcs_landPolygons.length; i++) {
+    stcs_landPolygons[i].setMap(null);
+  }
+  stcs_landPolygons = [];
+}
+
+function showStcsItem() {
+  for (var i = 0; i < stcs_landPolygons.length; i++) {
+    stcs_landPolygons[i].setMap(map);
+    var target = stcs_landPolygons[i].wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
+    });
+  }
+  for (var i = 0; i < stcs_label.length; i++) {
+    stcs_label[i].setMap(map);
+  }
+}
+
+function hideStcsItem() {
+  for (var i = 0; i < stcs_landPolygons.length; i++) {
+    stcs_landPolygons[i].setMap(null);
+  }
+  for (var i = 0; i < stcs_label.length; i++) {
+    stcs_label[i].setMap(null);
   }
 }
 
@@ -89,6 +120,7 @@ function createOverlay(name) {
   });
 
   customOverlay.setMap(map);
+  stcs_label.push(customOverlay);
 }
 
 function getStcsSgg(sggcode) {
@@ -108,7 +140,7 @@ function getStcsaggr(aggrcode) {
   ajax_type = 'stcsAggr';
   currHjstcs = aggrcode;
   customAjax($SITE_URL+'getStcs/statscAggr',{aggrcode:aggrcode},
-  drawPoly);
+  processStcs);
 }
 
 function getStcsOldind() {
@@ -137,18 +169,24 @@ function stat_side_btn(code) {
     $('#stat-side-dong').text('');
     $('#stat-side-sgg').attr("name", '');
     $('#stat-side-dong').attr("name", '');
-    getStcsSgg($('#stat-side-sido').attr("name"));
 
-    $('.stcs-item').remove();
-    $('.stcs_label').remove();
+    removeStcsLabel();
+    removeStcsPolygon();
+
+    getStcsSgg($('#stat-side-sido').attr("name"));
+    // $('.stcs-item').remove();
+    // $('.stcs_label').remove();
   }
   else if (code.length == 7) {  //dong 초기화
     $('#stat-side-dong').text('');
     $('#stat-side-dong').attr("name", '');
-    getStcsdong($('#stat-side-sgg').attr("name"))
 
-    $('.stcs-item').remove();
-    $('.stcs_label').remove();
+    removeStcsLabel();
+    removeStcsPolygon();
+
+    getStcsdong($('#stat-side-sgg').attr("name"))
+    // $('.stcs-item').remove();
+    // $('.stcs_label').remove();
   }
   else {
     initStcs();
@@ -494,9 +532,9 @@ var stcs_additag = function(target,data,addiType,code){
 
     case 'initdata':
 
-    $(target).find('#stcs-init-area').text(numberWithCommas((data[0]*1).toFixed(1)));
-    $(target).find('#stcs-init-pop').text(numberWithCommas(data[1]));
-    $(target).find('#stcs-init-avr').text(numberWithCommas(data[2]));
+    $(target).find('#stcs-init-area').text(numberWithCommas((data[0]*1).toFixed(1))+'㎡');
+    $(target).find('#stcs-init-pop').text(numberWithCommas(data[1])+'명');
+    $(target).find('#stcs-init-avr').text(numberWithCommas((data[2]*1).toFixed(0))+'세');
 
     break;
 
@@ -552,7 +590,7 @@ var stcs_additag = function(target,data,addiType,code){
       if (data.length == 0) {
         break;
       }
-      $(target).find('#stcs-init-tothouse').text(numberWithCommas(data[0]['value']));
+      $(target).find('#stcs-init-tothouse').text(numberWithCommas(data[0]['value'])+'개');
       // console.log(data);
       // $container = $(document.createElement('h')).addClass("stcs-initdata-stcsTotalHouse");
       // $container.append(
@@ -909,3 +947,37 @@ function numberWithCommas(x) {
     return temp[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   }
 }
+
+
+function youdongStart() {
+  var loading = $(document.createElement('div')).addClass("stcsLoading");
+  loading.append('<text class="loading" fill="#fff">Loading...</text>');
+  $(document.body).append(loading);
+  customAjax($SITE_URL+'getStcs/youdongStart',0,setYoudongCircle);
+}
+
+function setYoudongCircle(data) {
+  $.each(data, function(index, target) {
+      var point = parsePoint(target['point']);
+      var x = point[0], y = point[1];
+
+      var circle = new daum.maps.Circle({
+          // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
+          radius: 10, // 미터 단위의 원의 반지름입니다
+          strokeWeight: 5, // 선의 두께입니다
+          strokeColor: '#75B8FA', // 선의 색깔입니다
+          strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+          strokeStyle: 'solid', // 선의 스타일 입니다
+          fillColor: '#CFE7FF', // 채우기 색깔입니다
+          fillOpacity: 0.7  // 채우기 불투명도 입니다
+      });
+      circle.setPosition(new daum.maps.LatLng(x, y));
+      circle.setMap(map);
+      // console.log(point);
+  });
+  $(".stcsLoading").remove();
+}
+
+// function setYDCircle(circle,) {
+//
+// }

@@ -337,4 +337,15 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
+  function getYoudongStart(){
+      $query = $this->db->query(
+                "SELECT code, name, sigunguCd, dongCd, aggCd, ST_AsText(point) as point #, ST_AsText(point) as center
+                FROM raiz2.youdong_seoul_locationCd limit 1000
+                ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+
 }

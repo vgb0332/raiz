@@ -828,23 +828,77 @@ body {
   color: #32d38d;
   background-color: #ffffff;
 }
+.sil-filter-content {
 
+}
 
-.sil-filter-content{
+.sil-filter-content .ti-reload{
+  float: right;
+  margin-right: 15px;
+  font-size: 15px;
+  background-color: #aff39a;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: 2px solid #aff39a;
+}
 
+.sil-filter-content .ti-reload:hover{
+  -webkit-transition: border 0.35s ease, transform 1s ease;
+  -moz-transition: border 0.35s ease, transform 1s ease;
+  -o-transition:border 0.35s ease, transform 1s ease;
+  transition: border 0.35s ease, transform 1s ease;
+
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-360deg);
+  border: 2px solid #7cad6d
 }
 
 .sil-result-container{
   border-top: 1px solid #e2d7d7;
 }
 
-.sil-result-container .sil-result-list li{
+.dropdown-menu {
+  float: none;
+  position :inherit;
+}
+
+.sil-filter-dropdown {
+  background-color: #d8dad8;
+}
+
+.sil-filter-dropdown .btn{
+  color: black !important;
+  background-color: #ceefcb;
+  font-size : 15px;
+  width: 330px;
+}
+
+.sil-dropdown .btn{
+  color: black !important;
+  background-color: #effaee;
+  font-size : 15px;
+  width: 300px;
+}
+.sil-result-container .sil-result-list li,
+.sil-filter-dropdown-menu li{
   padding-top: 10px;
   margin-left: 10px;
   margin-right: 10px;
   margin-top: 10px;
   border-bottom: 1px solid #d4c8c8;
   cursor: pointer;
+}
+
+.sil-result-container .sil-result-list li:hover,
+.sil-filter-dropdown-menu li:hover {
+  -webkit-transition: background-color 0.35s ease, font-size 0.35s ease;
+  -moz-transition: background-color 0.35s ease, font-size 0.35s ease;
+  -o-transition:background-color 0.35s ease, font-size 0.35s ease;
+  transition: background-color 0.35s ease, font-size 0.35s ease;
+  background-color: #cae8c0;
 }
 
 .sil-result-container .sil-result-list .sil-result-item-title:hover,

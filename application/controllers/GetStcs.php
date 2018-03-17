@@ -130,5 +130,11 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->getStcsSupportO($code,$type);
   }
 
+        // 서울시 유동인구
+  public function youdongStart() {
+    $this->load->model('Statistics');
+    echo $this->Statistics->getYoudongStart();
+  }
+
 
 }

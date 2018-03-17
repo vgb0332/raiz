@@ -31,6 +31,7 @@ var aggr_poly = [];
 
 var currentCode;
 var currentAddress;
+var currentSilTab;
 var needSilRefresh = true;
 var sil_currentCode;
 var sil_ajax;

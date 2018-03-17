@@ -88,7 +88,7 @@
             <li id="apt-sil-btn" data-index='0'>
                 <button class="btn">아파트&nbsp;<span class="ti-angle-down"></span></button>
             </li>
-            <li id="yunlip-sil-btn" data-index='1'>
+            <li id="rhouse-sil-btn" data-index='1'>
                 <button class="btn">연립다세대&nbsp;<span class="ti-angle-down"></span></button>
             </li>
             <li id="store-sil-btn" data-index='2'>
@@ -111,7 +111,22 @@
               </script>
             </div>
             <div id="apt-sil-filter" class="collapse sil-filter-content">
-              조건입니다용!
+                <div class="sil-filter-dropdown">
+                  <button class="btn" btn-primary dropdown-toggle type="button" data-toggle="dropdown">
+                    기간 선택 <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu sil-filter-dropdown-menu">
+                    <li data-type=month value=6> 최근 6개월 </li>
+                    <li data-type=year value=1>  최근 1년  </li>
+                    <li data-type=year value=2>  최근 2년  </li>
+                    <li data-type=year value=3>  최근 3년  </li>
+                  </ul>
+                  <div class="filter-search-btn" style="width:100%; height:50px;">
+                      <span class="ti-reload"></span>
+                  </div>
+
+                </div>
+
             </div>
             <div class="sil-result-container">
               <div class="cs-loader">
@@ -122,46 +137,80 @@
                 </div>
               </div>
               <ul class="sil-result-list">
-                <!-- <li>결과 1</li>
-                <li>결과 2</li>
-                <li>결과 3</li>
-                <li>결과 4</li> -->
               </ul>
             </div>
-            <!-- <div class="" id="slider-3" style="width:50%;"></div>
-            <script type="text/javascript">
-            $( "#slider-3" ).slider({
-                       range:true,
-                       min: 0,
-                       max: 10,
-                       values: [ 0, 10 ],
-                       step: 1,
-                       slide: function( event, ui ) {
-                         console.log('sliding');
-                       }
-            }).each(function() {
-                var opt = $(this).data().uiSlider.options;
-
-                // Get the number of possible values
-                var vals = opt.max - opt.min;
-                // Space out values
-                $( "#slider-3 label").remove();
-                for (var i = 0; i <= vals; i++) {
-                  var el = $('<label>'+(opt.min*1+i)+'</label>').css('left',(i/vals*100)+'%');
-
-                  $( "#slider-3" ).append(el);
-                }
-              });
-            </script> -->
           </li>
-          <li id="yunlip-sil" data-index='1'>
-
+          <li id="rhouse-sil" data-index='1'>
+            <div class="sil-location-name">
+            </div>
+            <div href="#rhouse-sil-filter" data-toggle='collapse' class="rhouse-filter-index">
+              <span class="ti-filter" data-toggle="tooltip" data-placement="left" title="필터 검색"></span>
+              <script type="text/javascript">
+                $('[data-toggle="tooltip"]').tooltip();
+              </script>
+            </div>
+            <div id="rhouse-sil-filter" class="collapse sil-filter-content">
+              연립 조건입니다용!
+            </div>
+            <div class="sil-result-container">
+              <div class="cs-loader">
+                <div class="cs-loader-inner">
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                </div>
+              </div>
+              <ul class="sil-result-list">
+              </ul>
+            </div>
           </li>
           <li id="store-sil" data-index='2'>
-
+            <div class="sil-location-name">
+            </div>
+            <div href="#store-sil-filter" data-toggle='collapse' class="store-filter-index">
+              <span class="ti-filter" data-toggle="tooltip" data-placement="left" title="필터 검색"></span>
+              <script type="text/javascript">
+                $('[data-toggle="tooltip"]').tooltip();
+              </script>
+            </div>
+            <div id="store-sil-filter" class="collapse sil-filter-content">
+              상가 조건입니다용!
+            </div>
+            <div class="sil-result-container">
+              <div class="cs-loader">
+                <div class="cs-loader-inner">
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                </div>
+              </div>
+              <ul class="sil-result-list">
+              </ul>
+            </div>
           </li>
           <li id="toji-sil" data-index='3'>
-
+            <div class="sil-location-name">
+            </div>
+            <div href="#toji-sil-filter" data-toggle='collapse' class="toji-filter-index">
+              <span class="ti-filter" data-toggle="tooltip" data-placement="left" title="필터 검색"></span>
+              <script type="text/javascript">
+                $('[data-toggle="tooltip"]').tooltip();
+              </script>
+            </div>
+            <div id="toji-sil-filter" class="collapse sil-filter-content">
+              토지 조건입니다용!
+            </div>
+            <div class="sil-result-container">
+              <div class="cs-loader">
+                <div class="cs-loader-inner">
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                  <label>	●</label><label> ●</label>
+                </div>
+              </div>
+              <ul class="sil-result-list">
+              </ul>
+            </div>
           </li>
         </ul>
 
@@ -193,7 +242,7 @@
       </div>
       <div class="stat-body" style="text-align:center;">
         <div>
-          <button type="button" onclick="initStcs();" id="stcsOnOff" class="btn-outline-success btn waves-effect">통계 Layer 켜기</button>
+          <button type="button" id="stcsOnOff" class="btn-outline-success btn waves-effect">통계 Layer 켜기</button>
           <a onclick="initStcs();" class="icon-reload"></a>
         </div>
         <div>
@@ -209,9 +258,18 @@
           </div>
         </div>
         <div>
-          <svg version="1.1" width="100%" height="100%" style="stroke: none; stroke-dashoffset: 0.5; stroke-linejoin: round; fill: none; position: relative;" viewBox="0 0 7215 5095">
+          <button onclick="youdongStart();" style="width:130px" type="button" class="btn btn-pink">서울시 유동인구</button>
+        </div>
+        <div>
+          <button type="button" style="width:130px" class="btn btn-indigo">상권 정보</button>
+        </div>
+        <div>
+          <button type="button" style="width:130px" class="btn btn-brown">전자 지도 배경</button>
+        </div>
+        <div>
+          <svg version="1.1" width="100%" height="50%" style="stroke: none; stroke-dashoffset: 0.5; stroke-linejoin: round; fill: none; position: relative; " viewBox="0 0 7215 5095">
             <!-- <defs></defs> -->
-            <path id="daum-maps-shape-322" d="M3839 2152 L3863 2156 3863 2158 3862 2161 3863 2163 3864 2166 3855 2194 3871 2200 3872 2219 3859 2258 3852 2263 3849 2296 3855 2305 3862 2301 3863 2301 3868 2304 3879 2292 3915 2284 3942 2265 3952 2273 3960 2304 3960 2311 3961 2312 3962 2317 3961 2319 3961 2321 3963 2323 3949 2323 3941 2324 3939 2325 3938 2325 3934 2324 3921 2348 3902 2388 3932 2404 3927 2420 3928 2420 3927 2421 3907 2448 3884 2457 3869 2474 3856 2468 3838 2479 3831 2497 3808 2504 3806 2522 3796 2525 3781 2527 3758 2508 3757 2465 3750 2463 3750 2465 3750 2467 3749 2468 3748 2471 3748 2472 3746 2473 3746 2475 3745 2476 3744 2476 3742 2477 3740 2477 3739 2479 3737 2479 3736 2479 3734 2479 3733 2479 3732 2480 3729 2481 3726 2480 3724 2480 3724 2479 3723 2477 3722 2477 3721 2475 3720 2474 3720 2473 3719 2472 3718 2470 3717 2468 3716 2466 3716 2463 3716 2462 3715 2460 3669 2489 3652 2508 3638 2509 3624 2514 3610 2489 3589 2508 3588 2509 3587 2511 3586 2512 3586 2514 3585 2516 3584 2517 3582 2518 3581 2518 3579 2517 3577 2517 3575 2517 3575 2516 3575 2514 3574 2513 3562 2484 3560 2485 3552 2478 3550 2462 3533 2433 3539 2422 3524 2416 3498 2434 3495 2448 3491 2446 3490 2446 3487 2446 3486 2445 3485 2446 3483 2446 3480 2446 3481 2444 3477 2441 3471 2444 3468 2444 3455 2447 3453 2447 3465 2423 3462 2418 3459 2417 3454 2414 3453 2414 3452 2407 3470 2386 3465 2374 3472 2358 3463 2335 3443 2327 3431 2337 3415 2322 3394 2318 3386 2308 3396 2303 3409 2275 3424 2261 3435 2247 3429 2233 3437 2221 3507 2278 3538 2267 3551 2240 3571 2247 3572 2208 3583 2184 3588 2152 3620 2140 3627 2131 3650 2138 3659 2178 3688 2166 3681 2132 3698 2116 3699 2091 3721 2083 3730 2053 3749 2057 3754 2070 3776 2066 3779 2080 3796 2065 3821 2062 3841 2075 3836 2092 3842 2110 3835 2126 3839 2152 Z" transform="translate(0,0)" class="stcs-polygon stcs-item">
+            <path style="fill:white" id="daum-maps-shape-322" d="M3839 2152 L3863 2156 3863 2158 3862 2161 3863 2163 3864 2166 3855 2194 3871 2200 3872 2219 3859 2258 3852 2263 3849 2296 3855 2305 3862 2301 3863 2301 3868 2304 3879 2292 3915 2284 3942 2265 3952 2273 3960 2304 3960 2311 3961 2312 3962 2317 3961 2319 3961 2321 3963 2323 3949 2323 3941 2324 3939 2325 3938 2325 3934 2324 3921 2348 3902 2388 3932 2404 3927 2420 3928 2420 3927 2421 3907 2448 3884 2457 3869 2474 3856 2468 3838 2479 3831 2497 3808 2504 3806 2522 3796 2525 3781 2527 3758 2508 3757 2465 3750 2463 3750 2465 3750 2467 3749 2468 3748 2471 3748 2472 3746 2473 3746 2475 3745 2476 3744 2476 3742 2477 3740 2477 3739 2479 3737 2479 3736 2479 3734 2479 3733 2479 3732 2480 3729 2481 3726 2480 3724 2480 3724 2479 3723 2477 3722 2477 3721 2475 3720 2474 3720 2473 3719 2472 3718 2470 3717 2468 3716 2466 3716 2463 3716 2462 3715 2460 3669 2489 3652 2508 3638 2509 3624 2514 3610 2489 3589 2508 3588 2509 3587 2511 3586 2512 3586 2514 3585 2516 3584 2517 3582 2518 3581 2518 3579 2517 3577 2517 3575 2517 3575 2516 3575 2514 3574 2513 3562 2484 3560 2485 3552 2478 3550 2462 3533 2433 3539 2422 3524 2416 3498 2434 3495 2448 3491 2446 3490 2446 3487 2446 3486 2445 3485 2446 3483 2446 3480 2446 3481 2444 3477 2441 3471 2444 3468 2444 3455 2447 3453 2447 3465 2423 3462 2418 3459 2417 3454 2414 3453 2414 3452 2407 3470 2386 3465 2374 3472 2358 3463 2335 3443 2327 3431 2337 3415 2322 3394 2318 3386 2308 3396 2303 3409 2275 3424 2261 3435 2247 3429 2233 3437 2221 3507 2278 3538 2267 3551 2240 3571 2247 3572 2208 3583 2184 3588 2152 3620 2140 3627 2131 3650 2138 3659 2178 3688 2166 3681 2132 3698 2116 3699 2091 3721 2083 3730 2053 3749 2057 3754 2070 3776 2066 3779 2080 3796 2065 3821 2062 3841 2075 3836 2092 3842 2110 3835 2126 3839 2152 Z" transform="translate(0,0)" class="stcs-polygon stcs-item">
             </path>
           </svg>
           <!-- <svg id="side-tab-svg" version="1.1" width="100%" height="100%" style="stroke: none; stroke-dashoffset: 0.5; stroke-linejoin: round; fill: none; position: relative;" viewBox="0 0 100 100">
