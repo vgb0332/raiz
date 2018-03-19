@@ -30,6 +30,7 @@
 <script src="<?php echo base_url();?>assets/js/map/raiz_curAddr.js"></script>
 <script src="<?php echo base_url();?>assets/js/common/global_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/daum_functions.js"></script>
+<script src="<?php echo base_url();?>assets/js/map/map_controller.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/map_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/main_activity.js"></script>
 <!-- <script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script> -->

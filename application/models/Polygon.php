@@ -107,11 +107,14 @@ Class Polygon extends CI_Model {
     if($type === 'aptSil'){
       $sigunguCd = substr($values['bjdongCd'], 0, 5);
       $bjdongCd = substr($values['bjdongCd'], 5, 5);
+      $filter_type = $values['filter_type'];
+      $filter_value = $values['filter_value'];
+
       $current_time = date("Y-m");
-      $last_time = date("Y-m", strtotime('-1 year'));
+      $last_time = date("Y-m", strtotime('-' . $filter_value . ' ' . $filter_type));
       $last_year = explode("-", $last_time)[0];
       $last_month = explode("-", $last_time)[1];
-      // return json_encode($last_month, JSON_UNESCAPED_UNICODE);
+      // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
                 "SELECT b.년, b.월, b.일, b.아파트 as 이름, b.지번, b.전용면적, b.층, b.거래금액, st_asText(st_centroid(geomfromtext(a.polygon))) as point
                 FROM  getLandPolygonText as a, getRTMSDataSvcAptTrade as b

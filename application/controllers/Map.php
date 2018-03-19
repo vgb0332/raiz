@@ -39,6 +39,8 @@ class Map extends CI_Controller {
       $this->load->view('map/raiz_controller');
       $this->load->view('map/map_controller');
       $this->load->view('map/raiz_curAddr');
+      $this->load->view('common/login');
+      // $this->load->view('common/signup');
       // $this->load->view('map/raiz_window');
       $this->load->view('map/map_footer');
       // check for browser since IE won't take some js libraries TT

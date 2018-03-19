@@ -34,8 +34,8 @@ body {
   display: flex;
   position: absolute;
   top: 50px;
-  height: 40px;
-  width: 100%;
+  /* height: 40px;
+  width: 100%; */
   z-index: 10;
   /* background-color: #424245a3; */
 }
@@ -46,7 +46,7 @@ body {
   overflow: hidden;
   position: fixed;
   top: 15vh;
-  right: 4vw;
+  right: 6vw;
   width: 700px;
   height: 700px;
   z-index: 15;
@@ -670,9 +670,9 @@ body {
 }
 
 .side-tab-header span{
-  font-size: 22px;
-  letter-spacing: -1px;
-  line-height: 2.3;
+  font-size: 17px;
+  /* letter-spacing: -1px; */
+  line-height: 2.6;
 }
 
 .raiz-side-tab-return{
@@ -721,7 +721,7 @@ body {
   border: 1px solid #bdbdbd;
   font-size: 15px;
   color: #333;
-  padding-left: 5px;
+  /* padding-left: 5px; */
 }
 
 .raiz-side-tab-content li input[type=text]:focus{
@@ -827,6 +827,7 @@ body {
   transition: color 0.35s ease, font-size 0.35s ease;
   color: #32d38d;
   background-color: #ffffff;
+  cursor: pointer;
 }
 .sil-filter-content {
 
@@ -842,6 +843,47 @@ body {
   cursor: pointer;
   border: 2px solid #aff39a;
 }
+
+@keyframes rotating
+	{
+	from
+		{
+		transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		}
+	to
+		{
+		transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		}
+	}
+@-webkit-keyframes rotating
+	{
+	from
+		{
+		transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		}
+	to
+		{
+		transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		}
+	}
+.rotating
+	{
+	-webkit-animation: rotating 0.35s linear infinite;
+	-moz-animation: rotating 0.35s linear infinite;
+	-ms-animation: rotating 0.35s linear infinite;
+	-o-animation: rotating 0.35s linear infinite;
+	animation: rotating 0.35s linear infinite;
+	}
 
 .sil-filter-content .ti-reload:hover{
   -webkit-transition: border 0.35s ease, transform 1s ease;
@@ -1012,4 +1054,154 @@ body {
   background-color: #ffffff;
   color : #333;
   box-shadow: 4px 4px 5px #888888;
+}
+
+/* map controller */
+.map-controller {
+  position: absolute;
+  top : 50px;
+  right: 10px;
+  width: 50px;
+}
+
+.map-controller .btn {
+  background-color: #333;
+  padding: 1rem 1.5rem;
+  font-size: 15px;
+}
+
+.map-controller .btn-with-text{
+  font-size: 12px;
+  padding : 1.1rem 1.2rem;
+  white-space: nowrap !important;
+}
+
+.map-filter-list,
+.map-around-list{
+  z-index: 10;
+  position: absolute;
+  display: grid;
+  width: 90px;
+  right: 45px;
+}
+
+.map-filter-list .btn,
+.map-around-list .btn{
+  background-color: #f8f1f1;
+  -webkit-transition: background-color 0.35s ease;
+  -moz-transition: background-color 0.35s ease;
+  -o-transition: background-color 0.35s ease;
+  transition: background-color 0.35s ease;
+
+}
+
+.map-filter-list .btn > span,
+.map-around-list .btn > span {
+  color: #000000;
+}
+
+.wrap {
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  width: 245px;
+  height: 112px;
+  margin-left: -144px;
+  text-align: left;
+  overflow: hidden;
+  font-size: 12px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.wrap .info:nth-child(1) {
+    border: 0;
+    box-shadow: 0px 1px 2px #888;
+}
+
+.wrap .info {
+    width: 245px;
+    height: 100px;
+    border-radius: 5px;
+    border-bottom: 2px solid #ccc;
+    border-right: 1px solid #ccc;
+    overflow: hidden;
+    background: #fff;
+}
+
+.info .title {
+    padding: 5px 0 0 10px;
+    height: 30px;
+    background: rgba(65, 201, 128, 0.26);
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+    letter-spacing: -1px;
+    font-weight: bold;
+}
+
+.info .body {
+    padding-left: 10px;
+    padding-top: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.info .close {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    color: #888;
+    width: 17px;
+    height: 17px;
+    background: url(http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png);
+}
+
+/* toaster */
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    font-size: 13px;
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 6px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    top: 110px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+    visibility: visible; /* Show the snackbar */
+
+/* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+    from {top: 0; opacity: 0;}
+    to {top: 110px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {top: 0; opacity: 0;}
+    to {top: 110px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {top: 110px; opacity: 1;}
+    to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {top: 110px; opacity: 1;}
+    to {top: 0; opacity: 0;}
 }

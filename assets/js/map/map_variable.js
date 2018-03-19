@@ -15,7 +15,7 @@ var geocoder = new daum.maps.services.Geocoder();
 var categoryOverlay = new daum.maps.CustomOverlay({});
 
 // 장소 검색 객체를 생성합니다
-var ps = new daum.maps.services.Places();
+var ps = new daum.maps.services.Places(map);
 
 /*
   ajax_type => DB에서 데이터를 요청할 때, 타입을 지정해주어 폴리곤의 형태를 정한다.

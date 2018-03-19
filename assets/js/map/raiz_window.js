@@ -86,7 +86,10 @@ function lifeToWindow(Rwindow){
     }
   })
   .draggable( 'disable' );
-
+  Rwindow.find(".raiz-window-top, .header").on("dblclick", function(e){
+    // console.log('dblclick');
+    Rwindow.find(".ti-layers").trigger("click");
+  });
   Rwindow.find(".raiz-window-top, .header").on("mousedown", function(e){
     if(e.target !== e.currentTarget) {
       Rwindow.draggable( 'disable' );
@@ -130,14 +133,14 @@ function lifeToWindow(Rwindow){
       //     <span class="ti-close"></span>
       //   </div>
       //   `);
-      console.log(target);
+
       var tab = $(
         " <div class='footer-tab-container'>"
         +  "<div class='tab-name'>" + target + "</div>"
         +  "<span class='ti-close'></span>"
         + "</div>"
         );
-      console.log(tab);
+
 
       $(".map-footer").append(tab);
       tab.find('div').tooltip({

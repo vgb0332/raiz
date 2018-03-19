@@ -32,7 +32,7 @@ class Get extends CI_Controller {
       'type' => 'storeSil',
       'bjdongCd' => $this->input->post('bjdongCd'),
       'filter_type' => $this->input->post('filter_type'),
-      'filter_value' => $this->input->post('fitler_value')
+      'filter_value' => $this->input->post('filter_value')
     );
 
     echo $this->Polygon->getPolyInfo($data);
@@ -44,7 +44,7 @@ class Get extends CI_Controller {
       'type' => 'tojiSil',
       'bjdongCd' => $this->input->post('bjdongCd'),
       'filter_type' => $this->input->post('filter_type'),
-      'filter_value' => $this->input->post('fitler_value')
+      'filter_value' => $this->input->post('filter_value')
     );
 
     echo $this->Polygon->getPolyInfo($data);
@@ -56,7 +56,7 @@ class Get extends CI_Controller {
       'type' => 'rhouseSil',
       'bjdongCd' => $this->input->post('bjdongCd'),
       'filter_type' => $this->input->post('filter_type'),
-      'filter_value' => $this->input->post('fitler_value')
+      'filter_value' => $this->input->post('filter_value')
     );
 
     echo $this->Polygon->getPolyInfo($data);
@@ -68,7 +68,7 @@ class Get extends CI_Controller {
       'type' => 'aptSil',
       'bjdongCd' => $this->input->post('bjdongCd'),
       'filter_type' => $this->input->post('filter_type'),
-      'filter_value' => $this->input->post('fitler_value')
+      'filter_value' => $this->input->post('filter_value')
     );
 
     echo $this->Polygon->getPolyInfo($data);

@@ -6,7 +6,7 @@ $(".raiz-side-tab-list li").on('click', function(){
   if($(this).find('span').hasClass('ti-angle-down')){
     chosenDom.siblings().not(this).hide("drop", {direction : "down"}, 100);
     chosenDom.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
-    $(".side-tab-header:visible").children().first().after("<span class='ti-angle-right'> " + chosenButtonText.trim() + "</span>");
+    $(".side-tab-header:visible").children().first().after('&nbsp;' + "<span class='ti-angle-right' style=font-size:13px;> " + chosenButtonText.trim() + "</span>");
 
     chosenDom.parent().parent().find(".raiz-side-tab-content li[data-index=" + chosenIndex + "]").fadeIn('fast');
   }
@@ -22,7 +22,29 @@ $(".raiz-side-tab-list li").on('click', function(){
 
 
 /*************************** 검색 창 *****************************/
+function toaster(text, type) {
+    // Get the snackbar DIV
+    var x = document.getElementById("snackbar");
 
+    // Add the "show" class to DIV
+    x.className = "show";
+    if(type === 'success'){
+      x.style.backgroundColor = '#00c850';
+    }
+    else if(type === 'info'){
+      x.style.backgroundColor = '#34b5e5';
+    }
+    else if(type === 'error'){
+      x.style.backgroundColor = '#ef9da6';
+    }
+    else if(type === 'warning'){
+      x.style.backgroundColor = '#fe8801';
+    }
+
+    x.innerHTML = text;
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
 
 var keyword_history = [];
 $( "#keyword-input" ).on("focus change keyup",function(e){
@@ -34,7 +56,7 @@ $( "#keyword-input" ).on("focus change keyup",function(e){
 
       if(q === ''){
         //show history
-          console.log('empty string');
+
           $(".keyword-result-list-group").hide();
           $(".keyword-suggestions-list-group li").remove();
           var item = '';
@@ -60,8 +82,6 @@ $( "#keyword-input" ).on("focus change keyup",function(e){
           return false;
       }
       if (!q.replace(/^\s+|\s+$/g, '')) {
-          // alert('키워드를 입력해주세요!');
-          console.log('invalid string');
           $(".keyword-suggestions-list-group li")
           .hide("slide", { direction: "up" }, 200, function(){
             $(this).remove();
@@ -82,7 +102,7 @@ $( "#keyword-input" ).on("focus change keyup",function(e){
 });
 
 function fillKeywordSuggestions(data, status, pagination){
-      console.log(data);
+
       $(".keyword-result-list-group").hide();
       //first delete all previous lists
       $(".keyword-suggestions-list-group li")
@@ -119,7 +139,6 @@ function fillKeywordSuggestions(data, status, pagination){
           var name = $( this ).attr('data-name');
           $("#keyword-input").val(name);
 
-          console.log('you have clicked ' + $( this ).attr('data-index'));
           var selected = data[$( this ).attr('data-index')];
 
           $(".keyword-suggestions-list-group li")
@@ -151,7 +170,8 @@ $("#keyword-submit").on('click', function(e){
 
     var q = $( '#keyword-input' ).val();
     if (!q.replace(/^\s+|\s+$/g, '')) {
-        alert('키워드를 입력해주세요!');
+        // alert('키워드를 입력해주세요!');
+        toaster('키워드를 입력해주세요!', 'error');
         return false;
     }
 
@@ -188,12 +208,12 @@ function fillKeywordResult(data, status, pagination){
 
     } else if (status === daum.maps.services.Status.ZERO_RESULT) {
 
-        alert('검색 결과가 존재하지 않습니다.');
+        toaster('검색 결과가 존재하지 않습니다', 'error');
 
 
     } else if (status === daum.maps.services.Status.ERROR) {
 
-        alert('검색 결과 중 오류가 발생했습니다.');
+        toaster('검색 결과 중 오류가 발생했습니다', 'error');
     }
 }
 
@@ -207,7 +227,7 @@ $( "#jibun-input" ).on("focus change keyup",  function(e) {
 
       if(q === ''){
         //show history
-          console.log('empty string');
+
           $(".jibun-result-list-group").hide();
           $(".jibun-suggestions-list-group li").remove();
           var item = '';
@@ -234,7 +254,7 @@ $( "#jibun-input" ).on("focus change keyup",  function(e) {
       }
       if (!q.replace(/^\s+|\s+$/g, '')) {
           // alert('키워드를 입력해주세요!');
-          console.log('invalid string');
+
           $(".jibun-suggestions-list-group li")
           .hide("slide", { direction: "up" }, 200, function(){
             $(this).remove();
@@ -292,7 +312,6 @@ function fillJibunSuggestions(data, status){
       var name = $( this ).text();
       $("#jibun-input").val(name);
 
-      console.log('you have clicked ' + $( this ).attr('data-index'));
       var selected = data[$( this ).attr('data-index')];
 
       $(".jibun-suggestions-list-group li")
@@ -325,7 +344,8 @@ $("#jibun-submit").on('click', function(e){
 
     var q = $( '#jibun-input' ).val();
     if (!q.replace(/^\s+|\s+$/g, '')) {
-        alert('지번을 입력해주세요!');
+        toastr["info"]("I was launched via jQuery!");
+        toaster('지번을 입력해주세요!', 'error');
         return false;
     }
 
@@ -362,12 +382,12 @@ function fillJibunResult(data, status){
 
     } else if (status === daum.maps.services.Status.ZERO_RESULT) {
 
-        alert('검색 결과가 존재하지 않습니다.');
+        toaster('검색 결과가 존재하지 않습니다', 'error');
 
 
     } else if (status === daum.maps.services.Status.ERROR) {
 
-        alert('검색 결과 중 오류가 발생했습니다.');
+        toaster('검색 결과 중 오류가 발생했습니다', 'error');
     }
 }
 
@@ -407,12 +427,29 @@ daum.maps.event.addListener(map, 'idle', function() {
 
     if(map.getLevel() > 4){
         target.find(".sil-result-list li").remove();
+
+        $.each(sil_buildingPolygons, function(index, polygon){
+          polygon.setMap(null);
+          sil_buildingPolygons = [];
+        });
+
+        $.each(sil_landPolygons, function(index, polygon){
+          polygon.setMap(null);
+          sil_landPolygons = [];
+        });
+
         target.find(".sil-result-list").append('<li>조금만 확대해주세요^^;;</li>');
         needSilRefresh = false;
         return;
     }
     else{
+      if(!needSilRefresh){
         needSilRefresh = true;
+        sil_currentCode = null;
+        daum.maps.event.trigger(map, 'idle');
+        return;
+      }
+
     }
 
 
@@ -518,15 +555,19 @@ function sortByJibun(data){
 }
 
 function fillSilTab(result){
-  console.log(result);
+
   var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
   var li = '';
 
   if(result.length <= 0){
     //결과없음
+    target_dom.find(".sil-result-list li").remove();
     li += "<li>"
        +     "<h4> 결과 없음 </h4>"
        +  "</li>";
+
+    $(li).appendTo(target_dom.find(".sil-result-list"));
+    target_dom.find(".sil-filter-dropdown .filter-search-btn .rotating").removeClass('rotating');
     target_dom.find(".cs-loader").fadeOut('slow');
   }
   else{
@@ -555,7 +596,7 @@ function fillSilTab(result){
           +     "<div class=sil-dropdown>"
           +        "<button class=btn btn-primary dropdown-toggle type=button data-toggle=dropdown>" + "평형 선택"
           +        "<span class=caret></span></button>"
-          +        "<ul class=dropdown-menu sil-dropdown-menu>";
+          +        "<ul class='dropdown-menu sil-dropdown-menu'>";
 
        var area_dup_check = [];
        for(var i = lists[key].length - 1; i >= 0; i--){
@@ -591,9 +632,8 @@ function fillSilTab(result){
   });
 
 
-  target_dom.find(".sil-filter-dropdown .filter-search-btn .ti-reload").on("click", function(e){
+  target_dom.find(".sil-filter-dropdown .filter-search-btn .ti-reload").unbind("click").on("click", function(e){
 
-    console.log('lets filter');
     console.log($(this).parent().parent().parent().attr('id'));
     var target_sil_type = $(this).parent().parent().parent().attr('id');
     var filter_type = $(this).parent().siblings('button').attr('data-type');
@@ -612,15 +652,14 @@ function fillSilTab(result){
       request_name = 'tojiSilPolygon';
     }
 
+    $(this).addClass("rotating");
     sil_ajax = customAjax($SITE_URL+'get/' + request_name,
               {
-                bjdongCd : address[0]['code'],
+                bjdongCd : currentCode,
                 filter_type : filter_type,
                 filter_value : filter_value
               },
               fillSilTab);
-
-    console.log(filter_type, filter_value);
 
   });
   target_dom.find(".sil-result-list").fadeOut(function(){
@@ -631,11 +670,12 @@ function fillSilTab(result){
 
     //this is where chart is dyanmially created triggered by dropdown
     target_dom.find(".sil-dropdown-menu li").on("click", function(e){
+
         $(this).parent().siblings('.btn').text($(this).text());
         var target_index = $(this).attr('name');
         var target_area = $(this).attr('data-area');
 
-        console.log(target_index, target_area, lists);
+
         var data_object = {};
         for(var i = 0; i < lists[target_index].length; i++){
           // console.log(lists[target_index][i]);
@@ -880,6 +920,8 @@ function fillSilTab(result){
 
     target_dom.find(".sil-result-list").fadeIn();
   });
+
+  target_dom.find(".sil-filter-dropdown .filter-search-btn .rotating").removeClass('rotating');
   target_dom.find(".cs-loader").fadeOut('slow');
 
 }

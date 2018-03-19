@@ -26,8 +26,8 @@
             <li id="keyword-search-list" data-index='0'>
               <div id="keyword-input-group" class="keyword-search input-group">
 
-                <input id="keyword-input" autocomplete="off" type="text" class="form-control" name="keyword" placeholder="키워드를 입력하세요">
-                <span onclick="javascript:return false;"id="keyword-submit" class="input-group-addon"><i class="glyphicon glyphicon-search" style="color:#ffffff;"></i></span>
+                <input id="keyword-input" autocomplete="off" type="text" class="form-control" name="keyword" placeholder="  키워드를 입력하세요">
+                <span onclick="javascript:return false;"id="keyword-submit" class="input-group-addon"><i class="ti-search" style="color:#ffffff;"></i></span>
 
               </div>
               <div class="keyword-suggestions">
@@ -113,13 +113,15 @@
             <div id="apt-sil-filter" class="collapse sil-filter-content">
                 <div class="sil-filter-dropdown">
                   <button class="btn" btn-primary dropdown-toggle type="button" data-toggle="dropdown">
-                    기간 선택 <span class="caret"></span>
+                    기간 선택(기본값: 최근 1년) <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu sil-filter-dropdown-menu">
                     <li data-type=month value=6> 최근 6개월 </li>
                     <li data-type=year value=1>  최근 1년  </li>
                     <li data-type=year value=2>  최근 2년  </li>
                     <li data-type=year value=3>  최근 3년  </li>
+                    <li data-type=year value=4>  최근 4년  </li>
+                    <li data-type=year value=5>  최근 5년  </li>
                   </ul>
                   <div class="filter-search-btn" style="width:100%; height:50px;">
                       <span class="ti-reload"></span>
