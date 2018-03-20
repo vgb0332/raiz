@@ -950,10 +950,11 @@ function numberWithCommas(x) {
 
 
 function youdongStart() {
-  var loading = $(document.createElement('div')).addClass("stcsLoading");
-  loading.append('<text class="loading" fill="#fff">Loading...</text>');
-  $(document.body).append(loading);
-  customAjax($SITE_URL+'getStcs/youdongStart',0,setYoudongCircle);
+  // var loading = $(document.createElement('div')).addClass("stcsLoading");
+  // loading.append('<text class="loading" fill="#fff">Loading...</text>');
+  // $(document.body).append(loading);
+  ajax_type = "youdong";
+  customAjax($SITE_URL+'getStcs/statscSgg',{sggcode:11},processStcs);
 }
 
 function setYoudongCircle(data) {

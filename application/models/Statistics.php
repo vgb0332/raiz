@@ -22,7 +22,6 @@ Class Statistics extends CI_Model {
                 FROM raiz2.sensusHJsgg
                 WHERE sigunguCd LIKE '$code%';
                 ");
-
     $result = $query->result_array();
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }

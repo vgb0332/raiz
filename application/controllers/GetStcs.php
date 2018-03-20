@@ -20,6 +20,7 @@ class GetStcs extends CI_Controller {
     $this->load->model('Statistics');
     $code = $this->input->post('sggcode');
     echo $this->Statistics->getStcsSgg($code);
+
   }
 
   public function statscDong() {
