@@ -17,7 +17,7 @@
         <!-- <li><a href="#search">검색</a></li>
         <li><a href="#community">커뮤니티</a></li> -->
         <!-- <li><a href="#contact">CONTACT</a></li> -->
-        <li><a href="#signup" >회원가입</a></li>
+        <li><a href="#signup" data-toggle="modal" data-target="#modalRegisterForm">회원가입</a></li>
         <li><a href="#login" data-toggle="modal" data-target="#modalLoginForm">로그인</a></li>
         <!-- <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#"> MORE <span class="caret"></span></a>

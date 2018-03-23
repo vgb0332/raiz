@@ -11,7 +11,18 @@ daum.maps.event.addListener(map, 'idle', function() {
           var targetDiv = $(".raiz-cur-addr");
           currentCode = result[0]['code'];
           currentAddress = result[0]['address_name'];
-          targetDiv.find('a').find('span').text(result[0]['address_name']);
+
+          var text = result[0]['address_name'];
+
+          if(mapLevel > 4){
+            text = text.split(' ')[0] + ' ' + text.split(' ')[1];
+          }
+
+          if(mapLevel > 7){
+            text = text.split(' ')[0];
+          }
+
+          targetDiv.find('a').find('span').text( text );
           targetDiv.css('margin-left', -targetDiv.width()/2 - 10);
           targetDiv.fadeIn('normal');
 

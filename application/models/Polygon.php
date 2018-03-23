@@ -7,6 +7,68 @@ Class Polygon extends CI_Model {
 
   function getPolyInfo($values){
     $type = $values['type'];
+
+    if($type === 'aptJunwal'){
+      $sigunguCd = substr($values['bjdongCd'], 0, 5);
+      $bjdongCd = substr($values['bjdongCd'], 5, 5);
+      $filter_type = $values['filter_type'];
+      $filter_value = $values['filter_value'];
+
+      $current_time = date("Y-m");
+      $last_time = date("Y-m", strtotime('-' . $filter_value . ' ' . $filter_type));
+      $last_year = explode("-", $last_time)[0];
+      $last_month = explode("-", $last_time)[1];
+      // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
+      $query = $this->db->query(
+                "SELECT b.년, b.월, b.일, b.아파트 as 이름,
+                        b.지번, b.전용면적, b.층, b.보증금액, b.월세금액,
+                        st_asText(st_centroid(geomfromtext(a.polygon))) as point
+                FROM  getLandPolygonText as a, getRTMSDataSvcAptRent as b
+                WHERE a.sigunguCd = $sigunguCd
+                AND   a.bjdongCd = $bjdongCd
+                AND 	b.지역코드 = $sigunguCd
+                AND   b.법정동코드 = $bjdongCd
+                AND   a.bun = b.번
+                AND   a.ji = b.지
+                AND   b.년 >= $last_year
+                AND   b.월 >= $last_month
+                ORDER BY b.지번, b.아파트
+                ");
+
+      $result = $query->result_array();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+
+    if($type === 'rhouseJunwal'){
+      $sigunguCd = substr($values['bjdongCd'], 0, 5);
+      $bjdongCd = substr($values['bjdongCd'], 5, 5);
+      $filter_type = $values['filter_type'];
+      $filter_value = $values['filter_value'];
+
+      $current_time = date("Y-m");
+      $last_time = date("Y-m", strtotime('-' . $filter_value . ' ' . $filter_type));
+      $last_year = explode("-", $last_time)[0];
+      $last_month = explode("-", $last_time)[1];
+      // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
+      $query = $this->db->query(
+                "SELECT b.년, b.월, b.일, b.연립다세대 as 이름,
+                        b.지번, b.전용면적, b.층, b.보증금액, b.월세금액,
+                        st_asText(st_centroid(geomfromtext(a.polygon))) as point
+                FROM  getLandPolygonText as a, getRTMSDataSvcRHRent as b
+                WHERE a.sigunguCd = $sigunguCd
+                AND   a.bjdongCd = $bjdongCd
+                AND 	b.지역코드 = $sigunguCd
+                AND   b.법정동코드 = $bjdongCd
+                AND   a.bun = b.번
+                AND   a.ji = b.지
+                AND   b.년 >= $last_year
+                AND   b.월 >= $last_month
+                ORDER BY b.지번, b.연립다세대
+                ");
+
+      $result = $query->result_array();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
     if($type === 'tojiSil'){
       $sigunguCd = substr($values['bjdongCd'], 0, 5);
       $bjdongCd = substr($values['bjdongCd'], 5, 5);

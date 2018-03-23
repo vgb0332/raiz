@@ -16,7 +16,8 @@ class Home extends CI_Controller {
 		$this->load->view('home/intro');
 		$this->load->view('home/section_notitle');
 		$this->load->view('home/contact');
-		// $this->load->view('home/section');
+		$this->load->view('common/signup');
+		$this->load->view('common/login');
 		$this->load->view('home/footer');
 	}
 }

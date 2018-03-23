@@ -16,8 +16,12 @@
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a85645def53cba1df9f4bc7ada5bd6dd&libraries=clusterer,services,drawing"></script>
 
   <!-- NAVER -->
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=DX5aYb4n7jxGROt0PIPR&submodules=panorama"></script>
 
   <!-- GOOGLE -->
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw5vj4ZnOZUe-EH2A9_Nk9tP0a9-f9PBk">
+  </script>
 
   <!-- THREE.JS -->
   <script src="<?php echo base_url();?>assets/vendor/three/three.min.js"></script>

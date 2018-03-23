@@ -26,6 +26,30 @@ class Get extends CI_Controller {
     echo $this->Polygon->getPolyInfo($data);
   }
 
+  public function aptJunwalPolygon(){
+    $this->load->model('Polygon');
+    $data = array (
+      'type' => 'aptJunwal',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+
+    echo $this->Polygon->getPolyInfo($data);
+  }
+
+  public function rhouseJunwalPolygon(){
+    $this->load->model('Polygon');
+    $data = array (
+      'type' => 'rhouseJunwal',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+
+    echo $this->Polygon->getPolyInfo($data);
+  }
+
   public function storeSilPolygon(){
     $this->load->model('Polygon');
     $data = array (

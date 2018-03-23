@@ -17,6 +17,37 @@ body {
 /* mapContainer */
 #map {
   top: 50px;
+  /* -webkit-transition: width 0.5s ease, height 0.5s ease;
+  -moz-transition: width 0.5s ease, height 0.5s ease;
+  -o-transition: width 0.5s ease, height 0.5s ease;
+  transition: width 0.5s ease, height 0.5s ease, left 1s ease; */
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: calc(100% - 50px);
+  padding: 0px;
+  position: relative;
+}
+
+#naver_rv_map {
+  width: 100%;
+  top: 50px;
+  -webkit-transition: width 0.35s ease;
+  -moz-transition: width 0.35s ease;
+  -o-transition: width 0.35s ease;
+  transition: width 0.35s ease;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: calc(100% - 50px);
+  padding: 0px;
+  position: relative;
+}
+/* rvContainer */
+#rv_map,
+#google_rv_map {
+
+  top: 50px;
   -webkit-transition: width 0.35s ease;
   -moz-transition: width 0.35s ease;
   -o-transition: width 0.35s ease;
@@ -29,15 +60,51 @@ body {
   position: relative;
 }
 
+.small-map {
+  top:auto !important;
+  bottom: 50px;
+  left: 30px;
+  z-index: 20;
+  width: 300px;
+  height: 300px !important;
+  position: absolute !important;
+}
+
+.rv_cursor {
+  cursor : url(http://www.re-go.kr/raiz1.3/assets/icon/distance-icon.png), default !important;
+}
+
+.rv-controller {
+  display: flex;
+  position: absolute;
+  bottom: 40px;
+  right: 5px;
+  height: 40px;
+  z-index: 10;
+}
+
+.rv-button {
+  overflow: hidden;
+  background-color: #333;
+  color: #ffffff;
+  font-size: 13px;
+  margin: 0px;
+  margin-right: 5px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, .4);
+
+}
+
+.rv-button:hover{
+  /* border: 1px solid #27b874; */
+  font-size: 15px !important;
+}
+
 /* raiz-controller */
 .raiz-controller {
   display: flex;
   position: absolute;
   top: 50px;
-  /* height: 40px;
-  width: 100%; */
   z-index: 10;
-  /* background-color: #424245a3; */
 }
 
 /* raiz-window */
@@ -798,7 +865,8 @@ body {
 }
 
 /* sil side tab */
-.sil-location-name{
+.sil-location-name ,
+.junwal-location-name {
   font-size: 1.8em;
   /* border-bottom: 1px solid #e2d7d7; */
   margin-left: 5px;
@@ -806,7 +874,8 @@ body {
   text-align: center;
 }
 
-.sil-filter-index{
+.sil-filter-index,
+.junwal-filter-index {
   /* height: 150px; */
   /* background: yellow; */
   font-size: 17px;
@@ -815,12 +884,14 @@ body {
   padding-top: 5px;
 }
 
-.sil-filter-index > span {
+.sil-filter-index > span,
+.junwal-filter-index > span {
   padding: 0;
   background-color: #ffffff;
 }
 
-.sil-filter-index > span:hover {
+.sil-filter-index > span:hover,
+.junwal-filter-index > span:hover {
   -webkit-transition: color 0.35s ease, font-size 0.35s ease;
   -moz-transition: color 0.35s ease, font-size 0.35s ease;
   -o-transition:color 0.35s ease, font-size 0.35s ease;
@@ -833,7 +904,8 @@ body {
 
 }
 
-.sil-filter-content .ti-reload{
+.sil-filter-content .ti-reload,
+.junwal-filter-content .ti-reload {
   float: right;
   margin-right: 15px;
   font-size: 15px;
@@ -885,7 +957,8 @@ body {
 	animation: rotating 0.35s linear infinite;
 	}
 
-.sil-filter-content .ti-reload:hover{
+.sil-filter-content .ti-reload:hover,
+.junwal-filter-content .ti-reload:hover {
   -webkit-transition: border 0.35s ease, transform 1s ease;
   -moz-transition: border 0.35s ease, transform 1s ease;
   -o-transition:border 0.35s ease, transform 1s ease;
@@ -898,7 +971,8 @@ body {
   border: 2px solid #7cad6d
 }
 
-.sil-result-container{
+.sil-result-container,
+.junwal-result-container {
   border-top: 1px solid #e2d7d7;
 }
 
@@ -907,25 +981,30 @@ body {
   position :inherit;
 }
 
-.sil-filter-dropdown {
+.sil-filter-dropdown,
+.junwal-filter-dropdown {
   background-color: #d8dad8;
 }
 
-.sil-filter-dropdown .btn{
+.sil-filter-dropdown .btn,
+.junwal-filter-dropdown .btn {
   color: black !important;
   background-color: #ceefcb;
   font-size : 15px;
   width: 330px;
 }
 
-.sil-dropdown .btn{
+.sil-dropdown .btn,
+.junwal-dropdown .btn {
   color: black !important;
   background-color: #effaee;
   font-size : 15px;
   width: 300px;
 }
 .sil-result-container .sil-result-list li,
-.sil-filter-dropdown-menu li{
+.sil-filter-dropdown-menu li,
+.junwal-result-container .junwal-result-list li,
+.junwal-filter-dropdown-menu li {
   padding-top: 10px;
   margin-left: 10px;
   margin-right: 10px;
@@ -935,7 +1014,9 @@ body {
 }
 
 .sil-result-container .sil-result-list li:hover,
-.sil-filter-dropdown-menu li:hover {
+.sil-filter-dropdown-menu li:hover,
+.junwal-result-container .junwal-result-list li:hover,
+.junwal-filter-dropdown-menu li:hover {
   -webkit-transition: background-color 0.35s ease, font-size 0.35s ease;
   -moz-transition: background-color 0.35s ease, font-size 0.35s ease;
   -o-transition:background-color 0.35s ease, font-size 0.35s ease;
@@ -944,7 +1025,9 @@ body {
 }
 
 .sil-result-container .sil-result-list .sil-result-item-title:hover,
-.sil-result-container .sil-result-list .sil-result-item:hover{
+.sil-result-container .sil-result-list .sil-result-item:hover,
+.junwal-result-container .junwal-result-list .junwal-result-item-title:hover,
+.junwal-result-container .junwal-result-list .junwal-result-item:hover {
   -webkit-transition: background-color 0.35s ease, font-size 0.35s ease;
   -moz-transition: background-color 0.35s ease, font-size 0.35s ease;
   -o-transition:background-color 0.35s ease, font-size 0.35s ease;
@@ -952,13 +1035,16 @@ body {
   background-color: #effaee;
 }
 
-.sil-result-container .sil-result-list li div{
+.sil-result-container .sil-result-list li div,
+.junwal-result-container .junwal-result-list li div {
   padding-bottom: 5px;
   border-bottom: 1px solid #d4c8c8;
 }
 
 .sil-result-item .ti-arrow-down,
-.sil-result-item .ti-arrow-up {
+.sil-result-item .ti-arrow-up,
+.junwal-result-item .ti-arrow-down,
+.junwal-result-item .ti-arrow-up {
   float:right;
   padding: 0;
   /* background-color : #ffffff; */
@@ -1068,11 +1154,22 @@ body {
   background-color: #333;
   padding: 1rem 1.5rem;
   font-size: 15px;
+
+  -webkit-transition: opacity 0.5s ease;
+  -moz-transition: opacity 0.5s ease;
+  -o-transition: opacityopacity 0.5s ease;
+  transition: opacity 0.5s ease;
 }
 
-.map-controller .btn-with-text{
+.map-controller .btn-with-2chars{
   font-size: 12px;
   padding : 1.1rem 1.2rem;
+  white-space: nowrap !important;
+}
+
+.map-controller .btn-with-3chars{
+  font-size: 12px;
+  padding : 1.1rem 0.7rem;
   white-space: nowrap !important;
 }
 
@@ -1159,7 +1256,7 @@ body {
 /* toaster */
 
 /* The snackbar - position it at the bottom and in the middle of the screen */
-#snackbar {
+.snackbar {
     font-size: 13px;
     visibility: hidden; /* Hidden by default. Visible on click */
     min-width: 250px; /* Set a default minimum width */
@@ -1170,13 +1267,13 @@ body {
     border-radius: 6px; /* Rounded borders */
     padding: 16px; /* Padding */
     position: fixed; /* Sit on top of the screen */
-    z-index: 1; /* Add a z-index if needed */
+    z-index: 100; /* Add a z-index if needed */
     left: 50%; /* Center the snackbar */
     top: 110px; /* 30px from the bottom */
 }
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
-#snackbar.show {
+.snackbar.show {
     visibility: visible; /* Show the snackbar */
 
 /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
@@ -1205,3 +1302,51 @@ However, delay the fade out process for 2.5 seconds */
     from {top: 110px; opacity: 1;}
     to {top: 0; opacity: 0;}
 }
+
+
+.dot {overflow:hidden;float:left;width:12px;height:12px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
+.dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
+.dotOverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+.number {font-weight:bold;color:#ee6152;}
+.dotOverlay:after {content:'';position:absolute;margin-left:-6px;left:50%;bottom:-8px;width:11px;height:8px;background:url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white_small.png')}
+.distanceInfo {position:relative;top:5px;left:5px;list-style:none;margin:0;}
+.distanceInfo .label {color:#000000;display:inline-block;width:50px;}
+.distanceInfo:after {content:none;}
+
+/* 지도위에 로드뷰의 위치와 각도를 표시하기 위한 map walker 아이콘의 스타일 */
+.MapWalker {position:absolute;margin:-26px 0 0 -51px}
+.MapWalker .figure {position:absolute;width:25px;left:38px;top:-2px;
+    height:39px;background:url(http://t1.daumcdn.net/localimg/localimages/07/2012/roadview/roadview_minimap_wk.png) -298px -114px no-repeat}
+.MapWalker .angleBack {width:102px;height:52px;background: url(http://t1.daumcdn.net/localimg/localimages/07/2012/roadview/roadview_minimap_wk.png) -834px -2px no-repeat;}
+.MapWalker.m0 .figure {background-position: -298px -114px;}
+.MapWalker.m1 .figure {background-position: -335px -114px;}
+.MapWalker.m2 .figure {background-position: -372px -114px;}
+.MapWalker.m3 .figure {background-position: -409px -114px;}
+.MapWalker.m4 .figure {background-position: -446px -114px;}
+.MapWalker.m5 .figure {background-position: -483px -114px;}
+.MapWalker.m6 .figure {background-position: -520px -114px;}
+.MapWalker.m7 .figure {background-position: -557px -114px;}
+.MapWalker.m8 .figure {background-position: -2px -114px;}
+.MapWalker.m9 .figure {background-position: -39px -114px;}
+.MapWalker.m10 .figure {background-position: -76px -114px;}
+.MapWalker.m11 .figure {background-position: -113px -114px;}
+.MapWalker.m12 .figure {background-position: -150px -114px;}
+.MapWalker.m13 .figure {background-position: -187px -114px;}
+.MapWalker.m14 .figure {background-position: -224px -114px;}
+.MapWalker.m15 .figure {background-position: -261px -114px;}
+.MapWalker.m0 .angleBack {background-position: -834px -2px;}
+.MapWalker.m1 .angleBack {background-position: -938px -2px;}
+.MapWalker.m2 .angleBack {background-position: -1042px -2px;}
+.MapWalker.m3 .angleBack {background-position: -1146px -2px;}
+.MapWalker.m4 .angleBack {background-position: -1250px -2px;}
+.MapWalker.m5 .angleBack {background-position: -1354px -2px;}
+.MapWalker.m6 .angleBack {background-position: -1458px -2px;}
+.MapWalker.m7 .angleBack {background-position: -1562px -2px;}
+.MapWalker.m8 .angleBack {background-position: -2px -2px;}
+.MapWalker.m9 .angleBack {background-position: -106px -2px;}
+.MapWalker.m10 .angleBack {background-position: -210px -2px;}
+.MapWalker.m11 .angleBack {background-position: -314px -2px;}
+.MapWalker.m12 .angleBack {background-position: -418px -2px;}
+.MapWalker.m13 .angleBack {background-position: -522px -2px;}
+.MapWalker.m14 .angleBack {background-position: -626px -2px;}
+.MapWalker.m15 .angleBack {background-position: -730px -2px;}

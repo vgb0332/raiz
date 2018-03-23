@@ -326,21 +326,40 @@ Class Statistics extends CI_Model {
   }
 
   function getStcsAggrSum($code){
-      $query = $this->db->query(
-                "SELECT sum(SHAPE_AREA) as SHAPE_AREA,sum(TOTAL_POP) as TOTAL_POP,avg(MEDIUM_AGE) as MEDIUM_AGE
-                FROM raiz2.sensusHJaggzone
-                where dongCd like '$code%'
-                ");
+    $query = $this->db->query(
+              "SELECT sum(SHAPE_AREA) as SHAPE_AREA,sum(TOTAL_POP) as TOTAL_POP,avg(MEDIUM_AGE) as MEDIUM_AGE
+              FROM raiz2.sensusHJaggzone
+              where dongCd like '$code%'
+              ");
 
     $result = $query->result_array();
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
-  function getYoudongStart(){
-      $query = $this->db->query(
-                "SELECT code, name, sigunguCd, dongCd, aggCd, ST_AsText(point) as point #, ST_AsText(point) as center
-                FROM raiz2.youdong_seoul_locationCd limit 1000
-                ");
+  function getYoudongPoint($code){
+    // $query = $this->db->query(
+    //           "SELECT code, name, sigunguCd, dongCd, aggCd, ST_AsText(point) as point #, ST_AsText(point) as center
+    //           FROM raiz2.youdong_seoul_locationCd
+    //           WHERE sigunguCd = $code;
+    //           ");
+    $query = $this->db->query(
+              "SELECT a.code, a.name , b.type , b.day, b.time, b.value, astext(a.point) as point
+              FROM (SELECT * FROM raiz2.youdong_seoul_locationCd where sigunguCd = $code) as a
+              , raiz2.youdong_seoul_value as b
+              WHERE a.code = b.code;
+              ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+  function getYoudongValue($code){
+    $query = $this->db->query(
+              "SELECT a.code, a.name , b.type , b.day, b.time, b.value, astext(a.point) as point
+              FROM (SELECT * FROM raiz2.youdong_seoul_locationCd where sigunguCd = $code) as a
+              , raiz2.youdong_seoul_value as b
+              WHERE a.code = b.code;
+              ");
 
     $result = $query->result_array();
     return json_encode($result, JSON_UNESCAPED_UNICODE);

@@ -12,7 +12,9 @@ $(".raiz-side-tab-return").on('mouseover', function(){
 });
 
 $(".raiz-side-tab-return").on('click', function(){
-  console.log('뒤로')
+  console.log('뒤로');
+  removePolygons();
+  removeOverlay();
   $(".raiz-side-tab-container").hide("slide", {direction : "left"}, 200);
 });
 
@@ -35,6 +37,9 @@ $(".raiz-sil-button").on('click', function(){
   $(".raiz-side-tab ").not(".raiz-sil-tab").hide(function(){
 
     $(".raiz-sil-tab:hidden").show();
+    removePolygons();
+    removeOverlay();
+    daum.maps.event.trigger(map, 'idle');
 
   });
 });
@@ -46,6 +51,9 @@ $(".raiz-junwal-button").on('click', function(){
   $(".raiz-side-tab ").not(".raiz-junwal-tab").hide(function(){
 
     $(".raiz-junwal-tab:hidden").show();
+    removePolygons();
+    removeOverlay();
+    daum.maps.event.trigger(map, 'idle');
 
   });
 });

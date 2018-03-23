@@ -1,4 +1,42 @@
 /* test css */
+.legendBox {
+  position: absolute;
+  z-index: 10;
+  bottom: 10px;
+  left: 0px;
+  width: 170px;
+  padding: 4px;
+  height: 195px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  left: 40px;
+  bottom: 50px;
+  opacity: 0.8;
+}
+
+
+.colorbar {
+  float: left;
+  width: 170px;
+  height: 220px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.colorbar li {
+  color: #fff;
+  text-align: right;
+  position: relative;
+  width: 160px;
+  height: 22px;
+  padding-right: 10px;
+  overflow: hidden;
+  line-height: 22px;
+  font-size: 12px;
+  background: #890e4f;
+}
+
 .stcsHide{
   display: none;
 }

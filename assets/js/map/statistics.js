@@ -1,5 +1,9 @@
 var beforeNm = '';
 var stcs_label = [];
+var youdong_circle = [];
+var youdong_val = [];
+// var youdong_code = [];
+
 $('#stcsOnOff').click(function() {
   $(this).toggleClass('btn-outline-info');
   if( $(this).text() == '통계 Layer 켜기' ) {
@@ -54,7 +58,7 @@ function processStcs(data) {
       createOverlay(target['sidoNm']);
     });
   }
-  else if (ajax_type === 'stcsSgg') {
+  else if (ajax_type === 'stcsSgg' || ajax_type === 'youdong') {
     $.each(data, function(index, target){
       createOverlay(beforeNm+' '+target['sigunguNm']);
     });
@@ -950,35 +954,319 @@ function numberWithCommas(x) {
 
 
 function youdongStart() {
-  // var loading = $(document.createElement('div')).addClass("stcsLoading");
-  // loading.append('<text class="loading" fill="#fff">Loading...</text>');
-  // $(document.body).append(loading);
+  map.setCenter(new daum.maps.LatLng(37.55018419535014, 126.95256106549972));
+  map.setLevel(9);
+  $('.legendBox').remove();
+  for (var i = 0; i < youdong_circle.length; i++) {
+    youdong_circle[i].setMap(null);
+  }
   ajax_type = "youdong";
   customAjax($SITE_URL+'getStcs/statscSgg',{sggcode:11},processStcs);
 }
 
 function setYoudongCircle(data) {
-  $.each(data, function(index, target) {
-      var point = parsePoint(target['point']);
-      var x = point[0], y = point[1];
+  youdongLevel();
+  var YDformat = {
+    "code":"",
+    "havetype":[],
+    "type":{
+      "본조사":{
+        "평일":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        },
+        "주말":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        }
+      },
+      "계절요인조사":{
+        "평일":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        },
+        "주말":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        }
+      },
+      "북촌":{
+        "평일":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        },
+        "주말":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        }
+      },
+      "지하철":{
+        "평일":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        },
+        "주말":{
+          "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+        }
+      }
+    }
+  }
+  youdong_val = [];
+  // var YDformat = {"code":"","data":[]};
 
-      var circle = new daum.maps.Circle({
-          // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
-          radius: 10, // 미터 단위의 원의 반지름입니다
-          strokeWeight: 5, // 선의 두께입니다
-          strokeColor: '#75B8FA', // 선의 색깔입니다
-          strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-          strokeStyle: 'solid', // 선의 스타일 입니다
-          fillColor: '#CFE7FF', // 채우기 색깔입니다
-          fillOpacity: 0.7  // 채우기 불투명도 입니다
-      });
-      circle.setPosition(new daum.maps.LatLng(x, y));
-      circle.setMap(map);
-      // console.log(point);
-  });
-  $(".stcsLoading").remove();
+  console.log(data);
+  var before = data[0]['code'];
+  var sum = 0;
+  var cnt = 0;
+  YDformat["code"] = data[0]['code'];
+  bftype = data[0]['type'];
+  for (var i = 0; i < data.length; i++) {
+    (function(i){
+      var cd = data[i]['code'];
+      if (before == cd && i+1 != data.length) {
+        if (bftype != data[i]['type']) {
+          YDformat["havetype"].push(bftype);
+          bftype = data[i]['type'];
+        }
+        sum += data[i]['value']*1;
+        cnt++;
+        if (data[i]['day'] == '토') {
+          YDformat["type"][data[i]['type']]['주말'][data[i]['time']].push(data[i]['value']);
+        }
+        else {
+          YDformat["type"][data[i]['type']]['평일'][data[i]['time']].push(data[i]['value']);
+        }
+      }
+      else {
+        YDformat["havetype"].push(bftype);
+        bftype = data[i]['type'];
+        if (i+1 == data.length) {
+          if (data[i]['day'] == '토') {
+            YDformat["type"][data[i]['type']]['주말'][data[i]['time']].push(data[i]['value']);
+          }
+          else {
+            YDformat["type"][data[i]['type']]['평일'][data[i]['time']].push(data[i]['value']);
+          }
+          var pnt = data[i]['point'];
+          var nm = data[i]['name'];
+          var typ = data[i]['type'];
+          sum += data[i]['value']*1;
+          cnt++;
+        }
+        else {
+          var pnt = data[i-1]['point'];
+          var nm = data[i-1]['name'];
+          var typ = data[i-1]['type'];
+          before = cd;
+        }
+
+        var point = parsePoint(pnt);
+        var x = point[0], y = point[1];
+        var avg = (sum/cnt).toFixed(0)
+        var color;
+        var radius;
+        if (avg > 100) {
+          if (avg > 300) {
+            if (avg > 600) {
+              if (avg > 1000) {
+                color = 'rgb(205, 17, 3)';radius = 30;
+              }
+              else {color = 'rgb(224, 76, 22)';radius = 25;}
+            }
+            else {color = 'rgb(230, 116, 48)';radius = 20;}
+          }
+          else {color = 'rgb(255, 205, 156)';radius = 15;}
+        }
+        else {color = 'rgb(255, 242, 230)';radius = 10;}
+        // youdong_code.push(cd);
+        var circle = new daum.maps.Circle({
+            // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
+            radius: radius, // 미터 단위의 원의 반지름입니다
+            strokeWeight: 5, // 선의 두께입니다
+            strokeColor: color, // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid', // 선의 스타일 입니다
+            fillColor: color, // 채우기 색깔입니다
+            fillOpacity: 0.7  // 채우기 불투명도 입니다
+        });
+
+        // console.log(circle);
+
+        circle.setPosition(new daum.maps.LatLng(x, y));
+        circle.setMap(map);
+        // console.log(circle);
+        circle.Bb["cd"] = data[i]['code'];
+        circle.Bb["nm"] = nm;
+        circle.Bb["typ"] = typ;
+        circle.Bb["sum"] = sum;
+        circle.Bb["avg"] = (sum/cnt).toFixed(0);
+        // console.log(data[i]['code']);
+        // console.log(circle);
+
+        // console.log(cnt);
+        youdong_circle.push(circle);
+        var customOverlay = new daum.maps.CustomOverlay({});
+        daum.maps.event.addListener(circle, 'mouseover', function(mouseEvent) {
+          customOverlay.setContent('<div class="stcs_ol"><div>'+circle.Bb["nm"]+'</br>'+circle.Bb["typ"]+'</br>평균 : '+circle.Bb["avg"]+'명</div>'
+                                  +'<canvas id="ydoverlay" class=""></canvas>'
+                                  +'</div>');
+          customOverlay.setPosition(mouseEvent.latLng);
+          customOverlay.setMap(map);
+          showYDChart(circle.Bb["cd"]);
+        });
+        daum.maps.event.addListener(circle, 'mousemove', function(mouseEvent) {
+          customOverlay.setPosition(mouseEvent.latLng);
+        });
+        daum.maps.event.addListener(circle, 'mouseout', function() {
+          customOverlay.setMap(null);
+        });
+        sum = 0;
+        cnt = 0;
+        sum += data[i]['value']*1;
+        cnt++;
+        youdong_val.push(YDformat);
+        if (i+1 != data.length) {
+          YDformat = {
+            "code":"",
+            "havetype":[],
+            "type":{
+              "본조사":{
+                "평일":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                },
+                "주말":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                }
+              },
+              "계절요인조사":{
+                "평일":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                },
+                "주말":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                }
+              },
+              "북촌":{
+                "평일":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                },
+                "주말":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                }
+              },
+              "지하철":{
+                "평일":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                },
+                "주말":{
+                  "07~08":[],"08~09":[],"09~10":[],"10~11":[],"11~12":[],"12~13":[],"13~14":[],"14~15":[],"15~16":[],"16~17":[],"17~18":[],"18~19":[],"19~20":[],"20~21":[]
+                }
+              }
+            }
+          }
+          if (data[i]['day'] == '토') {
+            YDformat["type"][data[i]['type']]['주말'][data[i]['time']].push(data[i]['value']);
+          }
+          else {
+            YDformat["type"][data[i]['type']]['평일'][data[i]['time']].push(data[i]['value']);
+          }
+          YDformat["code"] = cd;
+        }
+      }
+
+
+    })(i)
+  };
+  // for (var i = 0; i < youdong_code.length; i++) {
+  //   console.log(youdong_code[i]);
+  //   youdong_circle[i].A["cd"] = youdong_code[i];
+  // }
+  console.log(youdong_val);
+
 }
 
+function showYDChart(code) {
+  for (var i = 0; i < youdong_val.length; i++) {
+    if (code == youdong_val[i]["code"]) {
+      var timeList = Object.keys(youdong_val[i]['type'][youdong_val[i]['havetype'][0]]['평일']);
+      var data1 = [];
+      var data2 = [];
+      var label = [];
+      for (var j = 0; j < timeList.length; j++) {
+        var sum = 0;
+        var num = youdong_val[i]['type'][youdong_val[i]['havetype'][0]]['평일'][timeList[j]].length;
+        for (var k = 0; k < num; k++) {
+          sum += youdong_val[i]['type'][youdong_val[i]['havetype'][0]]['평일'][timeList[j]][k]*1;
+        }
+        data1.push(sum/num);
+        data2.push(youdong_val[i]['type'][youdong_val[i]['havetype'][0]]['주말'][timeList[j]][0]*1)
+      }
+      console.log(data2);
+      var ctx = $('#ydoverlay').get(0).getContext('2d');
+      // ctx.canvas.width = 180;
+      // ctx.canvas.height = 60;
+      new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: timeList,
+            datasets: [{
+              label:'평일',
+              data:data1,
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor : "rgb(255, 99, 132)"
+            },
+            {
+              label:'주말',
+              data:data2,
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor : "rgb(75, 192, 192)"
+            }]
+          },
+          options: {
+            hover: {
+    					mode: 'nearest',
+    					intersect: true
+    				}
+          }
+          // options: {
+          //     bezierCurve:false, //remove curves from your plot
+          //     scaleShowLabels : false, //remove labels
+          //     tooltipEvents:[], //remove trigger from tooltips so they will'nt be show
+          //     pointDot : false, //remove the points markers
+          //     scaleShowGridLines: true //set to false to remove the grids background
+          //   }
+      });
+      break;
+    }
+  }
+}
+
+function youdongLevel() {
+  $(document.body).append('<div class="legendBox" id="typeArea_20180321181652550">'
+  +  '<ul class="colorbar" id="colorStatus_20180321181652550" style="font-family: Arial;">'
+  +    '<li style="background: rgb(205, 17, 3); border: 0px solid rgb(205, 17, 3); height: 31px; line-height: 31px;">'
+  +      '<span>1000명 이상</span>'
+  +    '</li>'
+  +    '<li style="background: rgb(224, 76, 22); border: 0px solid rgb(224, 76, 22); height: 31px; line-height: 31px;">'
+  +      '<span>600~1000명</span>'
+  +    '</li>'
+  +    '<li style="background: rgb(230, 116, 48); border: 0px solid rgb(230, 116, 48); height: 31px; line-height: 31px;">'
+  +      '<span>300~600명</span>'
+  +    '</li>'
+  +    '<li style="background: rgb(255, 205, 156); border: 0px solid rgb(255, 205, 156); height: 31px; line-height: 31px;">'
+  +      '<span>100~300명</span>'
+  +    '</li>'
+  +    '<li style="background: rgb(255, 242, 230); border: 0px solid rgb(255, 242, 230); height: 31px; line-height: 31px;">'
+  +      '<span>100명 이하</span>'
+  +    '</li>'
+  +    '<li style="color:black;background: white; border: 0px solid white; height: 31px; line-height: 31px;">'
+  +      '<span>평균 유동인구 수 / 한시간</span>'
+  +    '</li>'
+  +  '</ul>'
+  +'</div>');
+}
+
+
+function selectYDcolor(data) {
+
+}
+
+function adjustYoudong(data) {
+
+}
 // function setYDCircle(circle,) {
 //
 // }

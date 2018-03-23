@@ -7,6 +7,15 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         disableDoubleClickZoom: true,
     };
 
+var current_containment = 'map';
+// var small_map = new daum.maps.Map(document.getElementById('small_map'),
+//                 {
+//                   center: new daum.maps.LatLng(37.56642102997891, 126.97877971258067), // 지도의 중심좌표
+//                   level: 3, // 지도의 확대 레벨
+//                   disableDoubleClickZoom: true,
+//                 }
+//               );
+
 // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
 var map = new daum.maps.Map(mapContainer, mapOption);
 
@@ -16,6 +25,62 @@ var categoryOverlay = new daum.maps.CustomOverlay({});
 
 // 장소 검색 객체를 생성합니다
 var ps = new daum.maps.services.Places(map);
+
+// /둥둥이
+function MapWalker(position){
+
+    //커스텀 오버레이에 사용할 map walker 엘리먼트
+    var content = document.createElement('div');
+    var figure = document.createElement('div');
+    var angleBack = document.createElement('div');
+
+    //map walker를 구성하는 각 노드들의 class명을 지정 - style셋팅을 위해 필요
+    content.className = 'MapWalker';
+    figure.className = 'figure';
+    angleBack.className = 'angleBack';
+
+    content.appendChild(angleBack);
+    content.appendChild(figure);
+
+    //커스텀 오버레이 객체를 사용하여, map walker 아이콘을 생성
+    var walker = new daum.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 1
+    });
+
+    this.walker = walker;
+    this.content = content;
+}
+
+//로드뷰의 pan(좌우 각도)값에 따라 map walker의 백그라운드 이미지를 변경 시키는 함수
+//background로 사용할 sprite 이미지에 따라 계산 식은 달라 질 수 있음
+MapWalker.prototype.setAngle = function(angle){
+
+    var threshold = 22.5; //이미지가 변화되어야 되는(각도가 변해야되는) 임계 값
+    for(var i=0; i<16; i++){ //각도에 따라 변화되는 앵글 이미지의 수가 16개
+        if(angle > (threshold * i) && angle < (threshold * (i + 1))){
+            //각도(pan)에 따라 아이콘의 class명을 변경
+            var className = 'm' + i;
+            this.content.className = this.content.className.split(' ')[0];
+            this.content.className += (' ' + className);
+            break;
+        }
+    }
+};
+
+//map walker의 위치를 변경시키는 함수
+MapWalker.prototype.setPosition = function(position){
+    this.walker.setPosition(position);
+};
+
+//map walker를 지도위에 올리는 함수
+MapWalker.prototype.setMap = function(map){
+    this.walker.setMap(map);
+};
+
+
+var mapWalker = new MapWalker();
 
 /*
   ajax_type => DB에서 데이터를 요청할 때, 타입을 지정해주어 폴리곤의 형태를 정한다.
@@ -35,6 +100,29 @@ var currentSilTab;
 var needSilRefresh = true;
 var sil_currentCode;
 var sil_ajax;
+
+var currentJunwalTab;
+var needJunwalRefresh = true;
+var junwal_currentCode;
+var junwal_ajax;
+
+var landPolygons = []; //토지 폴리곤
+var buildingPolygons = []; //건물 폴리곤
+var sil_landPolygons = []; //실토지 폴리곤
+var sil_buildingPolygons = []; //실건물 폴리곤
+var junwal_landPolygons = []; //전월세토지 폴리곤
+var junwal_buildingPolygons = []; //전월세건물 폴리곤
+var stcs_landPolygons = []; //통계 지역 폴리곤
+
+var overlays = [];
+
+var zoom_start, zoom_end;
+
+var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
+var moveLine; // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체 입니다
+var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
+var distanceOverlay; // 선의 거리정보를 표시할 커스텀오버레이 입니다
+var dots = {}; // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
 
 var search_result = function(data){
   var $container = $(document.createElement('li'));

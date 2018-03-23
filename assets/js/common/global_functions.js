@@ -22,6 +22,10 @@ function customAjax(url,data,callback) {
   return ajax_call;
 }
 
+function round(num) {
+  return +(Math.round(num + "e+2")  + "e-2");
+}
+
 function comma(number) {
 
     var minusText = "";
@@ -87,6 +91,41 @@ function price_format(value, scale) {
 
 }
 
+function price_format_short(value)
+{
+  if (value == '-')
+  {
+    return "-";
+  }
+
+  if (value == '0')
+  {
+    return "0원";
+  }
+
+  var p = String(value).replace(',', '');
+
+  if (p.length <= 4)
+  {
+    return Number(p).toLocaleString() + "만";
+  }
+  else if (p.length >= 5 && p.length <= 8)
+  {
+    if (parseInt(p.slice(p.length - 4, p.length)) == 0)
+      return Number(p.slice(0, p.length - 4)).toLocaleString() + "억";
+    else
+      return Number(round(parseFloat(p) / 10000)).toLocaleString() + "억";
+  }
+  else if (p.length > 8 && p.length <= 11)
+  {
+    if (parseInt(p.slice(p.length - 8, p.length)) == 0)
+      return Number(p.slice(0, p.length - 8)).toLocaleString() + "조";
+    else
+      return Number(round(parseFloat(p) / 100000000)).toLocaleString() + "조";
+  }
+}
+
+
 function lpad(s, padLength, padString){
 
     while(s.length < padLength)
@@ -98,4 +137,41 @@ function rpad(s, padLength, padString){
     while(s.length < padLength)
         s += padString;
     return s;
+}
+
+function toaster(text, type, time) {
+    // Get the snackbar DIV
+    // var x = document.getElementById("snackbar");
+    time = typeof time !== 'undefined' ? time : '3000';
+    var x = document.createElement("div");
+    x.className = "snackbar show";
+
+    // Add the "show" class to DIV
+    // x.className = "show";
+    if(type === 'success'){
+      x.style.backgroundColor = '#00c850';
+    }
+    else if(type === 'info'){
+      x.style.backgroundColor = '#34b5e5';
+    }
+    else if(type === 'error'){
+      x.style.backgroundColor = '#ef9da6';
+    }
+    else if(type === 'warning'){
+      x.style.backgroundColor = '#fe8801';
+    }
+
+    if(text.length > 20){
+      x.style.marginLeft = '-220px';
+    }
+
+    x.innerHTML = text;
+
+    document.body.appendChild(x);
+    console.log($(x).css('animation'));
+    $(x).css({'-webkit-animation': 'fadein 0.5s fadeout 0.5s ' + (time/1000).toFixed(1) + 's',
+              'animation': 'fadein 0.5s fadeout 0.5s ' + (time/1000).toFixed(1) + 's'
+            });
+    // After 3 seconds, remove the show class from DIV
+    toaster_timeout = setTimeout(function(){ x.className = x.className.replace("snackbar show", "snackbar"); }, time);
 }

@@ -1,11 +1,7 @@
 
 <!-- MDB -->
 <link href="<?php echo base_url();?>assets/vendor/mdb/mdb.min.css" rel="stylesheet">
-<?php if($browser !== 'Internet Explorer'){ ?>
-  <script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script>
-<?php
- }
- ?>
+<script src="<?php echo base_url();?>assets/vendor/mdb/mdb.min.js"></script>
 
 <!-- DOM4 -->
 <script src="<?php echo base_url();?>assets/vendor/dom4/dom4.min.js"></script>
@@ -33,6 +29,8 @@
 <script src="<?php echo base_url();?>assets/js/map/map_controller.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/map_functions.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/main_activity.js"></script>
+<script src="<?php echo base_url();?>assets/js/common/signup.js"></script>
+<script src="<?php echo base_url();?>assets/js/common/login.js"></script>
 <!-- <script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script> -->
 <!-- <script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script> -->
 <script src="<?php echo base_url();?>assets/js/map/3d_functions2.js"></script>

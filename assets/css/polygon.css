@@ -31,7 +31,19 @@
     display: block;
 }
 
-.sil-toji-polygon-hover{
+.junwal-toji-polygon {
+    fill : #d1ec84;
+    fill-opacity: 0.8;
+    stroke : #d1ec84;
+    stroke-width: 4px;
+    stroke-opacity : 0.4;
+    color : black;
+    stroke-linecap: round;
+    display: block;
+}
+
+.sil-toji-polygon-hover,
+.junwal-toji-polygon-hover {
   fill-opacity: 0.4;
   -ms-animation: 20s toji-hover linear forwards infinite;
   -moz-animation: 20s toji-hover linear forwards infinite;
@@ -41,6 +53,7 @@
 }
 
 .toji-polygon:hover,
+.junwal-toji-polygon:hover,
 .sil-toji-polygon:hover {
     fill-opacity: 0.4;
     -ms-animation: 20s toji-hover linear forwards infinite;
@@ -50,7 +63,8 @@
     animation: 20s toji-hover linear forwards infinite;
 }
 
-.sil-apt-building-polygon{
+.sil-apt-building-polygon,
+.junwal-apt-building-polygon {
     fill : #4c8ce9;
     fill-opacity: 0.4;
     stroke : #4c8ce9;
@@ -61,7 +75,8 @@
     display: block;
 }
 
-.sil-rhouse-building-polygon{
+.sil-rhouse-building-polygon,
+.junwal-rhouse-building-polygon {
     fill : #FFA500;
     fill-opacity: 0.4;
     stroke : #FFA500;
@@ -72,7 +87,8 @@
     display: block;
 }
 
-.sil-store-building-polygon{
+.sil-store-building-polygon,
+.junwal-store-building-polygon {
     fill : #ff4141;
     fill-opacity: 0.4;
     stroke : #ff4141;
@@ -83,7 +99,8 @@
     display: block;
 }
 
-.sil-toji-building-polygon {
+.sil-toji-building-polygon,
+.junwal-toji-building-polygon {
     fill : #84ec8e;
     fill-opacity: 0.4;
     stroke : #84ec8e;
@@ -96,7 +113,10 @@
 
 .sil-apt-building-polygon:hover,
 .sil-rhouse-building-polygon:hover,
-.sil-store-building-polygon:hover{
+.sil-store-building-polygon:hover,
+.junwal-apt-building-polygon:hover,
+.junwal-rhouse-building-polygon:hover,
+.junwal-store-building-polygon:hover {
     -ms-animation: 1s polygon-blink linear forwards infinite;
     -moz-animation: 1s polygon-blink linear forwards infinite;
     -o-animation: 1s polygon-blink linear forwards infinite;
@@ -106,12 +126,61 @@
 
 .sil-apt-building-polygon-hover,
 .sil-rhouse-building-polygon-hover,
-.sil-store-building-polygon-hover{
+.sil-store-building-polygon-hover,
+.junwal-apt-building-polygon-hover,
+.junwal-rhouse-building-polygon-hover,
+.junwal-store-building-polygon-hover {
     -ms-animation: 1s polygon-blink linear forwards infinite;
     -moz-animation: 1s polygon-blink linear forwards infinite;
     -o-animation: 1s polygon-blink linear forwards infinite;
     -webkit-animation: 1s polygon-blink linear forwards infinite;
     animation: 1s polygon-blink linear forwards infinite;
+}
+
+.sil-overlay {
+  padding: 5px;
+  border-radius: 15px;
+  font-size: 12px;
+  /* font-weight: bold; */
+  background-color : #f5fdff;
+  text-align: right;
+}
+
+.apt-sil-overlay {
+  background-color : #f5fdff;
+}
+
+.rhouse-sil-overlay {
+  background-color : #fae393;
+}
+
+.store-sil-overlay {
+  background-color : #e7e0ff;
+}
+
+.toji-sil-overlay {
+  background-color : #eff6b4;
+}
+
+.apt-junwal-overlay {
+  background-color : #f5fdff;
+}
+
+.rhouse-junwal-overlay {
+  background-color : #fae393;
+}
+
+.overlay-header {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.overlay-info {
+  padding:2px;
+  border-radius: 15px;
+  background-color: #ffffff;
 }
 
 @keyframes polygon-blink {

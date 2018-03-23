@@ -8,23 +8,26 @@ $(document).ready(function(){
    */
 
    if(is_mobile){ trigger_by = 'dblclick'; }
-   daum.maps.event.addListener(map, trigger_by, function(mouseEvent){
-     var main_ajax;
-     coord2RegionCode(mouseEvent.latLng, function(address, status) {
-         if (status === daum.maps.services.Status.OK) {
-           console.log(address);
-           main_ajax = customAjax($SITE_URL+'get/singlePolygon',
-                     {
-                       bjdongCd : address[0]['code'],
-                       lat : mouseEvent.latLng.jb,
-                       lng : mouseEvent.latLng.ib
-                     },
-                     mainActivity);
-
-           // $.when( main_ajax ).then(function(){
-           //   map.panTo(new daum.maps.LatLng(mouseEvent.latLng.jb, mouseEvent.latLng.ib));
-           // });
-         }
-     });
-   });
+   daum.maps.event.addListener(map, trigger_by, mainFunction);
 });
+
+function mainFunction(mouseEvent){
+  var main_ajax;
+  coord2RegionCode(mouseEvent.latLng, function(address, status) {
+      if (status === daum.maps.services.Status.OK) {
+        console.log(address);
+        main_ajax = customAjax($SITE_URL+'get/singlePolygon',
+                  {
+                    bjdongCd : address[0]['code'],
+                    lat : mouseEvent.latLng.jb,
+                    lng : mouseEvent.latLng.ib
+                  },
+                  mainActivity);
+
+        // $.when( main_ajax ).then(function(){
+        //   map.panTo(new daum.maps.LatLng(mouseEvent.latLng.jb, mouseEvent.latLng.ib));
+        // });
+      }
+  });
+
+}

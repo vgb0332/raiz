@@ -132,10 +132,16 @@ class GetStcs extends CI_Controller {
   }
 
         // 서울시 유동인구
-  public function youdongStart() {
+  public function youdongPoint() {
     $this->load->model('Statistics');
-    echo $this->Statistics->getYoudongStart();
+    $code = $this->input->post('sggcode');
+    echo $this->Statistics->getYoudongPoint($code);
   }
 
+  public function youdongValue() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('code');
+    echo $this->Statistics->getYoudongValue($code);
+  }
 
 }

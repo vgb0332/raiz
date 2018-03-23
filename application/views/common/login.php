@@ -22,6 +22,10 @@
 
             </div>
             <div class="modal-footer d-flex justify-content-center">
+                <div class="options text-center text-md-right mt-1">
+                   <p><a href="#" class="blue-text">아이디</a>가 기억이 안나요</p>
+                   <p><a href="#" class="blue-text">비밀번호</a>가 기억이 안나요</p>
+                </div>
                 <button class="btn btn-default">Login</button>
             </div>
         </div>

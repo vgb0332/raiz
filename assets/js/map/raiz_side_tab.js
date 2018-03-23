@@ -22,29 +22,6 @@ $(".raiz-side-tab-list li").on('click', function(){
 
 
 /*************************** 검색 창 *****************************/
-function toaster(text, type) {
-    // Get the snackbar DIV
-    var x = document.getElementById("snackbar");
-
-    // Add the "show" class to DIV
-    x.className = "show";
-    if(type === 'success'){
-      x.style.backgroundColor = '#00c850';
-    }
-    else if(type === 'info'){
-      x.style.backgroundColor = '#34b5e5';
-    }
-    else if(type === 'error'){
-      x.style.backgroundColor = '#ef9da6';
-    }
-    else if(type === 'warning'){
-      x.style.backgroundColor = '#fe8801';
-    }
-
-    x.innerHTML = text;
-    // After 3 seconds, remove the show class from DIV
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-}
 
 var keyword_history = [];
 $( "#keyword-input" ).on("focus change keyup",function(e){
@@ -183,6 +160,8 @@ function fillKeywordResult(data, status, pagination){
     var item = '';
 
     if (status === daum.maps.services.Status.OK) {
+        currentCode = data[0]['code'];
+
         $(".keyword-result-list-group li").remove();
 
         item = search_result(data[0]);
@@ -205,6 +184,7 @@ function fillKeywordResult(data, status, pagination){
 
         map.panTo(new daum.maps.LatLng(mouseEvent.latLng.jb, mouseEvent.latLng.ib));
         daum.maps.event.trigger(map, trigger_by, mouseEvent);
+
 
     } else if (status === daum.maps.services.Status.ZERO_RESULT) {
 
@@ -380,6 +360,7 @@ function fillJibunResult(data, status){
         map.panTo(new daum.maps.LatLng(mouseEvent.latLng.jb, mouseEvent.latLng.ib));
         daum.maps.event.trigger(map, trigger_by, mouseEvent);
 
+
     } else if (status === daum.maps.services.Status.ZERO_RESULT) {
 
         toaster('검색 결과가 존재하지 않습니다', 'error');
@@ -402,22 +383,26 @@ var delay = (function(){
 
 /********************************************************************/
 
-/*************************** 실거래 창 ********************************/
+/*************************** 실거래 ********************************/
 
 //주소 초기화
 geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(data, status){
 
     if (status === daum.maps.services.Status.OK) {
 
-        $(".sil-location-name").text(data[0]['address_name']);
+        $(".sil-location-name, .junwal-location-name").text(data[0]['address_name']);
 
     }
 
 });
 
 $(".raiz-sil-tab .raiz-side-tab-list > li").on('click', function(e){
+
+    console.log($(this).attr('id'));
     daum.maps.event.trigger(map, 'idle');
+
 });
+
 
 daum.maps.event.addListener(map, 'idle', function() {
 
@@ -437,7 +422,7 @@ daum.maps.event.addListener(map, 'idle', function() {
           polygon.setMap(null);
           sil_landPolygons = [];
         });
-
+        removeOverlay();
         target.find(".sil-result-list").append('<li>조금만 확대해주세요^^;;</li>');
         needSilRefresh = false;
         return;
@@ -445,7 +430,7 @@ daum.maps.event.addListener(map, 'idle', function() {
     else{
       if(!needSilRefresh){
         needSilRefresh = true;
-        sil_currentCode = null;
+        // sil_currentCode = null;
         daum.maps.event.trigger(map, 'idle');
         return;
       }
@@ -456,6 +441,7 @@ daum.maps.event.addListener(map, 'idle', function() {
 
     geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
       if (status === daum.maps.services.Status.OK) {
+
          if(sil_currentCode === currentCode){
            if(sil_currentCode === undefined) needSilRefresh = true;
            else needSilRefresh = false;
@@ -471,18 +457,11 @@ daum.maps.event.addListener(map, 'idle', function() {
            needSilRefresh = true;
            currentSilTab = target.attr('id');
          }
-
+         console.log(needSilRefresh);
          if(needSilRefresh){
 
-           $.each(sil_buildingPolygons, function(index, polygon){
-             polygon.setMap(null);
-             sil_buildingPolygons = [];
-           });
-
-           $.each(sil_landPolygons, function(index, polygon){
-             polygon.setMap(null);
-             sil_landPolygons = [];
-           });
+           removePolygons();
+           removeOverlay();
 
            target.find(".sil-location-name").text(address[0]['address_name']);
            target.find(".cs-loader").fadeIn('slow');
@@ -501,11 +480,21 @@ daum.maps.event.addListener(map, 'idle', function() {
              request_name = 'tojiSilPolygon';
            }
 
+           var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
+
+           var filter_type = target_dom.find(".sil-filter-content .sil-filter-dropdown .btn").attr('data-type');
+           var filter_value = target_dom.find(".sil-filter-content .sil-filter-dropdown .btn").val();
+
+           filter_type = ( filter_type === undefined ) ? 'year' : filter_type;
+           filter_value = ( filter_value === '' ) ? '1' : filter_value;
+
+           console.log(filter_type, filter_value);
+
            sil_ajax = customAjax($SITE_URL+'get/' + request_name,
                      {
                        bjdongCd : address[0]['code'],
-                       filter_type : 'year',
-                       filter_value : 1
+                       filter_type : filter_type,
+                       filter_value : filter_value
                      },
                      fillSilTab);
 
@@ -606,7 +595,7 @@ function fillSilTab(result){
               li += "<li name="+ lists[key][i]['지번']
                     + " data-area=" + lists[key][i]['전용면적'] + ">"
                     + lists[key][i]['전용면적'] + "m<sup>2</sup>("
-                           + (lists[key][i]['전용면적']/3.3).toFixed(0) + "평)";
+                           + (lists[key][i]['전용면적']*.3025).toFixed(0) + "평)";
           }
 
        }
@@ -617,11 +606,21 @@ function fillSilTab(result){
        li += "<canvas class=sil-chart width=300 height=300 style=display:none;></canvas>";
        li += "</li>";
 
-       var point = parsePoint(lists[key][0]['point']);
+       try{
+          var point = parsePoint(lists[key][0]['point']);
+       }catch(e){
+          return true;
+       }
 
-       customAjax($SITE_URL+'get/singlePolygon',
-                  { bjdongCd : currentCode, lat : point[0], lng : point[1] },
-                  silActivity);
+
+       $.when(
+         customAjax($SITE_URL+'get/singlePolygon',
+                    { bjdongCd : currentCode, lat : point[0], lng : point[1] },
+                    silActivity)
+       ).done(function(result){
+          completeOverlay(currentSilTab, point, lists[key]);
+
+       });
     });
   }
 
@@ -805,7 +804,7 @@ function fillSilTab(result){
                +   "</h5>"
                +   "<h5>"  + "전용면적: "
                          + lists[target_index][i]['전용면적'] + "m<sup>2</sup>("
-                         + (lists[target_index][i]['전용면적']/3.3).toFixed(0) + "평";
+                         + (lists[target_index][i]['전용면적']*.3025).toFixed(0) + "평";
                    if(currentSilTab == 'apt-sil' || currentSilTab === 'rhouse-sil'){
                      li += ", " + lists[target_index][i]['층'] + "층";
                    }
@@ -925,3 +924,634 @@ function fillSilTab(result){
   target_dom.find(".cs-loader").fadeOut('slow');
 
 }
+
+// 전월세
+
+$(".raiz-junwal-tab .raiz-side-tab-list > li").on('click', function(e){
+    daum.maps.event.trigger(map, 'idle');
+});
+
+daum.maps.event.addListener(map, 'idle', function() {
+
+    //find which sil tab is open!
+    var target = $(".raiz-junwal-tab .raiz-side-tab-content li:visible");
+    if(target.attr('id') === undefined) return false;
+    console.log(target.attr('id'));
+    if(map.getLevel() > 4){
+        target.find(".junwal-result-list li").remove();
+
+        $.each(junwal_buildingPolygons, function(index, polygon){
+          polygon.setMap(null);
+          junwal_buildingPolygons = [];
+        });
+
+        $.each(junwal_landPolygons, function(index, polygon){
+          polygon.setMap(null);
+          junwal_landPolygons = [];
+        });
+
+        target.find(".junwal-result-list").append('<li>조금만 확대해주세요^^;;</li>');
+        needSilRefresh = false;
+        return;
+    }
+    else{
+      if(!needJunwalRefresh){
+        needJunwalRefresh = true;
+        // junwal_currentCode = null;
+        daum.maps.event.trigger(map, 'idle');
+        return;
+      }
+
+    }
+
+
+
+    geocoder.coord2RegionCode(map.getCenter().getLng(), map.getCenter().getLat(), function(address, status){
+      if (status === daum.maps.services.Status.OK) {
+         if(junwal_currentCode === currentCode){
+           if(junwal_currentCode === undefined) needJunwalRefresh = true;
+           else needJunwalRefresh = false;
+
+         }
+         else{
+           junwal_currentCode = address[0]['code'];
+           needJunwalRefresh = true;
+         }
+
+
+         if(currentJunwalTab !== target.attr('id')){
+           needJunwalRefresh = true;
+           currentJunwalTab = target.attr('id');
+         }
+
+         if(needJunwalRefresh){
+
+           removePolygons();
+           removeOverlay();
+
+           target.find(".junwal-location-name").text(address[0]['address_name']);
+           target.find(".cs-loader").fadeIn('slow');
+           var request_name, callback_function;
+
+           if(target.attr('id') === 'apt-junwal'){
+             request_name = 'aptJunwalPolygon';
+           }
+           else if(target.attr('id') === 'rhouse-junwal'){
+             request_name = 'rhouseJunwalPolygon';
+           }
+           else if(target.attr('id') === 'store-junwal'){
+             request_name = 'storeJunwalPolygon';
+           }
+
+           var target_dom = $(".raiz-junwal-tab .raiz-side-tab-content li:visible");
+
+           var filter_type = target_dom.find(".junwal-filter-content .junwal-filter-dropdown .btn").attr('data-type');
+           var filter_value = target_dom.find(".junwal-filter-content .junwal-filter-dropdown .btn").val();
+
+           filter_type = ( filter_type === undefined ) ? 'year' : filter_type;
+           filter_value = ( filter_value === '' ) ? '1' : filter_value;
+
+           console.log(filter_type, filter_value);
+
+           junwal_ajax = customAjax($SITE_URL+'get/' + request_name,
+                     {
+                       bjdongCd : address[0]['code'],
+                       filter_type : filter_type,
+                       filter_value : filter_value
+                     },
+                     fillJunwalTab);
+
+         }
+      }
+    });
+
+});
+
+daum.maps.event.addListener(map, 'drag', function() {
+    if(junwal_ajax){
+      junwal_ajax.abort();
+      junwal_ajax = null;
+    }
+    needJunwalRefresh = false;
+});
+
+daum.maps.event.addListener(map, 'dragend', function() {
+    needJunwalRefresh = true;
+});
+
+function fillJunwalTab(result){
+    console.log(result);
+
+    var target_dom = $(".raiz-junwal-tab .raiz-side-tab-content li:visible");
+    var li = '';
+
+    if(result.length <= 0){
+      //결과없음
+      target_dom.find(".junwal-result-list li").remove();
+      li += "<li>"
+         +     "<h4> 결과 없음 </h4>"
+         +  "</li>";
+
+      $(li).appendTo(target_dom.find(".junwal-result-list"));
+      target_dom.find(".junwal-filter-dropdown .filter-search-btn .rotating").removeClass('rotating');
+      target_dom.find(".cs-loader").fadeOut('slow');
+    }
+    else{
+
+      var lists = sortByJibun(result);
+
+      $.each(Object.keys(lists), function(index, key){
+
+         li += "<li class=junwal-result-item data-bunji=" + lists[key][0]['지번'] + ">"
+            +     "<div class=junwal-result-item-title>";
+            if(currentJunwalTab === 'apt-junwal' || currentJunwalTab === 'rhouse-junwal'){
+              li +=   "<p style=font-size:17px;font-weight=bold;>" + lists[key][0]['이름']
+                 +        "<span class='' style=font-size:14px;float:none;>" + "(" + key + "번지)" + "</span>"
+                 +        "<span class=ti-arrow-down></span>"
+                 +    "</p>";
+            }
+            else{
+              li +=   "<p style=font-size:17px;font-weight=bold;>" + key + "번지"
+                 +        "<span class=ti-arrow-down></span>"
+                 +    "</p>";
+            }
+
+         li +=    "</div>";
+
+
+         li +=  "<div class=junwal-result-item-content style=display:none;>"
+            +     "<div class=junwal-dropdown>"
+            +        "<button class=btn btn-primary dropdown-toggle type=button data-toggle=dropdown>" + "평형 선택"
+            +        "<span class=caret></span></button>"
+            +        "<ul class='dropdown-menu junwal-dropdown-menu'>";
+
+         var area_dup_check = [];
+         for(var i = lists[key].length - 1; i >= 0; i--){
+
+            if( jQuery.inArray(lists[key][i]['전용면적'], area_dup_check) === -1 ){
+                area_dup_check.push(lists[key][i]['전용면적']);
+                li += "<li name="+ lists[key][i]['지번']
+                      + " data-area=" + lists[key][i]['전용면적'] + ">"
+                      + lists[key][i]['전용면적'] + "m<sup>2</sup>("
+                             + (lists[key][i]['전용면적']*0.3025).toFixed(0) + "평)";
+            }
+
+         }
+         li +=      "</ul>"
+            +    "</div>"; //end of dropdown
+
+         //chart graph
+         li += "<canvas class=junwal-chart width=300 height=300 style=display:none;></canvas>";
+         li += "</li>";
+
+         try{
+            var point = parsePoint(lists[key][0]['point']);
+         }catch(e){
+            return true;
+         }
+
+         $.when(
+           customAjax($SITE_URL+'get/singlePolygon',
+                      { bjdongCd : currentCode, lat : point[0], lng : point[1] },
+                      junwalActivity)
+         ).done(function(result){
+            completeOverlay(currentJunwalTab, point, lists[key]);
+         });
+      });
+    }
+
+    target_dom.find(".junwal-filter-dropdown-menu li").on("click", function(e){
+      $(this).parent().siblings('.btn').text($(this).text())
+                                       .attr('data-type', $(this).attr('data-type'))
+                                       .val($(this).val());
+    });
+
+    target_dom.find(".junwal-filter-dropdown .filter-search-btn .ti-reload").unbind("click").on("click", function(e){
+
+      console.log($(this).parent().parent().parent().attr('id'));
+      var target_junwal_type = $(this).parent().parent().parent().attr('id');
+      var filter_type = $(this).parent().siblings('button').attr('data-type');
+      var filter_value = $(this).parent().siblings('button').val();
+
+      if(target_junwal_type === 'apt-junwal-filter'){
+        request_name = 'aptJunwalPolygon';
+      }
+      else if(target_junwal_type === 'rhouse-junwal-filter'){
+        request_name = 'rhouseJunwalPolygon';
+      }
+      else if(target_junwal_type === 'store-junwal-filter'){
+        request_name = 'storeJunwalPolygon';
+      }
+
+      $(this).addClass("rotating");
+      junwal_ajax = customAjax($SITE_URL+'get/' + request_name,
+                {
+                  bjdongCd : currentCode,
+                  filter_type : filter_type,
+                  filter_value : filter_value
+                },
+                fillJunwalTab);
+
+    });
+
+    target_dom.find(".junwal-result-list").fadeOut(function(){
+
+      target_dom.find(".junwal-result-list li").remove();
+
+      $(li).appendTo(target_dom.find(".junwal-result-list"));
+
+      //this is where chart is dyanmially created triggered by dropdown
+      target_dom.find(".junwal-dropdown-menu li").on("click", function(e){
+
+          $(this).parent().siblings('.btn').text($(this).text());
+          var target_index = $(this).attr('name');
+          var target_area = $(this).attr('data-area');
+          //
+          //
+          // var data_object = {};
+          // for(var i = 0; i < lists[target_index].length; i++){
+          //   // console.log(lists[target_index][i]);
+          //   if(lists[target_index][i]['전용면적'] === target_area){
+          //     // console.log(i);
+          //
+          //     var date = lists[target_index][i]['년'] + '/' + lists[target_index][i]['월'];
+          //
+          //     if(data_object[ date ] === undefined){
+          //         data_object[ date ] = [];
+          //         data_object[ date ].push(lists[target_index][i]['거래금액']);
+          //     }
+          //     else{
+          //         data_object[ date ].push(lists[target_index][i]['거래금액']);
+          //     }
+          //
+          //   }
+          // }
+          //
+          // var data = [];
+          // $.each(Object.keys(data_object), function(index, key){
+          //   var sum = 0;
+          //   for(var i = 0; i < data_object[key].length; ++i){
+          //     sum += data_object[key][i]*1;
+          //   }
+          //
+          //   data.push( (sum / data_object[key].length).toFixed(0) );
+          // });
+          //
+          // var ctx = $(this).parent().parent().parent().find('.junwal-chart')[0].getContext('2d');
+          // //beginning of chart
+          // var junwal_chart = new Chart(ctx, {
+          //   type: 'line',
+          //   data: {
+          //       labels: Object.keys(data_object),
+          //       datasets: [{
+          //           label: '실거래가',
+          //           data: data,
+          //           backgroundColor: '#41c980',
+          //           borderColor: '#41c980',
+          //           fill: false,
+          //           borderWidth: 1
+          //       }]
+          //   },
+          //   options: {
+          //       layout: {
+          //         padding : {
+          //           top: 30,
+          //           left: 20
+          //         }
+          //       },
+          //       legend: {
+          //         display: false
+          //       },
+          //       responsive: true,
+          //       hover: {
+          //         mode: false,
+          //         intersect: false
+          //       },
+          //       tooltips: {
+          //         callbacks: {
+          //              label: function(tooltipItem, data) {
+          //                  return price_format(tooltipItem.yLabel, '만원').replace('원', '');
+          //              },
+          //          }
+          //       },
+          //       scales: {
+          //           yAxes: [{
+          //             ticks: {
+          //                 fontSize: 12,
+          //                 beginAtZero: false,
+          //                 padding: 0,
+          //                 userCallback: function(value, index, values) {
+          //                     if (value == 0)
+          //                         return "0원";
+          //                     else
+          //                         return price_format(value.toFixed(0), '만원').replace('원', '');
+          //                 }
+          //             }
+          //           }]
+          //       },
+          //       animation: {
+          //         onComplete: function(e){
+          //           var ctx = this.chart.ctx;
+          //           ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+          //           ctx.fillStyle = this.chart.config.options.defaultFontColor;
+          //           ctx.textAlign = 'center';
+          //           ctx.textBaseline = 'bottom';
+          //
+          //           this.data.datasets.forEach(function (dataset) {
+          //             // console.log(dataset);
+          //             var percentage = [];
+          //             for(var i = 1; i < dataset['data'].length; ++i){
+          //               percentage.push( (dataset['data'][i] - dataset['data'][i-1])/dataset['data'][i-1] * 100 );
+          //             }
+          //               var index = Object.keys(dataset['_meta']);
+          //               var points = dataset['_meta'][index]['dataset']['_children'];
+          //               for(var i = 1; i < points.length; ++i){
+          //                 var x = points[i]['_view']['x'];
+          //                 var y = points[i]['_view']['y'];
+          //                 if(percentage[i-1] > 0) {
+          //                   ctx.fillText('+' + percentage[i-1].toFixed(1) + '%', x, y);
+          //                 }
+          //                 else{
+          //                   ctx.fillText(percentage[i-1].toFixed(1) + '%', x, y);
+          //                 }
+          //               }
+          //           });
+          //         }
+          //       }
+          //   }
+          // });
+
+          //end of chart
+          // var canvas = $(this).parent().parent().parent().find('.junwal-chart');
+          // canvas.show('normal');
+
+          //show content
+          var li = '';
+          for(var i = lists[target_index].length - 1; i >= 0; i--){
+            if( lists[target_index][i]['전용면적'] === target_area ){
+              li +="<div class=junwal-result-item-content style=display:none;>"
+                 +   "<h5>"  + "거래날짜: "
+                           + lists[target_index][i]['년'] + "년 "
+                           + lists[target_index][i]['월'] + "월 "
+                           + lists[target_index][i]['일'] + "일"
+                 +   "</h5>"
+                 +   "<h5>"  + "전용면적: "
+                           + lists[target_index][i]['전용면적'] + "m<sup>2</sup>("
+                           + (lists[target_index][i]['전용면적']*0.3025).toFixed(0) + "평";
+                     if(currentJunwalTab == 'apt-junwal' || currentJunwalTab === 'rhouse-junwal'){
+                       li += ", " + lists[target_index][i]['층'] + "층";
+                     }
+              li +=         ")";
+              li +=   "</h5>"
+                 +   "<h5>"  + "보증금: "
+                           + price_format(lists[target_index][i]['보증금액'], '만원')
+                 +   "</h5>"
+                 +   "<h5>"  + "월세: "
+                           + price_format(lists[target_index][i]['월세금액'], '만원')
+                 +   "</h5>"
+                 + "</div>";
+            }
+          }
+
+          $(this).parent().parent().parent().find('.junwal-result-item-content').remove();
+          $(li).appendTo($(this).parent().parent().parent()).show();
+      });
+
+      target_dom.find(".junwal-result-list li p").on("mouseover", function(e){
+        var target = $(this).parent().parent();
+
+        if(currentJunwalTab === 'apt-junwal'){
+          class_name = 'junwal-apt-building-polygon';
+        }
+        else if(currentJunwalTab === 'rhouse-junwal'){
+          class_name = 'junwal-rhouse-building-polygon';
+
+        }
+        else if(currentJunwalTab === 'store-junwal') {
+          class_name = 'junwal-store-building-polygon';
+        }
+        else if(currentJunwalTab === 'toji-junwal'){
+          class_name = 'junwal-toji-building-polygon';
+        }
+
+        var polygons = $('.'+class_name);
+
+        $.each( polygons, function(index, polygon) {
+
+            var bunji = $(polygon).attr('data-bun') + ( ($(polygon).attr('data-ji') === '') ? '' : '-' + $(polygon).attr('data-ji') );
+
+            if(target.attr('data-bunji') === bunji){
+                $(polygon).addClass(class_name+ '-hover');
+            }
+
+        });
+
+        polygons = $('.junwal-toji-polygon');
+        $.each( polygons, function(index, polygon) {
+            var polygon_bunji = $(polygon).attr('name').substr($(polygon).attr('name').length - 8);
+
+            var bun = polygon_bunji.substr(0, 4);
+            var ji = polygon_bunji.substr(polygon_bunji.length - 4);
+
+            var bunji = bun + ji;
+
+            var target_bun = target.attr('data-bunji').split('-')[0];
+            var target_ji = (target.attr('data-bunji').split('-')[1] === undefined) ? '' : target.attr('data-bunji').split('-')[1];
+            var target_bunji = lpad(target_bun, 4, 0)
+                             + lpad(target_ji, 4, 0);
+
+            if(polygon_bunji === target_bunji){
+              $(polygon).addClass('junwal-toji-polygon-hover');
+            }
+
+        });
+
+      });
+
+      target_dom.find(".junwal-result-list li p").on("mouseout", function(e){
+
+        if(currentJunwalTab === 'apt-junwal'){
+          class_name = 'junwal-apt-building-polygon';
+        }
+        else if(currentJunwalTab === 'rhouse-junwal'){
+          class_name = 'junwal-rhouse-building-polygon';
+
+        }
+        else if(currentJunwalTab === 'store-junwal') {
+          class_name = 'junwal-store-building-polygon';
+        }
+        else if(currentJunwalTab === 'toji-junwal'){
+          class_name = 'junwal-toji-building-polygon';
+        }
+
+        var polygons = $('.'+class_name);
+
+        $.each( polygons, function(index, polygon) {
+
+            $(polygon).removeClass(class_name + '-hover');
+
+        });
+
+        polygons = $('.junwal-toji-polygon');
+        $.each( polygons, function(index, polygon) {
+
+              $(polygon).removeClass('junwal-toji-polygon-hover');
+
+        });
+
+      });
+      target_dom.find(".junwal-result-item-title").on("click", function(e){
+
+        if( $(this).siblings().is(":visible")){
+          $(this).find('.ti-arrow-up').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+        }
+        else{
+          $(this).find('.ti-arrow-down').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+        }
+
+        $(this).siblings().toggle('fast', 'linear');
+
+      });
+
+      target_dom.find(".junwal-result-list").fadeIn();
+    });
+
+    target_dom.find(".junwal-filter-dropdown .filter-search-btn .rotating").removeClass('rotating');
+    target_dom.find(".cs-loader").fadeOut('slow');
+
+}
+
+function completeOverlay(type, point, data){
+
+  var customOverlay = new daum.maps.CustomOverlay({});
+  var price = price_format_short(data[data.length - 1]['거래금액']);
+
+  var target_type = type.split('-')[1];
+  if(target_type === 'junwal'){
+    var price = data[data.length - 1]['월세금액'];
+    var label_name = '월';
+    var label_color = 'blue';
+    if(data[data.length - 1]['월세금액'] === '0'){
+      price = data[data.length - 1]['보증금액'];
+      label_name = '전';
+      label_color = 'red';
+    }
+    price = price_format_short(price);
+    label = '<span style=color:'+ label_color + ';>' + label_name + '</span>';
+    price = label + price;
+  }
+
+  customOverlay.setContent(
+                              '<div class="sil-overlay ' + type + '-overlay">'
+                              +   '<div class=overlay-header>'
+                              +       data[0]['이름'] + '<br>'
+                              +   '</div>'
+                              +   '<strong>'
+                              +       price
+                              +   '</strong>'
+                              +   '(' + (data[data.length - 1]['전용면적']*.3025).toFixed(0) + '평)'
+                              +     '| '
+                              +   '<span class=overlay-info>'
+                              +       data[data.length - 1]['년'].slice(-2) + '-' + data[data.length - 1]['월']
+                              +   '</span>'
+                              + '</div>'
+                            );
+  customOverlay.setPosition(new daum.maps.LatLng(point[0], point[1]));
+  customOverlay.setMap(map);
+
+  var mapLevel = map.getLevel();
+  var font_size = '12px';
+  var header_font_size = '14px';
+  if(mapLevel === 2){
+    font_size = '10px';
+    header_font_size = '12px';
+  }
+  else if(mapLevel === 3){
+    font_size = '7px';
+    header_font_size = '9px';
+  }
+  else if(mapLevel === 4){
+    font_size = '4px';
+    header_font_size = '6px';
+  }
+
+  $(".sil-overlay, .junwal-overlay").css('font-size', font_size);
+  $(".overlay-header").css('font-size', header_font_size);
+
+  overlays.push(customOverlay);
+
+}
+
+function removeOverlay(){
+  console.log(overlays);
+  $.each(overlays, function(index, overlay){
+
+    overlay.setMap(null);
+
+  });
+  overlays = [];
+}
+
+function removePolygons(){
+  if(junwal_landPolygons.length > 0){
+    $.each(junwal_landPolygons, function(index, polygon){
+      polygon.setMap(null);
+      junwal_landPolygons = [];
+    });
+  }
+
+  if(junwal_buildingPolygons.length > 0){
+    $.each(junwal_buildingPolygons, function(index, polygon){
+      polygon.setMap(null);
+      junwal_buildingPolygons = [];
+    });
+  }
+
+  if(sil_landPolygons.length > 0){
+    $.each(sil_landPolygons, function(index, polygon){
+      polygon.setMap(null);
+      sil_landPolygons = [];
+    });
+  }
+
+  if(sil_buildingPolygons.length > 0 ){
+    $.each(sil_buildingPolygons, function(index, polygon){
+      polygon.setMap(null);
+      sil_buildingPolygons = [];
+    });
+  }
+}
+
+daum.maps.event.addListener(map, 'zoom_start', function() {
+
+    zoom_start = map.getLevel();
+
+});
+
+
+  // add zoom in zoom out mouseEvent
+daum.maps.event.addListener(map, 'zoom_changed', function() {
+    zoom_end = map.getLevel();
+
+    if(overlays.length > 0){
+
+        var mapLevel = map.getLevel();
+        var font_size = '12px';
+        var header_font_size = '14px';
+        if(mapLevel === 2){
+          font_size = '10px';
+          header_font_size = '12px';
+        }
+        else if(mapLevel === 3){
+          font_size = '7px';
+          header_font_size = '9px';
+        }
+        else if(mapLevel === 4){
+          font_size = '4px';
+          header_font_size = '6px';
+        }
+
+        $(".sil-overlay, .junwal-overlay").css('font-size', font_size);
+        $(".overlay-header").css('font-size', header_font_size);
+    }
+});

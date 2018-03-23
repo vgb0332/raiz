@@ -1,9 +1,4 @@
 "use strict";
-var landPolygons = []; //토지 폴리곤
-var buildingPolygons = []; //건물 폴리곤
-var sil_landPolygons = []; //실토지 폴리곤
-var sil_buildingPolygons = []; //실건물 폴리곤
-var stcs_landPolygons = []; //통계 지역 폴리곤
 
 function mainActivity(data){
 
@@ -23,6 +18,17 @@ function silActivity(data){
   ajax_type = 'sil-toji';
   drawPoly(landResult);
   ajax_type = 'sil-building';
+  drawPoly(buildingResult);
+
+}
+
+function junwalActivity(data){
+
+  var landResult = data['land'];
+  var buildingResult = data['building'];
+  ajax_type = 'junwal-toji';
+  drawPoly(landResult);
+  ajax_type = 'junwal-building';
   drawPoly(buildingResult);
 
 }
@@ -92,6 +98,7 @@ function setRWindow(polygons, data){
     }
   });
   var Rwindow = raiz_window(header);
+  Rwindow.draggable( "option", "containment", $( "#" +  current_containment ) );
   $(document.body).append(Rwindow);
 
   var values = {
@@ -202,6 +209,89 @@ function setSTCSWindow(polygons, data, type){
 */
 
 function setPoly(type, polygon, data){
+  if(type === 'junwal-toji'){
+
+    polygon.setMap(map);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('toji-polygon').addClass('junwal-toji-polygon').attr('name', data['pnu']);
+    });
+
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+
+      var target_id = polygon.wc[0].id;
+      var land_target_name = $("#" + target_id).attr('name');
+
+      var polygons = [];
+      polygons.push(polygon);
+      //find all bulilding polygons that correspond to their toji.
+      $.each(junwal_buildingPolygons, function(index, polygon){
+
+         $.each(polygon.wc, function(index, polygon_attr){
+
+           var building_target_id = polygon_attr.id;
+           var building_target_name = $("#" + building_target_id).attr('name');
+           if(building_target_name === land_target_name){
+             polygons.push(polygon);
+           }
+         });
+      });
+
+      setRWindow(polygons, data);
+    });
+
+    junwal_landPolygons.push(polygon);
+  }
+
+  if(type === 'junwal-building'){
+
+    polygon.setMap(map);
+    var target = polygon.wc;
+    var class_name = 'junwal-apt-building-polygon';
+    if(currentSilTab === 'apt-junwal'){
+      class_name = 'junwal-apt-building-polygon';
+    }
+    else if(currentSilTab === 'rhouse-junwal'){
+      class_name = 'junwal-rhouse-building-polygon';
+
+    }
+    else if(currentSilTab === 'store-junwal') {
+      class_name = 'junwal-store-building-polygon';
+    }
+
+    $.each(target, function(index, path){
+      $("#" + path.id)
+      .removeAttr('style').addClass('building-polygon').addClass(class_name)
+      .attr('name', data['pnu'])
+      .attr('data-buildingID',  data['buildingID'])
+      .attr('data-sigunguCd' , data['sigunguCd'])
+      .attr('data-bjdongCd', data['bjdongCd'])
+      .attr('data-bun', data['bun'])
+      .attr('data-ji', data['ji'])
+      .attr('data-height', data['height']);
+    });
+
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      daum.maps.event.preventMap();
+      var building_target_name = $("#" + polygon.wc[0].id).attr('name');
+
+      $.each(sil_landPolygons, function(index, polygon){
+
+        $.each(polygon.wc, function(index, polygon_attr){
+
+            var toji_target_id = polygon_attr.id;
+            var toji_target_name = $("#" + toji_target_id).attr('name');
+            if(toji_target_name === building_target_name ){
+              daum.maps.event.trigger(polygon, 'click');
+            }
+        });
+
+      });
+    });
+
+    junwal_buildingPolygons.push(polygon);
+  }
+
   if(type === 'sil-toji'){
 
     polygon.setMap(map);
@@ -211,7 +301,7 @@ function setPoly(type, polygon, data){
     });
 
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
-      console.log('polygon click activated! : ' , polygon );
+      daum.maps.event.preventMap();
       var target_id = polygon.wc[0].id;
       var land_target_name = $("#" + target_id).attr('name');
 
@@ -268,6 +358,7 @@ function setPoly(type, polygon, data){
     });
 
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      daum.maps.event.preventMap();
       var building_target_name = $("#" + polygon.wc[0].id).attr('name');
 
       $.each(sil_landPolygons, function(index, polygon){
@@ -344,6 +435,7 @@ function setPoly(type, polygon, data){
     });
 
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      daum.maps.event.preventMap();
       var building_target_name = $("#" + polygon.wc[0].id).attr('name');
 
       $.each(landPolygons, function(index, polygon){
@@ -373,8 +465,7 @@ function setPoly(type, polygon, data){
     polygon.Bb[0] = data['sidoCd'];
     polygon.Bb[1] = data['sidoNm'];
 
-    // console.log(polygon.wc[0].outerHTML);
-    // $("#side-tab-svg").append(polygon.wc[0].outerHTML)
+
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
@@ -504,6 +595,33 @@ function setPoly(type, polygon, data){
       // $('.stcs-polygon').remove();
       // $('.stcs_ol').remove();
 
+    });
+  }
+
+  if(type === 'youdong'){
+    // polygon.setOptions( toji_polygon_option );
+    polygon.setMap(map);
+
+    stcs_landPolygons.push(polygon);
+
+    polygon.Bb[0] = data['sigunguCd'];
+    polygon.Bb[1] = data['sigunguNm'];
+    // console.log(polygon);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
+    });
+
+    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+      // console.log('polygon mouseover activated! : ' , polygon );
+    });
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      removeStcsPolygon();
+      removeStcsLabel();
+      customAjax($SITE_URL+'getStcs/youdongPoint',{sggcode:polygon.Bb[0]},setYoudongCircle);
+      // console.log(polygon.Bb[0].substring(2,4));
+      //
+      // customAjax($SITE_URL+'getStcs/youdongValue',{code:polygon.Bb[0]},youdongProcessing);
     });
   }
 }
