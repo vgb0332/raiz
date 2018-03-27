@@ -17,11 +17,13 @@
 
   <!-- NAVER -->
   <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=DX5aYb4n7jxGROt0PIPR&submodules=panorama"></script>
+  <script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js" charset="utf-8"></script>
 
   <!-- GOOGLE -->
   <script async defer
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw5vj4ZnOZUe-EH2A9_Nk9tP0a9-f9PBk">
   </script>
+  <script src="https://apis.google.com/js/platform.js?onload=loginWithGoogle" async defer></script>
 
   <!-- THREE.JS -->
   <script src="<?php echo base_url();?>assets/vendor/three/three.min.js"></script>

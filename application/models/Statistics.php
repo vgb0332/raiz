@@ -365,5 +365,14 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
+  function gmtest() {
+    $query = $this->db->query(
+              "SELECT * FROM GM_test limit 1000;
+              ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
 
 }

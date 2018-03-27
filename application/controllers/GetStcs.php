@@ -144,4 +144,9 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->getYoudongValue($code);
   }
 
+  public function gmtest() {
+    $this->load->model('Statistics');
+    echo $this->Statistics->gmtest();
+  }
+
 }

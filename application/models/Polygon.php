@@ -178,17 +178,22 @@ Class Polygon extends CI_Model {
       $last_month = explode("-", $last_time)[1];
       // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
-                "SELECT b.년, b.월, b.일, b.아파트 as 이름, b.지번, b.전용면적, b.층, b.거래금액, st_asText(st_centroid(geomfromtext(a.polygon))) as point
-                FROM  getLandPolygonText as a, getRTMSDataSvcAptTrade as b
-                WHERE a.sigunguCd = $sigunguCd
-                AND   a.bjdongCd = $bjdongCd
-                AND 	b.지역코드 = $sigunguCd
-                AND   b.법정동코드 = $bjdongCd
-                AND   a.bun = b.번
+                "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.polygon, b.번, b.지
+                FROM
+                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon
+                  from getLandPolygonText
+                  where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd) as a,
+
+                (select 번, 지, 년, 월, 일, 아파트 as 이름, 지번, 전용면적, 층, 거래금액
+                  from getRTMSDataSvcAptTrade
+                  where 지역코드 = $sigunguCd
+                  and 법정동코드 = $bjdongCd
+                  and 년 >= $last_year AND 월 >= $last_month) as b
+
+                WHERE a.bun = b.번
                 AND   a.ji = b.지
-                AND   b.년 >= $last_year
-                AND   b.월 >= $last_month
-                ORDER BY b.지번, b.아파트
+                GROUP BY b.지번 desc
+                ORDER BY b.지번, b.이름
                 ");
 
       $result = $query->result_array();
@@ -203,16 +208,21 @@ Class Polygon extends CI_Model {
 
       $this->db->cache_off();
       $query1 = $this->db->query(
-                "SELECT *
-                FROM getLandPolygonText as a, getLandCharacteristics as b
-                WHERE a.sigunguCd = $sigunguCd
-                AND   a.bjdongCd = $bjdongCd
-                AND 	b.sigunguCd = a.sigunguCd
-                AND   b.bjdongCd = a.bjdongCd
-                AND   a.bun = b.bun
+                "SELECT a.sigunguCd, a.bjdongCd, a.bun, a.ji, a.pnu, a.polygon
+                FROM
+                (select sigunguCd, bjdongCd, bun, ji, pnu, polygon
+                  from getLandPolygonText
+                  where sigunguCd = $sigunguCd
+                      and bjdongCd = $bjdongCd
+                      and ST_CONTAINS(geomfromtext(polygon), point($x, $y))) as a,
+
+                (select sigunguCd, bjdongcd, bun, ji, pnu
+                  from getLandCharacteristics
+                  where sigunguCd = $sigunguCd
+                      and bjdongCd = $bjdongCd) as b
+                WHERE a.bun = b.bun
                 AND   a.ji = b.ji
                 AND 	a.pnu = b.pnu
-                AND 	ST_CONTAINS(geomfromtext(polygon), point($x, $y))
                 LIMIT 1
                 ");
 

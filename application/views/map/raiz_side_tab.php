@@ -407,7 +407,7 @@
           <button onclick="youdongProcessing();" type="button" style="width:130px" class="btn btn-indigo">상권 정보</button>
         </div>
         <div>
-          <button type="button" style="width:130px" class="btn btn-brown">전자 지도 배경</button>
+          <button onclick="GM_test();" type="button" style="width:130px" class="btn btn-brown">전자 지도 배경</button>
         </div>
         <!-- <div>
           <svg version="1.1" width="100%" height="50%" style="stroke: none; stroke-dashoffset: 0.5; stroke-linejoin: round; fill: none; position: relative; " viewBox="0 0 7215 5095">

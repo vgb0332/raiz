@@ -1,7 +1,7 @@
 "use strict";
 
 function mainActivity(data){
-
+  console.log(data);
   var landResult = data['land'];
   var buildingResult = data['building'];
   ajax_type = 'toji';
@@ -40,11 +40,21 @@ function junwalActivity(data){
 
 */
 
+function drawMarker(data){
+  $.each(data, function(index, target){
+    var point = parsePoint(target['point']);
+    var marker = new daum.maps.Marker({
+        position: new daum.maps.LatLng(point[0], point[1])
+    });
+    marker.setMap(map);
+  });
+}
+
 function drawPoly(data){
 
   var testPolygon;
   $.each(data, function(index, target){
-
+      console.log(target);
       var polygon = target['polygon'];
       var target_polygon = parseShape(polygon);
       var target_data = target;
@@ -380,7 +390,7 @@ function setPoly(type, polygon, data){
 
   if(type === 'toji'){
     polygon.setMap(map);
-    // console.log(polygon);
+    console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('toji-polygon').attr('name', data['pnu']);
@@ -627,6 +637,7 @@ function setPoly(type, polygon, data){
 }
 
 function parseShape(shape){
+  console.log(shape);
   /*    shape : 'polygon( (poly1) , (poly2) , ...)'   */
   // console.log(shape);
   if (shape[0] === 'P') {

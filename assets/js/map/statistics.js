@@ -1260,13 +1260,67 @@ function youdongLevel() {
 }
 
 
-function selectYDcolor(data) {
-
+function GM_test() {
+  customAjax($SITE_URL+'getStcs/gmtest',0,GM_make);
 }
 
-function adjustYoudong(data) {
+var clusterer = new daum.maps.MarkerClusterer({
+  map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+  averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+  minLevel: 6, // 클러스터 할 최소 지도 레벨
+});
+var styles = [{
+        width : '53px', height : '52px',
+        backgroundColor : 'rgba(255, 0, 54, 0.6)',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '54px',
+        fillOpacity: 0.5
+    }, {
+        width : '73px', height : '72px',
+        backgroundColor : 'rgba(97, 0, 255, 0.62)',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '74px',
+        fillOpacity: 0.5
+    }
+];
 
+clusterer.setStyles(styles);
+
+
+
+function GM_make(data) {
+
+  console.log(data);
+  var comp = [];
+  $.each(data, function(index, target){
+      var x = target['y'],y = target['x'];
+      var position = new daum.maps.LatLng(x, y);
+      var marker = new daum.maps.Marker({
+          position: position // 마커를 표시할 위치
+      });
+      marker.setMap(map);
+      marker.J = [target['addr'],target['면적/특이사항'],target['물건용도'],target['법원명/담당계'],target['진행상태'],target['감정가'],target['최저가율']];
+
+      var customOverlay = new daum.maps.CustomOverlay({});
+      daum.maps.event.addListener(marker, 'mouseover', function(mouseEvent) {
+        customOverlay.setContent('<div class="stcs_ol"><div>'+marker.J[0]+'</br>'+marker.J[1]+'</br>용도 : '+marker.J[2]+'</br>법원명 / 담당계 : '
+                                +marker.J[3]+'</br>진행상태 : '+marker.J[4]+'</br>감정가 : '+marker.J[5]+'</br>최저가율 : '+marker.J[6]+'</div>'
+                                +'</div>');
+        customOverlay.setPosition(marker.getPosition());
+        customOverlay.setMap(map);
+        // showYDChart(marker.J["cd"]);
+      });
+      // daum.maps.event.addListener(marker, 'mousemove', function(mouseEvent) {
+      //   customOverlay.setPosition(marker.getPosition());
+      // });
+      daum.maps.event.addListener(marker, 'mouseout', function() {
+        customOverlay.setMap(null);
+      });
+
+      comp.push(marker);
+  });
+  console.log(comp);
+  clusterer.addMarkers(comp);
 }
-// function setYDCircle(circle,) {
-//
-// }

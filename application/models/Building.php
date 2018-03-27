@@ -67,12 +67,10 @@ Class Building extends CI_Model {
     }
 
     if($type === 'brTitleInfo'){
-      $this->db->start_cache();
       $this->db->where('sigunguCd', $sigunguCd);
       $this->db->where('bjdongCd', $bjdongCd);
       $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
       $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
-      $this->db->stop_cache();
 
       $result = $this->db->get('getBrTitleInfo')->result();
       return json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -80,12 +78,10 @@ Class Building extends CI_Model {
     }
 
     if($type === 'brRecapTitleInfo'){
-      $this->db->start_cache();
       $this->db->where('sigunguCd', $sigunguCd);
       $this->db->where('bjdongCd', $bjdongCd);
       $this->db->where('bun', str_pad($bun, 4, '0', STR_PAD_LEFT));
       $this->db->where('ji' , str_pad($ji, 4, '0', STR_PAD_LEFT));
-      $this->db->stop_cache();
 
       $result = $this->db->get('getBrRecapTitleInfo')->result();
       return json_encode($result, JSON_UNESCAPED_UNICODE);

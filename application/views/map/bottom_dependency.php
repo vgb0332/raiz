@@ -31,6 +31,7 @@
 <script src="<?php echo base_url();?>assets/js/map/main_activity.js"></script>
 <script src="<?php echo base_url();?>assets/js/common/signup.js"></script>
 <script src="<?php echo base_url();?>assets/js/common/login.js"></script>
+<script src="<?php echo base_url();?>assets/js/common/logout.js"></script>
 <!-- <script src="<?php echo base_url();?>assets/js/map/3dtest.js"></script> -->
 <!-- <script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script> -->
 <script src="<?php echo base_url();?>assets/js/map/3d_functions2.js"></script>
@@ -45,3 +46,62 @@ if($is_mobile){
 <?php
 }
 ?>
+
+  <script type="text/javascript">  login_type = "<?php echo $this->session->userdata('type'); ?>" </script>
+
+<!-- SNS init -->
+<script type="text/javascript">
+  //kakao
+  Kakao.init('bc10b2d63f82032b01864827f2f7d7ff');
+
+  //facebook
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '1880086172301711',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      status           : true,
+      cookie           : true,
+      version          : 'v2.11'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+   //google
+   gapi.load('auth2', function() {
+    auth2 = gapi.auth2.init({
+      client_id: '766578953193-clebs9v51rgap5t2fa09ki2pjk0h7tc6.apps.googleusercontent.com',
+      cookiepolicy: 'single_host_origin',
+      scope: 'profile',
+    });
+
+    var element = document.getElementById('google_login');
+    auth2.attachClickHandler(element, {},
+      function(googleUser) {
+          loginWithGoogle(googleUser);
+        }, function(error) {
+          console.log('Sign-in error', error);
+        }
+      );
+   });
+
+
+
+   // var naverLogin = new naver.LoginWithNaverId(
+  	// {
+  	// 	clientId: "Ma4jxG6UCNH4LwE5CWvr",
+  	// 	callbackUrl: "http://www.re-go.kr/raiz1.3/map/main",
+  	// 	isPopup: false,
+  	// 	callbackHandle: true,
+   //    loginButton: {color: "green", type: 3, height: 44} /* 로그인 버튼의 타입을 지정 */
+  	// 	/* callback 페이지가 분리되었을 경우에 callback 페이지에서는 callback처리를 해줄수 있도록 설정합니다. */
+  	// }).init();
+
+</script>
