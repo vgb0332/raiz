@@ -112,7 +112,7 @@
             </div>
             <div id="apt-sil-filter" class="collapse sil-filter-content">
                 <div class="sil-filter-dropdown">
-                  <button class="btn" btn-primary dropdown-toggle type="button" data-toggle="dropdown">
+                  <button class="btn" data-type='year' value='1' btn-primary dropdown-toggle type="button" data-toggle="dropdown">
                     기간 선택(기본값: 최근 1년) <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu sil-filter-dropdown-menu">

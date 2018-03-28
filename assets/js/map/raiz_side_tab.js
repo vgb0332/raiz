@@ -548,7 +548,7 @@ function fillSilTab(result){
   var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
   var li = '';
   var target_sil_type = $(".raiz-sil-tab .raiz-side-tab-content li:visible").attr('id');
-  console.log(target_sil_type);
+
   var request_name = 'aptSilPolygon';
 
   if(target_sil_type === 'apt-sil'){
@@ -578,7 +578,7 @@ function fillSilTab(result){
   else{
     $.each(result, function(index, key){
 
-       li += "<li class=sil-result-item data-sigunguCd=" + key['지역코드'] + " data-bjdongCd=" + key['법정동코드'] + " data-bun=" + key['번'] + " data-ji=" + key['지'] + " data-bunji=" + key['지번'] + ">"
+       li += "<li class=sil-result-item data-sigunguCd=" + key['지역코드'] + " data-bjdongCd=" + key['법정동코드'] + " data-bunji=" + key['지번'] + ">"
           +     "<div class=sil-result-item-title>";
           if(currentSilTab === 'apt-sil' || currentSilTab === 'rhouse-sil'){
             li +=   "<p style=font-size:17px;font-weight=bold;>" + key['이름']
@@ -669,13 +669,26 @@ function fillSilTab(result){
 
   target_dom.find(".sil-filter-dropdown .filter-search-btn .ti-reload").unbind("click").on("click", function(e){
 
-    console.log($(this).parent().parent().parent().attr('id'));
+    // console.log($(this).parent().parent().parent().attr('id'));
     var target_sil_type = $(this).parent().parent().parent().attr('id');
     var filter_type = $(this).parent().siblings('button').attr('data-type');
     var filter_value = $(this).parent().siblings('button').val();
 
+    if(target_sil_type === 'apt-sil'){
+      request_name = 'aptSilPolygon';
+    }
+    else if(target_sil_type === 'rhouse-sil'){
+      request_name = 'rhouseSilPolygon';
+    }
+    else if(target_sil_type === 'store-sil'){
+      request_name = 'storeSilPolygon';
+    }
+    else if(target_sil_type === 'toji-sil'){
+      request_name = 'tojiSilPolygon';
+    }
+
     $(this).addClass("rotating");
-    sil_ajax = customAjax($SITE_URL+'get/' + target_sil_type,
+    sil_ajax = customAjax($SITE_URL+'get/' + request_name,
               {
                 bjdongCd : currentCode,
                 filter_type : filter_type,
@@ -684,12 +697,37 @@ function fillSilTab(result){
               fillSilTab);
 
   });
+
   target_dom.find(".sil-result-list").fadeOut(function(){
 
     target_dom.find(".sil-result-list li").remove();
 
     $(li).appendTo(target_dom.find(".sil-result-list"));
     target_dom.find(".sil-result-list .sil-result-item").on("click", function(e){
+      console.log('clicked');
+      var clicked_item = $(this);
+
+      if( clicked_item.next().hasClass('sil-result-item-content') ){
+
+        if( clicked_item.next().is(":visible") ) {
+          console.log(clicked_item.children().children().children());
+          clicked_item.children().children().find('.ti-arrow-down').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+        }
+        else{
+          // clicked_item.children().children().children().find('.ti-arrow-up').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+        }
+        $(this).find('.ti-arrow-up').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+        $(this).next().toggle('fast', 'linear');
+        return false;
+      }
+      // else{
+      //   $(this).find('.ti-arrow-down').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+      //   $(this).children().siblings().show('fast', 'linear');
+      // }
+
+
+
+      var bunji = $(this).attr('data-bunji');
 
       if(target_sil_type === 'apt-sil'){
         request_name = 'aptSil';
@@ -703,16 +741,222 @@ function fillSilTab(result){
       else if(target_sil_type === 'toji-sil'){
         request_name = 'tojiSil';
       }
+
+      var filter_type = $('#' + target_sil_type + '-filter .sil-filter-dropdown button').attr('data-type');
+      var filter_value = $('#' + target_sil_type + '-filter .sil-filter-dropdown button').val();
+
       sil_ajax = customAjax($SITE_URL+'get/' + request_name,
                 {
                   bjdongCd : currentCode,
+                  bunji : bunji,
                   filter_type : filter_type,
                   filter_value : filter_value
                 },
-                fillSilTab);
+                function(list){
+                  console.log(list);
+
+                  //일단 전용면적 선택버튼. canvas 먼저 부착해볼까
+                  var containment = "<div class=sil-result-item-content></div>";
+
+                  var chart = "<canvas class=sil-chart width=300 height=300 style=display:none;></canvas>";
+                  var dropbox = "<div class=sil-dropdown>"
+                              +     "<button class=btn btn-primary dropdown-toggle type=button data-toggle=dropdown>"
+                              +        "평형 선택" + "<span class=caret></span>"
+                              +     "</button>"
+                              +     "<ul class='dropdown-menu sil-dropdown-menu'>";
+                  var area_dup_check = [];
+                  for(var i = 0; i < list.length; ++i){
+
+                      if( jQuery.inArray(list[i]['전용면적'], area_dup_check) === -1 ){
+                          area_dup_check.push(list[i]['전용면적']);
+                          dropbox += "<li name="+ list[i]['지번']
+                                  + " data-area=" + list[i]['전용면적'] + ">"
+                                  + list[i]['전용면적'] + "m<sup>2</sup>("
+                                  + (list[i]['전용면적']*.3025).toFixed(0) + "평)"
+                                  +   "</li>";
+                      }
+
+                  }
+
+                  dropbox += "</ul>" + "</div>";
+
+                  clicked_item.after(containment);
+                  clicked_item.parent().find('.sil-result-item-content').append($(dropbox + chart));
+
+
+                  target_dom.find(".sil-dropdown-menu li").on("click", function(e){
+
+                      $(this).parent().siblings('.btn').text($(this).text());
+                      // var target_index = $(this).attr('name');
+                      var target_area = $(this).attr('data-area');
+
+                      var data_object = {};
+                      for(var i = 0; i < list.length; i++){
+                        // console.log(lists[target_index][i]);
+                        if(list[i]['전용면적'] === target_area){
+                          // console.log(i);
+
+                          var date = list[i]['년'] + '/' + list[i]['월'];
+
+                          if(data_object[ date ] === undefined){
+                              data_object[ date ] = [];
+                              data_object[ date ].push(list[i]['거래금액']);
+                          }
+                          else{
+                              data_object[ date ].push(list[i]['거래금액']);
+                          }
+
+                        }
+                      }
+
+                      var data = [];
+                      $.each(Object.keys(data_object), function(index, key){
+                        var sum = 0;
+                        for(var i = 0; i < data_object[key].length; ++i){
+                          sum += data_object[key][i]*1;
+                        }
+
+                        data.push( (sum / data_object[key].length).toFixed(0) );
+                      });
+
+                      var ctx = $(this).parent().parent().parent().find('.sil-chart')[0].getContext('2d');
+                      //beginning of chart
+                      var sil_chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Object.keys(data_object),
+                            datasets: [{
+                                label: '실거래가',
+                                data: data,
+                                backgroundColor: '#41c980',
+                                borderColor: '#41c980',
+                                fill: false,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            layout: {
+                              padding : {
+                                top: 30,
+                                left: 20
+                              }
+                            },
+                            legend: {
+                              display: false
+                            },
+                            responsive: true,
+                            hover: {
+                              mode: false,
+                              intersect: false
+                            },
+                            tooltips: {
+                              callbacks: {
+                                   label: function(tooltipItem, data) {
+                                       return price_format(tooltipItem.yLabel, '만원').replace('원', '');
+                                   },
+                               }
+                            },
+                            scales: {
+                                yAxes: [{
+                                  ticks: {
+                                      fontSize: 12,
+                                      beginAtZero: false,
+                                      padding: 0,
+                                      userCallback: function(value, index, values) {
+                                          if (value == 0)
+                                              return "0원";
+                                          else
+                                              return price_format(value.toFixed(0), '만원').replace('원', '');
+                                      }
+                                  }
+                                }]
+                            },
+                            animation: {
+                              onComplete: function(e){
+                                var ctx = this.chart.ctx;
+                                ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+                                ctx.fillStyle = this.chart.config.options.defaultFontColor;
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'bottom';
+
+                                this.data.datasets.forEach(function (dataset) {
+                                  // console.log(dataset);
+                                  var percentage = [];
+                                  for(var i = 1; i < dataset['data'].length; ++i){
+                                    percentage.push( (dataset['data'][i] - dataset['data'][i-1])/dataset['data'][i-1] * 100 );
+                                  }
+                                    var index = Object.keys(dataset['_meta']);
+                                    var points = dataset['_meta'][index]['dataset']['_children'];
+                                    for(var i = 1; i < points.length; ++i){
+                                      var x = points[i]['_view']['x'];
+                                      var y = points[i]['_view']['y'];
+                                      if(percentage[i-1] > 0) {
+                                        ctx.fillText('+' + percentage[i-1].toFixed(1) + '%', x, y);
+                                      }
+                                      else{
+                                        ctx.fillText(percentage[i-1].toFixed(1) + '%', x, y);
+                                      }
+                                    }
+                                });
+                              }
+                            }
+                        }
+                      });
+
+                      //end of chart
+                      var canvas = $(this).parent().parent().parent().find('.sil-chart');
+                      canvas.show('normal');
+
+                      //show content
+                      var li = '';
+                      for(var i = list.length - 1; i >= 0; i--){
+                        if( list[i]['전용면적'] === target_area ){
+
+                          li +=   "<h5>"  + "거래날짜: "
+                                       + list[i]['년'] + "년 "
+                                       + list[i]['월'] + "월 "
+                                       + list[i]['일'] + "일"
+                             +   "</h5>"
+                             +   "<h5>"  + "전용면적: "
+                                       + list[i]['전용면적'] + "m<sup>2</sup>("
+                                       + (list[i]['전용면적']*.3025).toFixed(0) + "평";
+                                 if(currentSilTab == 'apt-sil' || currentSilTab === 'rhouse-sil'){
+                                   li += ", " + list[i]['층'] + "층";
+                                 }
+                          li +=         ")";
+                          li +=   "</h5>"
+                             +   "<h5>"  + "거래금액: "
+                                       + price_format(list[i]['거래금액'], '만원')
+                             +   "</h5>";
+
+                        }
+                      }
+
+
+                      $(this).parent().parent().next().after($(li).show());
+
+                      // $(this).parent().parent().parent().find('.sil-result-item-content').remove();
+                      // $(li).appendTo($(this).parent().parent().parent()).show();
+                      // target_dom.find(".sil-result-item-title").on("click", function(e){
+                      //
+                      //   if( $(this).siblings().is(":visible")){
+                      //     $(this).find('.ti-arrow-up').removeClass('ti-arrow-up').addClass('ti-arrow-down');
+                      //   }
+                      //   else{
+                      //     $(this).find('.ti-arrow-down').removeClass('ti-arrow-down').addClass('ti-arrow-up');
+                      //   }
+                      //
+                      //   $(this).siblings().toggle('fast', 'linear');
+                      //
+                      // });
+                  });
+                });
 
     });
+
     target_dom.find(".sil-result-list").fadeIn();
+
+
     //this is where chart is dyanmially created triggered by dropdown
     // target_dom.find(".sil-dropdown-menu li").on("click", function(e){
     //

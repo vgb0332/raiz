@@ -365,9 +365,10 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
-  function gmtest() {
+  function gmtest($code) {
+    // $code = substr($code, 0, 5);
     $query = $this->db->query(
-              "SELECT * FROM GM_test limit 1000;
+              "SELECT * FROM raiz2.auction_mm where sigunguCd = $code;
               ");
 
     $result = $query->result_array();

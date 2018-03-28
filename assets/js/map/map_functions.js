@@ -88,7 +88,7 @@ function drawPoly(data){
 */
 
 function setRWindow(polygons, data){
-
+  console.log('yooooooooooooooo',data);
   if ( ! Detector.webgl ) alert('webGL needed');
 
   var windows = $(document.body).find(".raiz-window-container")
@@ -656,7 +656,7 @@ function parseShape(shape){
 }
 
 function parsePoint(point){
-  point = point.toLowerCase();
+  point = point.toLowerCase().replace(',',' ');
   var points = point.replace('point(', '').replace(')' , '').split(' ');
   return points;
 }

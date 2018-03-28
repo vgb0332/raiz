@@ -11,6 +11,19 @@ class Get extends CI_Controller {
    parent::__construct();
   }
 
+  public function aptSil(){
+    $this->load->model('Sil');
+    $data = array (
+      'type' => 'aptSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bunji' => $this->input->post('bunji'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+    // echo json_encode($data);
+    echo $this->Sil->getSilInfo($data);
+  }
+
   public function singlePolygon() {
     /*
       it takes POST variable - bjdongCd, lat, lng

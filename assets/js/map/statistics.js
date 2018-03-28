@@ -1052,9 +1052,9 @@ function setYoudongCircle(data) {
           var typ = data[i-1]['type'];
           before = cd;
         }
-
         var point = parsePoint(pnt);
         var x = point[0], y = point[1];
+
         var avg = (sum/cnt).toFixed(0)
         var color;
         var radius;
@@ -1260,67 +1260,167 @@ function youdongLevel() {
 }
 
 
+
+
+// var clusterer = new daum.maps.MarkerClusterer({
+//   map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+//   averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+//   minLevel: 6, // 클러스터 할 최소 지도 레벨
+// });
+// var styles = [{
+//         width : '53px', height : '52px',
+//         backgroundColor : 'rgba(255, 0, 54, 0.6)',
+//         color: '#fff',
+//         textAlign: 'center',
+//         lineHeight: '54px',
+//         fillOpacity: 0.5
+//     }, {
+//         width : '73px', height : '72px',
+//         backgroundColor : 'rgba(97, 0, 255, 0.62)',
+//         color: '#fff',
+//         textAlign: 'center',
+//         lineHeight: '74px',
+//         fillOpacity: 0.5
+//     }
+// ];
+//
+// clusterer.setStyles(styles);
+
+var currentAcode = ['',''];
+var currentAcircle = [];
+
+
 function GM_test() {
-  customAjax($SITE_URL+'getStcs/gmtest',0,GM_make);
+  var level = map.getLevel();
+  var center = map.getCenter();
+  if (level < 6) {
+    geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
+      if (status === daum.maps.services.Status.OK) {
+        console.log(result);
+        currentAcode[0] = result[0].code.substring(0,5);
+        customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
+        if (result[0].code.substring(0,5) != result[1].code.substring(0,5)) {
+          customAjax($SITE_URL+'getStcs/gmtest',{code:result[1].code.substring(0,5)},GM_make);
+        }
+
+      }
+
+    });
+
+  }
+  auction_start();
+  // customAjax($SITE_URL+'getStcs/gmtest',0,GM_make);
 }
 
-var clusterer = new daum.maps.MarkerClusterer({
-  map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
-  averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-  minLevel: 6, // 클러스터 할 최소 지도 레벨
-});
-var styles = [{
-        width : '53px', height : '52px',
-        backgroundColor : 'rgba(255, 0, 54, 0.6)',
-        color: '#fff',
-        textAlign: 'center',
-        lineHeight: '54px',
-        fillOpacity: 0.5
-    }, {
-        width : '73px', height : '72px',
-        backgroundColor : 'rgba(97, 0, 255, 0.62)',
-        color: '#fff',
-        textAlign: 'center',
-        lineHeight: '74px',
-        fillOpacity: 0.5
-    }
-];
-
-clusterer.setStyles(styles);
-
-
-
 function GM_make(data) {
-
-  console.log(data);
+  if (data.length == 0) {
+    return
+  }
+  // console.log(data);
   var comp = [];
+  var AcircleFormat = {'code' : '','circle':[]};
+  AcircleFormat['code'] = data[0]['sigunguCd'];
   $.each(data, function(index, target){
-      var x = target['y'],y = target['x'];
-      var position = new daum.maps.LatLng(x, y);
-      var marker = new daum.maps.Marker({
-          position: position // 마커를 표시할 위치
-      });
-      marker.setMap(map);
-      marker.J = [target['addr'],target['면적/특이사항'],target['물건용도'],target['법원명/담당계'],target['진행상태'],target['감정가'],target['최저가율']];
+      var point = parsePoint(target['point']);
+      var x = point[0],y = point[1];
 
-      var customOverlay = new daum.maps.CustomOverlay({});
-      daum.maps.event.addListener(marker, 'mouseover', function(mouseEvent) {
-        customOverlay.setContent('<div class="stcs_ol"><div>'+marker.J[0]+'</br>'+marker.J[1]+'</br>용도 : '+marker.J[2]+'</br>법원명 / 담당계 : '
-                                +marker.J[3]+'</br>진행상태 : '+marker.J[4]+'</br>감정가 : '+marker.J[5]+'</br>최저가율 : '+marker.J[6]+'</div>'
-                                +'</div>');
-        customOverlay.setPosition(marker.getPosition());
-        customOverlay.setMap(map);
-        // showYDChart(marker.J["cd"]);
+      // console.log(point);
+
+      // return
+      var circle = new daum.maps.Circle({
+          // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
+          radius: 25, // 미터 단위의 원의 반지름입니다
+          strokeWeight: 2, // 선의 두께입니다
+          strokeColor: 'rgb(255, 255, 255)', // 선의 색깔입니다
+          strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+          strokeStyle: 'solid', // 선의 스타일 입니다
+          fillColor: 'rgb(255, 84, 84)', // 채우기 색깔입니다
+          fillOpacity: 0.7  // 채우기 불투명도 입니다
       });
+
+      // console.log(circle);
+
+      circle.setPosition(new daum.maps.LatLng(x, y));
+      circle.setMap(map);
+
+
+      AcircleFormat['circle'].push(circle);
+
+      // var position = new daum.maps.LatLng(x, y);
+      // var marker = new daum.maps.Marker({
+      //     position: position // 마커를 표시할 위치
+      // });
+      // marker.setMap(map);
+      // marker.J = [target['addr'],target['면적/특이사항'],target['물건용도'],target['법원명/담당계'],target['진행상태'],target['감정가'],target['최저가율']];
+      //
+      // var customOverlay = new daum.maps.CustomOverlay({});
+      // daum.maps.event.addListener(marker, 'mouseover', function(mouseEvent) {
+      //   customOverlay.setContent('<div class="stcs_ol"><div>'+marker.J[0]+'</br>'+marker.J[1]+'</br>용도 : '+marker.J[2]+'</br>법원명 / 담당계 : '
+      //                           +marker.J[3]+'</br>진행상태 : '+marker.J[4]+'</br>감정가 : '+marker.J[5]+'</br>최저가율 : '+marker.J[6]+'</div>'
+      //                           +'</div>');
+      //   customOverlay.setPosition(marker.getPosition());
+      //   customOverlay.setMap(map);
+      //   // showYDChart(marker.J["cd"]);
+      // });
       // daum.maps.event.addListener(marker, 'mousemove', function(mouseEvent) {
       //   customOverlay.setPosition(marker.getPosition());
       // });
-      daum.maps.event.addListener(marker, 'mouseout', function() {
-        customOverlay.setMap(null);
-      });
+      // daum.maps.event.addListener(marker, 'mouseout', function() {
+      //   customOverlay.setMap(null);
+      // });
 
-      comp.push(marker);
   });
-  console.log(comp);
-  clusterer.addMarkers(comp);
+  currentAcircle.push(AcircleFormat);
+  // console.log(comp);
+  // clusterer.addMarkers(comp);
+}
+
+
+
+function auction_start() {
+  daum.maps.event.addListener(map, 'center_changed', function() {
+
+    // 지도의  레벨을 얻어옵니다
+    var level = map.getLevel();
+
+    // 지도의 중심좌표를 얻어옵니다
+    var center = map.getCenter();
+
+    geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
+
+      if (status === daum.maps.services.Status.OK) {
+        // console.log(result);
+        var temp = [];
+        for (var i = 0; i < 2; i++) {
+          if (currentAcode[0] != result[i].code.substring(0,5) && currentAcode[1] != result[i].code.substring(0,5)) {
+            console.log('change');
+            customAjax($SITE_URL+'getStcs/gmtest',result[i].code.substring(0,5),GM_make);
+            temp.push(result[i].code.substring(0,5));
+          }
+          else {
+              temp.push(result[i].code.substring(0,5));
+          }
+        }
+        currentAcode = temp;
+
+        for (var i = 0; i < currentAcircle.length; i++) {
+          if (currentAcode[0] != currentAcircle[i]['code'] && currentAcode[1] != currentAcircle[i]['code']) {
+            console.log(currentAcircle[i]['circle'].length);
+            // for (var i = 0; i < currentAcircle[i].circle.length; i++) {
+            //   currentAcircle[i]['circle'][i].setMap(null);
+            // }
+            // currentAcircle.splice(i,1);
+          }
+        }
+      }
+
+    });
+
+    // var message = '<p>지도 레벨은 ' + level + ' 이고</p>';
+    // message += '<p>중심 좌표는 위도 ' + latlng.getLat() + ', 경도 ' + latlng.getLng() + '입니다</p>';
+    //
+    // var resultDiv = document.getElementById('result');
+    // resultDiv.innerHTML = message;
+
+  });
 }
