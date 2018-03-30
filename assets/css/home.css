@@ -80,17 +80,17 @@ h3, h4 {
 }
 .btn:hover, .btn:focus {
     border: 1px solid #333;
-    background-color: #fff;
+    /* background-color: #fff; */
     color: #000;
 }
 .modal-header, h4, .close {
     background-color: #333;
     color: #fff !important;
     text-align: center;
-    font-size: 30px;
+    /* font-size: 30px; */
 }
 .modal-header, .modal-body {
-    padding: 40px 50px;
+    /* padding: 40px 50px; */
 }
 .nav-tabs li a {
     color: #777;

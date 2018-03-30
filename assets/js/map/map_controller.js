@@ -60,6 +60,13 @@ $(".map-controller .control-btn").on("click", function(e){
       mapRoadview();
   }
 
+  else if( $(this).has('.map-reset').length) {
+
+      console.log('map reset');
+      mapReset();
+
+  }
+
 });
 
 var mapTypes = {
@@ -177,7 +184,8 @@ function refreshAroundMarkers(){
 
       if(markers.length <= 0){
 
-        return true;
+
+         true;
 
       }
       else{
@@ -669,7 +677,7 @@ $(".naver-rv-button").on("click", function(e){
   }
   current_containment = 'naver_rv_map';
   $("#rv_map, #google_rv_map").hide();
-
+  $("#"+ current_containment).show( );
   var naver_roadview = new naver.maps.Panorama( document.getElementById("naver_rv_map"), {
       // size : new naver.maps.Size(400, 400),
       position: new naver.maps.LatLng(map.getCenter().getLat(), map.getCenter().getLng()),
@@ -711,15 +719,23 @@ $(".google-rv-button").on("click", function(e){
 });
 
 $(".return-button").on("click", function(e){
-
+    var center = map.getCenter();
     $(".map-controller").fadeIn();
     $("#map").removeClass('small-map');
     mapWalker.setMap(null);
     map.removeOverlayMapTypeId(daum.maps.MapTypeId.ROADVIEW);
     map.relayout();
+    map.setCenter(center);
     $(".raiz-window-container").draggable( "option", "containment", $( "#map" ) );
     $("#rv_map").hide();
     $(".rv-controller").hide();
     current_containment = 'map';
 
 });
+
+function mapReset(){
+
+    removeOverlay();
+    removePolygons();
+
+}

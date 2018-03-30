@@ -150,4 +150,11 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->gmtest($code);
   }
 
+  public function gmSig() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('code');
+    echo $this->Statistics->gmSig($code);
+  }
+
+
 }

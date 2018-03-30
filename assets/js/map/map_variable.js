@@ -94,6 +94,9 @@ var ajax_type = 'toji';
 var currHjstcs = '';
 var aggr_poly = [];
 
+var first_polygon_click = true;
+var first_window_open = true;
+
 var currentCode;
 var currentAddress;
 var currentSilTab;
@@ -811,11 +814,14 @@ var toji_characteristics = function(data){
     'tpgrphFrmCodeNm', 'roadSideCodeNm', 'lastUpdtDt'
   ];
   var index_len = data_index.length;
-  var content = $(document.createElement('div')).addClass('toji-characteristics-table');
+
+  var content = $(document.createElement('div')).addClass('toji-characteristics-body-info');
   for(var i = 0; i < index_len; ++i){
     content.append(
-        "<div>" + data_index[i] + "</div>"
-      + "<div>" + ( (data[data_attr[i]] === undefined) ? '-' : data[data_attr[i]] ) + "</div>"
+        "<p>"
+      +    "<strong>" + data_index[i] + "</strong>"
+      +    "<span>" + ( (data[data_attr[i]] === undefined) ? 'N/A' : data[data_attr[i]] ) + "</span>"
+      + "</p>"
     );
   }
 
@@ -824,10 +830,10 @@ var toji_characteristics = function(data){
   $container.find('.toji-characteristics-header').on('click', function(e){
 
     if($container.find('.toji-characteristics-body').is(":visible")){
-      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+      $container.find('ti-angle-up').removeClass('ti-angle-up').addClass('ti-angle-down');
     }
     else{
-      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+      $container.find('ti-angle-down').removeClass('ti-angle-down').addClass('ti-angle-up');
     }
     $container.find('.toji-characteristics-body').toggle('fast', 'linear');
   });
@@ -862,14 +868,28 @@ var toji_possession = function(data){
   ];
 
   var index_len = data_index.length;
-  var content = $(document.createElement('div')).addClass('toji-possession-table');
+  var content = $(document.createElement('div')).addClass('toji-possession-body-info');
 
   $.each(data, function(index, value){
 
     for(var i = 0; i < index_len; ++i){
+      var index = data_index[i]
+      var text = value[data_attr[i]];
+
+      if(index === '공시지가'){
+        text = price_format(text , '일원') + '원';
+      }
+      if(index === '토지면적'){
+
+        text = comma( Math.floor(text*1).toFixed(0) ) + '.' + ( (text*1 - Math.floor(text*1)).toFixed(2)*100 )+ 'm<sup>2</sup> (' + comma( (text*0.3025).toFixed(0) ) + '평)';
+      }
+
       content.append(
-          "<div>" + data_index[i] + "</div>"
-        + "<div>" + ( (value[data_attr[i]] === undefined) ? '-' : value[data_attr[i]] ) + "</div>"
+          "<p>"
+        +    "<strong>" + index + "</strong>"
+        +    "<span>" + ( (text === undefined) ? 'N/A' : text ) + "</span>"
+        + "</p>"
+
       );
     }
 
@@ -880,10 +900,10 @@ var toji_possession = function(data){
   $container.find('.toji-possession-header').on('click', function(e){
 
     if($container.find('.toji-possession-body').is(":visible")){
-      $container.find('span').removeClass('ti-angle-up').addClass('ti-angle-down');
+      $container.find('ti-angle-up').removeClass('ti-angle-up').addClass('ti-angle-down');
     }
     else{
-      $container.find('span').removeClass('ti-angle-down').addClass('ti-angle-up');
+      $container.find('ti-angle-down').removeClass('ti-angle-down').addClass('ti-angle-up');
     }
     $container.find('.toji-possession-body').toggle('fast', 'linear');
   });

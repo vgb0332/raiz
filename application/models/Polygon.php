@@ -20,19 +20,24 @@ Class Polygon extends CI_Model {
       $last_month = explode("-", $last_time)[1];
       // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
-                "SELECT b.년, b.월, b.일, b.아파트 as 이름,
-                        b.지번, b.전용면적, b.층, b.보증금액, b.월세금액,
-                        st_asText(st_centroid(geomfromtext(a.polygon))) as point
-                FROM  getLandPolygonText as a, getRTMSDataSvcAptRent as b
-                WHERE a.sigunguCd = $sigunguCd
-                AND   a.bjdongCd = $bjdongCd
-                AND 	b.지역코드 = $sigunguCd
-                AND   b.법정동코드 = $bjdongCd
-                AND   a.bun = b.번
+               "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드,
+                b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층,
+                 b.보증금액, b.월세금액, a.point, a.polygon, b.번, b.지
+                FROM
+                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon, st_asText(st_centroid(geomfromtext(polygon))) as point
+                  from getLandPolygonText
+                  where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd) as a,
+
+                (select 번, 지, 년, 월, 일, 아파트 as 이름, 지번, 전용면적, 층, 보증금액, 월세금액
+                  from getRTMSDataSvcAptRent
+                  where 지역코드 = $sigunguCd
+                  and 법정동코드 = $bjdongCd
+                  and 년 >= $last_year AND 월 >= $last_month) as b
+
+                WHERE a.bun = b.번
                 AND   a.ji = b.지
-                AND   b.년 >= $last_year
-                AND   b.월 >= $last_month
-                ORDER BY b.지번, b.아파트
+                GROUP BY b.지번 desc
+                ORDER BY b.지번, b.이름
                 ");
 
       $result = $query->result_array();
@@ -51,19 +56,23 @@ Class Polygon extends CI_Model {
       $last_month = explode("-", $last_time)[1];
       // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
-                "SELECT b.년, b.월, b.일, b.연립다세대 as 이름,
-                        b.지번, b.전용면적, b.층, b.보증금액, b.월세금액,
-                        st_asText(st_centroid(geomfromtext(a.polygon))) as point
-                FROM  getLandPolygonText as a, getRTMSDataSvcRHRent as b
-                WHERE a.sigunguCd = $sigunguCd
-                AND   a.bjdongCd = $bjdongCd
-                AND 	b.지역코드 = $sigunguCd
-                AND   b.법정동코드 = $bjdongCd
-                AND   a.bun = b.번
+
+                "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층, b.보증금액, b.월세금액, a.point, a.polygon, b.번, b.지
+                FROM
+                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon, st_asText(st_centroid(geomfromtext(polygon))) as point
+                  from getLandPolygonText
+                  where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd ) as a,
+
+                (select 번, 지, 년, 월, 일, 연립다세대 as 이름, 지번, 전용면적, 층, 보증금액, 월세금액
+                  from getRTMSDataSvcRHRent
+                  where 지역코드 = $sigunguCd
+                  and 법정동코드 = $bjdongCd
+                  and 년 >= $last_year AND 월 >= $last_month ) as b
+
+                WHERE a.bun = b.번
                 AND   a.ji = b.지
-                AND   b.년 >= $last_year
-                AND   b.월 >= $last_month
-                ORDER BY b.지번, b.연립다세대
+                GROUP BY b.지번 desc
+                ORDER BY b.지번, b.이름
                 ");
 
       $result = $query->result_array();
@@ -78,9 +87,9 @@ Class Polygon extends CI_Model {
       $last_month = explode("-", $last_time)[1];
       // return json_encode($values, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
-                "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.거래금액, a.polygon, b.번, b.지
+                "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.거래금액, a.point, a.polygon, b.번, b.지
                 FROM
-                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon
+                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon, st_asText(st_centroid(geomfromtext(polygon))) as point
                   from getLandPolygonText
                   where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd) as a,
 
@@ -118,9 +127,9 @@ Class Polygon extends CI_Model {
 
       $query = $this->db->query(
                 "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월,
-                        b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.polygon, b.bun_1 as 번, b.ji_1 as 지
+                        b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.point, a.polygon, b.bun_1 as 번, b.ji_1 as 지
                 FROM
-                (select sigunguCd, bjdongCd, bun, ji, st_asText(geomfromtext(polygon)) as polygon
+                (select sigunguCd, bjdongCd, bun, ji, st_asText(geomfromtext(polygon)) as polygon, st_asText(st_centroid(geomfromtext(polygon))) as point
                   from getLandPolygonText
                   where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd ) as a,
 
@@ -156,9 +165,9 @@ Class Polygon extends CI_Model {
       $last_month = explode("-", $last_time)[1];
       // return json_encode($values, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
-                "SELECT b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.polygon, b.번, b.지
+                "SELECT b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.point, a.polygon, b.번, b.지
                 FROM
-                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon
+                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon, st_asText(st_centroid(geomfromtext(polygon))) as point
                   from getLandPolygonText
                   where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd ) as a,
 
@@ -190,9 +199,9 @@ Class Polygon extends CI_Model {
       $last_month = explode("-", $last_time)[1];
       // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
       $query = $this->db->query(
-                "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.polygon, b.번, b.지
+                "SELECT a.sigunguCd as 지역코드, a.bjdongCd as 법정동코드, b.년, b.월, b.일, b.이름, b.지번, b.전용면적, b.층, b.거래금액, a.point, a.polygon, b.번, b.지
                 FROM
-                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon
+                (select sigunguCd, bjdongCd, bun,ji,st_asText(geomfromtext(polygon)) as polygon, st_asText(st_centroid(geomfromtext(polygon))) as point
                   from getLandPolygonText
                   where sigunguCd = $sigunguCd AND bjdongCd = $bjdongCd) as a,
 
@@ -220,7 +229,7 @@ Class Polygon extends CI_Model {
 
       $this->db->cache_off();
       $query1 = $this->db->query(
-                "SELECT b.ldCodeNm, a.sigunguCd, a.bjdongCd, a.bun, a.ji, a.pnu, a.polygon
+                "SELECT b.*, a.sigunguCd, a.bjdongCd, a.bun, a.ji, a.pnu, a.polygon
                 FROM
                 (select sigunguCd, bjdongCd, bun, ji, pnu, polygon
                   from getLandPolygonText
@@ -228,7 +237,7 @@ Class Polygon extends CI_Model {
                       and bjdongCd = $bjdongCd
                       and ST_CONTAINS(geomfromtext(polygon), point($x, $y))) as a,
 
-                (select sigunguCd, bjdongcd, bun, ji, pnu, ldCodeNm
+                (select *
                   from getLandCharacteristics
                   where sigunguCd = $sigunguCd
                       and bjdongCd = $bjdongCd) as b

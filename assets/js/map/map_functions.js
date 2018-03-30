@@ -54,7 +54,7 @@ function drawPoly(data){
 
   var testPolygon;
   $.each(data, function(index, target){
-      console.log(target);
+      // console.log(target);
       var polygon = target['polygon'];
       var target_polygon = parseShape(polygon);
       var target_data = target;
@@ -88,8 +88,11 @@ function drawPoly(data){
 */
 
 function setRWindow(polygons, data){
-  console.log('yooooooooooooooo',data);
-  if ( ! Detector.webgl ) alert('webGL needed');
+
+  if ( ! Detector.webgl ) {
+    toaster('webGL이 필요합니다 익스플로러를 구글 혹은 파이어폭스를 사용해보세요!', 'warning');
+    return false;
+  }
 
   var windows = $(document.body).find(".raiz-window-container")
                                 .find(".raiz-window-top")
@@ -135,11 +138,6 @@ function setRWindow(polygons, data){
     Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_indivPrice(data));
   });
 
-  // customAjax($SITE_URL+'get/buildingRecapTitleInfo', values, function(data){
-  //   if(data.length === 0) return false;
-  //   Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_recapTitleInfo(data));
-  // });
-
   customAjax($SITE_URL+'get/buildingTitleInfo', values, function(data){
     if(data.length === 0) return false;
     Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_titleInfo(data));
@@ -147,7 +145,20 @@ function setRWindow(polygons, data){
 
 
   THREE_init(polygons, data, Rwindow);
-  Rwindow.show('normal');
+  Rwindow.show('normal' , function(e) {
+
+    // user info for the first timers
+    if(first_window_open){
+      $(".raiz-info-icon, .raiz-mouse-control").trigger('mouseover');
+      setTimeout(function(){
+        $(".raiz-info-icon, .raiz-mouse-control").trigger('mouseout');
+      }, 5000);
+      first_window_open = false;
+    }
+
+  });
+
+
 }
 
 function setSTCSWindow(polygons, data, type){
@@ -223,33 +234,54 @@ function setPoly(type, polygon, data){
 
     polygon.setMap(map);
     var target = polygon.wc;
+    console.log('jwunwal', data);
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('toji-polygon').addClass('junwal-toji-polygon').attr('name', data['pnu']);
+      $("#" + path.id).removeAttr('style').addClass('toji-polygon').addClass('junwal-toji-polygon')
+                      .attr('data-sigunguCd' , data['지역코드'])
+                      .attr('data-bjdongCd', data['법정동코드'])
+                      .attr('data-bunji', data['지번']);
     });
 
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
 
-      var target_id = polygon.wc[0].id;
-      var land_target_name = $("#" + target_id).attr('name');
+      daum.maps.event.preventMap();
+      daum.maps.event.trigger(map, trigger_by, mouseEvent);
 
-      var polygons = [];
-      polygons.push(polygon);
-      //find all bulilding polygons that correspond to their toji.
-      $.each(junwal_buildingPolygons, function(index, polygon){
-
-         $.each(polygon.wc, function(index, polygon_attr){
-
-           var building_target_id = polygon_attr.id;
-           var building_target_name = $("#" + building_target_id).attr('name');
-           if(building_target_name === land_target_name){
-             polygons.push(polygon);
-           }
-         });
-      });
-
-      setRWindow(polygons, data);
     });
 
+    daum.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
+       var target_dom = $(".raiz-junwal-tab .raiz-side-tab-content li:visible");
+
+       // console.log(target_dom.siblings('.sil-result-item'));
+
+       $.each( target_dom.siblings('.junwal-result-item'), function(index, item) {
+
+         var poly_bunji = $("#" + polygon.wc[0].id).attr('data-bunji');
+         var item_bunji = $(item).attr('data-bunji');
+         // console.log($(".raiz-side-tab-container").scrollTop(300));
+         if( poly_bunji === item_bunji ){
+
+           $(".raiz-side-tab-container").animate({
+             scrollTop: $(item).position().top
+           }, 500, function(){
+
+             $(item).addClass('list-mouseover');
+
+           });
+
+         }
+
+       });
+    });
+
+    daum.maps.event.addListener(polygon, 'mouseout', function(mouseEvent) {
+
+      var target_dom = $(".raiz-junwal-tab .raiz-side-tab-content li:visible");
+      target_dom.siblings('.list-mouseover').removeClass('list-mouseover');
+
+    });
+
+    completeOverlay('junwal', data['point'], data);
     junwal_landPolygons.push(polygon);
   }
 
@@ -306,32 +338,55 @@ function setPoly(type, polygon, data){
 
     polygon.setMap(map);
     var target = polygon.wc;
+
     $.each(target, function(index, path){
-      $("#" + path.id).removeAttr('style').addClass('toji-polygon').addClass('sil-toji-polygon').attr('name', data['pnu']);
+      $("#" + path.id).removeAttr('style').addClass('toji-polygon')
+                      .addClass('sil-toji-polygon')
+                      .attr('data-sigunguCd' , data['지역코드'])
+                      .attr('data-bjdongCd', data['법정동코드'])
+                      .attr('data-bunji', data['지번']);
     });
 
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+
       daum.maps.event.preventMap();
-      var target_id = polygon.wc[0].id;
-      var land_target_name = $("#" + target_id).attr('name');
+      daum.maps.event.trigger(map, trigger_by, mouseEvent);
 
-      var polygons = [];
-      polygons.push(polygon);
-      //find all bulilding polygons that correspond to their toji.
-      $.each(sil_buildingPolygons, function(index, polygon){
-
-         $.each(polygon.wc, function(index, polygon_attr){
-
-           var building_target_id = polygon_attr.id;
-           var building_target_name = $("#" + building_target_id).attr('name');
-           if(building_target_name === land_target_name){
-             polygons.push(polygon);
-           }
-         });
-      });
-      console.log(polygons);
-      setRWindow(polygons, data);
     });
+
+    daum.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
+       var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
+
+       // console.log(target_dom.siblings('.sil-result-item'));
+
+       $.each( target_dom.siblings('.sil-result-item'), function(index, item) {
+
+         var poly_bunji = $("#" + polygon.wc[0].id).attr('data-bunji');
+         var item_bunji = $(item).attr('data-bunji');
+         // console.log($(".raiz-side-tab-container").scrollTop(300));
+         if( poly_bunji === item_bunji ){
+
+           $(".raiz-side-tab-container").animate({
+             scrollTop: $(item).position().top
+           }, 500, function(){
+
+             $(item).addClass('list-mouseover');
+
+           });
+
+         }
+
+       });
+    });
+
+    daum.maps.event.addListener(polygon, 'mouseout', function(mouseEvent) {
+
+      var target_dom = $(".raiz-sil-tab .raiz-side-tab-content li:visible");
+      target_dom.siblings('.list-mouseover').removeClass('list-mouseover');
+
+    });
+
+    completeOverlay('sil', data['point'], data);
 
     sil_landPolygons.push(polygon);
   }
@@ -354,7 +409,7 @@ function setPoly(type, polygon, data){
     else if(currentSilTab === 'toji-sil'){
       class_name = 'sil-toji-building-polygon';
     }
-
+    // console.log('here', data);
     $.each(target, function(index, path){
       $("#" + path.id)
       .removeAttr('style').addClass('building-polygon').addClass(class_name)
@@ -637,7 +692,7 @@ function setPoly(type, polygon, data){
 }
 
 function parseShape(shape){
-  console.log(shape);
+  // console.log(shape);
   /*    shape : 'polygon( (poly1) , (poly2) , ...)'   */
   // console.log(shape);
   if (shape[0] === 'P') {
@@ -659,4 +714,134 @@ function parsePoint(point){
   point = point.toLowerCase().replace(',',' ');
   var points = point.replace('point(', '').replace(')' , '').split(' ');
   return points;
+}
+
+function completeOverlay(type, point, data){
+  // console.log(data);
+  var customOverlay = new daum.maps.CustomOverlay({});
+  var price = price_format_short(data['거래금액']);
+
+  var target_type = type.split('-')[1];
+  if(type === 'junwal'){
+    var price = data['월세금액'];
+    var label_name = '월';
+    var label_color = 'blue';
+    if(data['월세금액'] === '0'){
+      price = data['보증금액'];
+      label_name = '전';
+      label_color = 'red';
+    }
+    price = price_format_short(price);
+    var label = '<span style=color:'+ label_color + ';>' + label_name + '</span>';
+    price = label + price;
+  }
+
+  customOverlay.setContent(
+                              '<div class="sil-overlay ' + type + '-overlay">'
+                              +   '<div class=overlay-header>'
+                              +       data['이름'] + '<br>'
+                              +   '</div>'
+                              +   '<strong>'
+                              +       price
+                              +   '</strong>'
+                              +   '(' + (data['전용면적']*.3025).toFixed(0) + '평)'
+                              +     '| '
+                              +   '<span class=overlay-info>'
+                              +       data['년'].slice(-2) + '-' + data['월']
+                              +   '</span>'
+                              + '</div>'
+                            );
+
+  try{
+     var point = parsePoint(data['point']);
+  }catch(e){
+     return true;
+  }
+  customOverlay.setPosition(new daum.maps.LatLng(point[0], point[1]));
+  customOverlay.setMap(map);
+
+  var mapLevel = map.getLevel();
+  var font_size = '12px';
+  var header_font_size = '14px';
+  if(mapLevel === 2){
+    font_size = '10px';
+    header_font_size = '12px';
+  }
+  else if(mapLevel === 3){
+    font_size = '7px';
+    header_font_size = '9px';
+  }
+  else if(mapLevel === 4){
+    font_size = '4px';
+    header_font_size = '6px';
+  }
+
+  $(".sil-overlay, .junwal-overlay").css('font-size', font_size);
+  $(".overlay-header").css('font-size', header_font_size);
+
+  overlays.push(customOverlay);
+
+}
+
+function removeOverlay(){
+  // console.log(overlays);
+  $.each(overlays, function(index, overlay){
+
+    overlay.setMap(null);
+
+  });
+  overlays = [];
+}
+
+function removePolygons(){
+
+  if(junwal_landPolygons.length > 0){
+    $.each(junwal_landPolygons, function(index, polygon){
+      polygon.setMap(null);
+      junwal_landPolygons = [];
+    });
+  }
+
+  if(junwal_buildingPolygons.length > 0){
+    $.each(junwal_buildingPolygons, function(index, polygon){
+      polygon.setMap(null);
+      junwal_buildingPolygons = [];
+    });
+  }
+
+  if(sil_landPolygons.length > 0){
+    $.each(sil_landPolygons, function(index, polygon){
+      polygon.setMap(null);
+      sil_landPolygons = [];
+    });
+  }
+
+  if(sil_buildingPolygons.length > 0 ){
+    $.each(sil_buildingPolygons, function(index, polygon){
+      polygon.setMap(null);
+      sil_buildingPolygons = [];
+    });
+  }
+
+  if(landPolygons.length > 0){
+    $.each(landPolygons, function(index, polygon){
+      polygon.setMap(null);
+      landPolygons = [];
+    });
+  }
+
+  if(buildingPolygons.length > 0){
+    $.each(buildingPolygons, function(index, polygon){
+      polygon.setMap(null);
+      buildingPolygons = [];
+    });
+  }
+
+  if(stcs_landPolygons.length > 0){
+    $.each(stcs_landPolygons, function(index, polygon){
+      polygon.setMap(null);
+      stcs_landPolygons = [];
+    });
+  }
+
 }

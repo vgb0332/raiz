@@ -82,12 +82,12 @@ function price_format(value, scale) {
           return p + "원";
       } else if (p.length >= 5 && p.length <= 8) {
           if (parseInt(p.slice(p.length - 4, p.length)) == 0)
-              return p.slice(0, p.length - 4) + "만 ";
+              return p.slice(0, p.length - 4) + "만";
           else
-              return p.slice(0, p.length - 4) + "만 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만원";
+              return p.slice(0, p.length - 4) + "만 " + String(parseInt(p.slice(p.length - 4, p.length))) + "만";
       } else if (p.length > 8 && p.length <= 11) {
           if (parseInt(p.slice(p.length - 8, p.length)) == 0)
-              return p.slice(0, p.length - 8) + "억 ";
+              return p.slice(0, p.length - 8) + "억";
           else if (parseInt(p.slice(p.length - 4, p.length)) == 0)
               return p.slice(0, p.length - 8) + "억 " + String(parseInt(p.slice(p.length - 8, p.length - 4))) + "억";
           else
@@ -148,7 +148,7 @@ function rpad(s, padLength, padString){
 function toaster(text, type, time) {
     // Get the snackbar DIV
     // var x = document.getElementById("snackbar");
-    time = typeof time !== 'undefined' ? time : '3000';
+    time = typeof time !== 'undefined' ? time : '5000';
     var x = document.createElement("div");
     x.className = "snackbar show";
 
@@ -174,7 +174,7 @@ function toaster(text, type, time) {
     x.innerHTML = text;
 
     document.body.appendChild(x);
-    console.log($(x).css('animation'));
+    // console.log($(x).css('animation'));
     $(x).css({'-webkit-animation': 'fadein 0.5s fadeout 0.5s ' + (time/1000).toFixed(1) + 's',
               'animation': 'fadein 0.5s fadeout 0.5s ' + (time/1000).toFixed(1) + 's'
             });

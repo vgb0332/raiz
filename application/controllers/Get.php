@@ -11,6 +11,70 @@ class Get extends CI_Controller {
    parent::__construct();
   }
 
+  public function aptJunwal() {
+    $this->load->model('Junwal');
+    $data = array (
+      'type' => 'aptJunwal',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bunji' => $this->input->post('bunji'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+    // echo json_encode($data);
+    echo $this->Junwal->getJunwalInfo($data);
+  }
+
+  public function rhouseJunwal() {
+    $this->load->model('Junwal');
+    $data = array (
+      'type' => 'rhouseJunwal',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bunji' => $this->input->post('bunji'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+    // echo json_encode($data);
+    echo $this->Junwal->getJunwalInfo($data);
+  }
+
+  public function tojiSil(){
+    $this->load->model('Sil');
+    $data = array (
+      'type' => 'tojiSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bunji' => $this->input->post('bunji'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+    // echo json_encode($data);
+    echo $this->Sil->getSilInfo($data);
+
+  }
+  public function storeSil() {
+    $this->load->model('Sil');
+    $data = array (
+      'type' => 'storeSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bunji' => $this->input->post('bunji'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+    // echo json_encode($data);
+    echo $this->Sil->getSilInfo($data);
+  }
+  public function rhouseSil(){
+    $this->load->model('Sil');
+    $data = array (
+      'type' => 'rhouseSil',
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bunji' => $this->input->post('bunji'),
+      'filter_type' => $this->input->post('filter_type'),
+      'filter_value' => $this->input->post('filter_value')
+    );
+    // echo json_encode($data);
+    echo $this->Sil->getSilInfo($data);
+  }
+
   public function aptSil(){
     $this->load->model('Sil');
     $data = array (

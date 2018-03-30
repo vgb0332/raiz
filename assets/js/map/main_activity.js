@@ -12,6 +12,11 @@ $(document).ready(function(){
 });
 
 function mainFunction(mouseEvent){
+  // user information toaster for the first timers
+  if(first_polygon_click){
+    toaster('도형을 클릭하시면 상세 정보를 보실 수 있어요!', 'info');
+    first_polygon_click = false;
+  }
   var main_ajax;
   coord2RegionCode(mouseEvent.latLng, function(address, status) {
       if (status === daum.maps.services.Status.OK) {

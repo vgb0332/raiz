@@ -577,7 +577,9 @@ body {
 }
 
 .building-titleInfo-body-info,
-.building-recapTitleInfo-body-info {
+.building-recapTitleInfo-body-info,
+.toji-characteristics-body-info,
+.toji-possession-body-info {
   text-align: left;
   padding-left: 10px;
   padding-top: 10px;
@@ -586,7 +588,9 @@ body {
   background-color: #ffffff;
 }
 
-.building-titleInfo-body-info span {
+.building-titleInfo-body-info span,
+.toji-characteristics-body-info span,
+.toji-possession-body-info span {
   float: right;
   line-height: 2em;
 }
@@ -916,47 +920,6 @@ body {
   border: 2px solid #aff39a;
 }
 
-@keyframes rotating
-	{
-	from
-		{
-		transform: rotate(0deg);
-		-o-transform: rotate(0deg);
-		-ms-transform: rotate(0deg);
-		-moz-transform: rotate(0deg);
-		-webkit-transform: rotate(0deg);
-		}
-	to
-		{
-		transform: rotate(360deg);
-		-o-transform: rotate(360deg);
-		-ms-transform: rotate(360deg);
-		-moz-transform: rotate(360deg);
-		-webkit-transform: rotate(360deg);
-		}
-	}
-@-webkit-keyframes rotating
-	{
-	from
-		{
-		transform: rotate(0deg);
-		-webkit-transform: rotate(0deg);
-		}
-	to
-		{
-		transform: rotate(360deg);
-		-webkit-transform: rotate(360deg);
-		}
-	}
-.rotating
-	{
-	-webkit-animation: rotating 0.35s linear infinite;
-	-moz-animation: rotating 0.35s linear infinite;
-	-ms-animation: rotating 0.35s linear infinite;
-	-o-animation: rotating 0.35s linear infinite;
-	animation: rotating 0.35s linear infinite;
-	}
-
 .sil-filter-content .ti-reload:hover,
 .junwal-filter-content .ti-reload:hover {
   -webkit-transition: border 0.35s ease, transform 1s ease;
@@ -1008,7 +971,7 @@ body {
   padding-top: 10px;
   margin-left: 10px;
   margin-right: 10px;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   border-bottom: 1px solid #d4c8c8;
   cursor: pointer;
 }
@@ -1048,6 +1011,14 @@ body {
   float:right;
   padding: 0;
   /* background-color : #ffffff; */
+}
+
+.list-mouseover {
+  -webkit-transition: background-color 0.35s ease, font-size 0.35s ease;
+  -moz-transition: background-color 0.35s ease, font-size 0.35s ease;
+  -o-transition:background-color 0.35s ease, font-size 0.35s ease;
+  transition: background-color 0.35s ease, font-size 0.35s ease;
+  background-color: #b7f0b1;
 }
 /*
 .sil-result-item span:hover{
@@ -1136,6 +1107,7 @@ body {
 }
 
 .raiz-cur-addr a{
+  border: 1px solid #000000;
   border-radius: 25px;
   padding: 10px;
   background-color: #ffffff;
@@ -1253,57 +1225,6 @@ body {
     height: 17px;
     background: url(http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png);
 }
-
-/* toaster */
-
-/* The snackbar - position it at the bottom and in the middle of the screen */
-.snackbar {
-    font-size: 13px;
-    visibility: hidden; /* Hidden by default. Visible on click */
-    min-width: 250px; /* Set a default minimum width */
-    margin-left: -125px; /* Divide value of min-width by 2 */
-    background-color: #333; /* Black background color */
-    color: #fff; /* White text color */
-    text-align: center; /* Centered text */
-    border-radius: 6px; /* Rounded borders */
-    padding: 16px; /* Padding */
-    position: fixed; /* Sit on top of the screen */
-    z-index: 1300; /* Add a z-index if needed */
-    left: 50%; /* Center the snackbar */
-    top: 110px; /* 30px from the bottom */
-}
-
-/* Show the snackbar when clicking on a button (class added with JavaScript) */
-.snackbar.show {
-    visibility: visible; /* Show the snackbar */
-
-/* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-However, delay the fade out process for 2.5 seconds */
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-/* Animations to fade the snackbar in and out */
-@-webkit-keyframes fadein {
-    from {top: 0; opacity: 0;}
-    to {top: 110px; opacity: 1;}
-}
-
-@keyframes fadein {
-    from {top: 0; opacity: 0;}
-    to {top: 110px; opacity: 1;}
-}
-
-@-webkit-keyframes fadeout {
-    from {top: 110px; opacity: 1;}
-    to {top: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-    from {top: 110px; opacity: 1;}
-    to {top: 0; opacity: 0;}
-}
-
 
 .dot {overflow:hidden;float:left;width:12px;height:12px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
 .dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}

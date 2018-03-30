@@ -375,5 +375,16 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
+  function gmSig($code) {
+    // $code = substr($code, 0, 5);
+    $query = $this->db->query(
+              "SELECT address,sigunguCd,count(*) as sum FROM raiz2.auction_mm
+              WHERE sigunguCd LIKE '$code%' GROUP BY sigunguCd;
+              ");
+
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
 
 }

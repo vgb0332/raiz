@@ -5,6 +5,7 @@
       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
       <li data-target="#myCarousel" data-slide-to="1"></li>
       <li data-target="#myCarousel" data-slide-to="2"></li>
+      <li data-target="#myCarousel" data-slide-to="3"></li>
     </ol>
 
     <!-- Wrapper for slides -->
@@ -19,18 +20,23 @@
       </div>
 
       <div class="item">
-        <img src="<?php echo base_url();?>assets/gif/banner2.gif">
+        <img src="<?php echo base_url();?>assets/img/banner4.jpg">
         <div class="carousel-caption">
-          <!-- <h3>Chicago</h3>
-          <p>Thank you, Chicago - A night we won't forget.</p> -->
+          <h3>REAL ESTATE PLATFORM</h3>
         </div>
       </div>
 
       <div class="item">
-        <img src="<?php echo base_url();?>assets/gif/banner3.gif">
+        <img src="<?php echo base_url();?>assets/img/banner5.jpg">
         <div class="carousel-caption">
-          <!-- <h3>LA</h3>
-          <p>Even though the traffic was a mess, we had the best time playing at Venice Beach!</p> -->
+          <h3>REAL ESTATE PLATFORM</h3>
+        </div>
+      </div>
+
+      <div class="item">
+        <img src="<?php echo base_url();?>assets/img/banner6.jpg">
+        <div class="carousel-caption">
+          <h3>REAL ESTATE PLATFORM</h3>
         </div>
       </div>
     </div>

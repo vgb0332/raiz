@@ -1297,12 +1297,17 @@ function GM_test() {
     geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
       if (status === daum.maps.services.Status.OK) {
         console.log(result);
-        currentAcode[0] = result[0].code.substring(0,5);
+
         customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
         if (result[0].code.substring(0,5) != result[1].code.substring(0,5)) {
           customAjax($SITE_URL+'getStcs/gmtest',{code:result[1].code.substring(0,5)},GM_make);
         }
-
+        else {
+          customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
+          customAjax($SITE_URL+'getStcs/gmtest',{code:result[1].code.substring(0,5)},GM_make);
+        }
+        currentAcode[0] = result[0].code.substring(0,5);
+        currentAcode[1] = result[1].code.substring(0,5);
       }
 
     });
@@ -1317,6 +1322,8 @@ function GM_make(data) {
     return
   }
   // console.log(data);
+  var size = {5:25,4:15,3:8,2:6,1:6};
+  var sizeval = size[map.getLevel()];
   var comp = [];
   var AcircleFormat = {'code' : '','circle':[]};
   AcircleFormat['code'] = data[0]['sigunguCd'];
@@ -1324,12 +1331,8 @@ function GM_make(data) {
       var point = parsePoint(target['point']);
       var x = point[0],y = point[1];
 
-      // console.log(point);
-
-      // return
       var circle = new daum.maps.Circle({
-          // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
-          radius: 25, // 미터 단위의 원의 반지름입니다
+          radius: sizeval, // 미터 단위의 원의 반지름입니다
           strokeWeight: 2, // 선의 두께입니다
           strokeColor: 'rgb(255, 255, 255)', // 선의 색깔입니다
           strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
@@ -1345,76 +1348,176 @@ function GM_make(data) {
 
 
       AcircleFormat['circle'].push(circle);
+      var prc = target['appValue'].slice(0,-4)
+      if (prc.length < 5) {
+        var prctxt = prc+'만원';
+      }
+      else {
+        var man = prc.substring(prc.length-4,5);
+        var uck = prc.slice(0,-4);
+        var prctxt = uck+'억'+man+'만원';
+      }
+      circle.cm = [prctxt,target['yongdo'],target['img'],target['address']];
 
-      // var position = new daum.maps.LatLng(x, y);
-      // var marker = new daum.maps.Marker({
-      //     position: position // 마커를 표시할 위치
-      // });
-      // marker.setMap(map);
-      // marker.J = [target['addr'],target['면적/특이사항'],target['물건용도'],target['법원명/담당계'],target['진행상태'],target['감정가'],target['최저가율']];
-      //
-      // var customOverlay = new daum.maps.CustomOverlay({});
-      // daum.maps.event.addListener(marker, 'mouseover', function(mouseEvent) {
-      //   customOverlay.setContent('<div class="stcs_ol"><div>'+marker.J[0]+'</br>'+marker.J[1]+'</br>용도 : '+marker.J[2]+'</br>법원명 / 담당계 : '
-      //                           +marker.J[3]+'</br>진행상태 : '+marker.J[4]+'</br>감정가 : '+marker.J[5]+'</br>최저가율 : '+marker.J[6]+'</div>'
-      //                           +'</div>');
-      //   customOverlay.setPosition(marker.getPosition());
-      //   customOverlay.setMap(map);
-      //   // showYDChart(marker.J["cd"]);
-      // });
-      // daum.maps.event.addListener(marker, 'mousemove', function(mouseEvent) {
-      //   customOverlay.setPosition(marker.getPosition());
-      // });
-      // daum.maps.event.addListener(marker, 'mouseout', function() {
-      //   customOverlay.setMap(null);
-      // });
+      var customOverlay = new daum.maps.CustomOverlay({});
+      daum.maps.event.addListener(circle, 'mouseover', function(mouseEvent) {
+        customOverlay.setContent('<div style="border-radius: 5px;border-color: white;box-shadow: 0 15px 15px rgba(0,0,0,0.3);" class="stcs_ol"><img src="'+circle.cm[2]+'" width="150" height="120" border="0"></img><div>'+circle.cm[3]+'</br>감정가 : '+circle.cm[0]+'</br>물건용도 : '+circle.cm[1]+'</div>'
+                                +'</div>');
+        customOverlay.setPosition(circle.getPosition());
+        customOverlay.setMap(map);
+        circle.setOptions({
+            fillColor: 'rgb(50, 252, 95)',
+        });
+
+      });
+      daum.maps.event.addListener(circle, 'mousemove', function(mouseEvent) {
+        // customOverlay.setPosition(circle.getPosition());
+        customOverlay.setPosition(mouseEvent.latLng);
+      });
+      daum.maps.event.addListener(circle, 'mouseout', function() {
+        circle.setOptions({
+            fillColor: 'rgb(255, 84, 84)'
+        });
+        customOverlay.setMap(null);
+      });
 
   });
   currentAcircle.push(AcircleFormat);
-  // console.log(comp);
+  console.log(currentAcircle);
   // clusterer.addMarkers(comp);
 }
 
+function GM_make_sig(data){
+  if (data.length == 0) {
+    return
+  }
+  // console.log(data);
+  var comp = [];
+  var AcircleFormat = {'code' : '','circle':[],'name':[]};
+  AcircleFormat['code'] = data[0]['sigunguCd'].substring(0,2);
+  $.each(data, function(index, target){
+      var geoaddr = target['address'].split(" ")
+      geocoder.addressSearch(geoaddr[0]+" "+geoaddr[1], function(result, status) {
+           if (status === daum.maps.services.Status.OK) {
 
+              var coords = new daum.maps.LatLng(result[0].y, result[0].x);
+              var circle = new daum.maps.Circle({
+                  // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
+                  radius: 500, // 미터 단위의 원의 반지름입니다
+                  strokeWeight: 8, // 선의 두께입니다
+                  strokeColor: 'rgb(255, 255, 255)', // 선의 색깔입니다
+                  strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                  strokeStyle: 'solid', // 선의 스타일 입니다
+                  fillColor: 'rgb(255, 255, 255)', // 채우기 색깔입니다
+                  fillOpacity: 0.7  // 채우기 불투명도 입니다
+              });
+
+              var customOverlay = new daum.maps.CustomOverlay({});
+              customOverlay.setContent('<div style="text-align: center;">'+target['sum']+'</br>'+geoaddr[0]+' '+geoaddr[1]+'</div>');
+              customOverlay.setPosition(coords);
+
+              customOverlay.setMap(map);
+              circle.setPosition(coords);
+              circle.setMap(map);
+
+              AcircleFormat['circle'].push(circle);
+              AcircleFormat['name'].push(customOverlay);
+          }
+      });
+
+  });
+  currentAcircle.push(AcircleFormat);
+  console.log(currentAcircle);
+  // clusterer.addMarkers(comp);
+}
 
 function auction_start() {
-  daum.maps.event.addListener(map, 'center_changed', function() {
+  daum.maps.event.addListener(map, 'tilesloaded', function() {
 
     // 지도의  레벨을 얻어옵니다
     var level = map.getLevel();
-
+    console.log(level);
     // 지도의 중심좌표를 얻어옵니다
     var center = map.getCenter();
 
-    geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
-
-      if (status === daum.maps.services.Status.OK) {
-        // console.log(result);
-        var temp = [];
-        for (var i = 0; i < 2; i++) {
-          if (currentAcode[0] != result[i].code.substring(0,5) && currentAcode[1] != result[i].code.substring(0,5)) {
-            console.log('change');
-            customAjax($SITE_URL+'getStcs/gmtest',result[i].code.substring(0,5),GM_make);
-            temp.push(result[i].code.substring(0,5));
-          }
-          else {
-              temp.push(result[i].code.substring(0,5));
-          }
-        }
-        currentAcode = temp;
+    if(level < 6){
+        var size = {5:25,4:15,3:8,2:6,1:6};
+        var sizeval = size[level];
 
         for (var i = 0; i < currentAcircle.length; i++) {
-          if (currentAcode[0] != currentAcircle[i]['code'] && currentAcode[1] != currentAcircle[i]['code']) {
-            console.log(currentAcircle[i]['circle'].length);
-            // for (var i = 0; i < currentAcircle[i].circle.length; i++) {
-            //   currentAcircle[i]['circle'][i].setMap(null);
-            // }
-            // currentAcircle.splice(i,1);
+          for (var j = 0; j < currentAcircle[i].circle.length; j++) {
+            currentAcircle[i].circle[j].setOptions({
+                radius: sizeval
+            });
           }
-        }
-      }
 
-    });
+        }
+        geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
+          if (status === daum.maps.services.Status.OK) {
+            console.log(result[0].code);
+            console.log(currentAcode);
+            var temp = [];
+            var callcode = [];
+            for (var i = 0; i < 2; i++) {
+              if (currentAcode[0] != result[i].code.substring(0,5) && currentAcode[1] != result[i].code.substring(0,5)) {
+                console.log('change');
+                // console.log();
+                callcode.push(result[i].code.substring(0,5));
+                temp.push(result[i].code.substring(0,5));
+              }
+              else {
+                  temp.push(result[i].code.substring(0,5));
+              }
+            }
+            currentAcode = temp;
+            temp = [];
+            for (var i = 0; i < currentAcircle.length; i++) {
+              if (currentAcode[0] != currentAcircle[i]['code'] && currentAcode[1] != currentAcircle[i]['code']) {
+                for (var j = 0; j < currentAcircle[i].circle.length; j++) {
+                  currentAcircle[i]['circle'][j].setMap(null);
+                  if (currentAcircle[i]['name'] != undefined) {
+                    currentAcircle[i]['name'][j].setMap(null);
+                  }
+                }
+                temp.push(i);
+              }
+            }
+            for (var i = 0; i < temp.length; i++) {
+              currentAcircle.splice(temp[i],1);
+            }
+            for (var i = 0; i < callcode.length; i++) {
+              customAjax($SITE_URL+'getStcs/gmtest',{code:callcode[i]},GM_make);
+            }
+          }
+        });
+    }
+    if (level >= 6 && level < 10) {
+        geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
+          if (status === daum.maps.services.Status.OK) {
+            console.log(result[0].code);
+            console.log(currentAcode);
+            if (currentAcircle.length == 0) {
+              return
+            }
+            if (currentAcircle[0].code != result[0].code.substring(0,2)) {
+              for (var i = 0; i < currentAcircle.length; i++) {
+                for (var j = 0; j < currentAcircle[i].circle.length; j++) {
+                  currentAcircle[i]['circle'][j].setMap(null);
+                  if (currentAcircle[i]['name'] != undefined) {
+                    currentAcircle[i]['name'][j].setMap(null);
+                  }
+                }
+              }
+              currentAcircle = [];
+              currentAcode = [];
+              currentAcode.push(result[0].code.substring(0,2))
+              customAjax($SITE_URL+'getStcs/gmSig',{code:result[0].code.substring(0,2)},GM_make_sig);
+            }
+
+          }
+        });
+    }
+
 
     // var message = '<p>지도 레벨은 ' + level + ' 이고</p>';
     // message += '<p>중심 좌표는 위도 ' + latlng.getLat() + ', 경도 ' + latlng.getLng() + '입니다</p>';

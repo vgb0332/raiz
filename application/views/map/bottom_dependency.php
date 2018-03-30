@@ -1,3 +1,4 @@
+<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=DX5aYb4n7jxGROt0PIPR&submodules=panorama"></script>
 
 <!-- MDB -->
 <link href="<?php echo base_url();?>assets/vendor/mdb/mdb.min.css" rel="stylesheet">
@@ -36,6 +37,7 @@
 <!-- <script src="<?php echo base_url();?>assets/js/map/3d_functions.js"></script> -->
 <script src="<?php echo base_url();?>assets/js/map/3d_functions2.js"></script>
 <script src="<?php echo base_url();?>assets/js/map/statistics.js"></script>
+
 
 <!-- MOBILE CHECK -->
 <!-- is_mobile variable can be checked in common/global_variable.js default is false -->
@@ -103,5 +105,16 @@ if($is_mobile){
    //    loginButton: {color: "green", type: 3, height: 44} /* 로그인 버튼의 타입을 지정 */
   	// 	/* callback 페이지가 분리되었을 경우에 callback 페이지에서는 callback처리를 해줄수 있도록 설정합니다. */
   	// }).init();
+
+</script>
+
+<!-- welcome info -->
+<script type="text/javascript">
+
+  $(document).ready(function() {
+
+      toaster('환영합니다! 원하시는 건물이나 땅을 오른쪽 클릭해보세요!');
+
+  });
 
 </script>

@@ -48,4 +48,8 @@
   <div class="btn control-btn btn-with-2chars"><span class="map-distance">거리</span></div>
 
   <div class="btn control-btn btn-with-3chars"><span class="map-roadview">로드뷰</span></div>
+
+  <div class="btn control-btn btn-with-3chars"><span class="map-reset">초기화</span></div>
+
+  
 </div>
