@@ -1,4 +1,9 @@
 /* test css */
+
+hr {
+  margin: 1rem;
+}
+
 .legendBox {
   position: absolute;
   z-index: 10;
@@ -80,8 +85,8 @@
 }
 
 .stchart {
-  width: inherit !important;
-  height: inherit !important;
+  /* width: inherit !important;
+  height: inherit !important; */
   padding-bottom: 5px;
   left: 50% !important;
   transform: translateX(-50%);

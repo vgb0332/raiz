@@ -4,9 +4,15 @@ var youdong_circle = [];
 var youdong_val = [];
 // var youdong_code = [];
 
+// $(function () {
+//   $('[data-toggle="tooltip"]').tooltip()
+// })
+
+
 $('#stcsOnOff').click(function() {
-  $(this).toggleClass('btn-outline-info');
+  $(this).toggleClass('btn-info');
   if( $(this).text() == '통계 Layer 켜기' ) {
+    toaster('지역을 클릭하세요', 'info', '5000')
     if ($(this).val() == 1) {
       showStcsItem();
     }
@@ -15,11 +21,13 @@ $('#stcsOnOff').click(function() {
       initStcs();
     }
     $(this).text('통계 Layer 끄기');
+    $('#stcsLayer').show();
 
   }
   else {
     $(this).text('통계 Layer 켜기');
     hideStcsItem();
+    $('#stcsLayer').hide();
   }
 });
 
@@ -1260,32 +1268,6 @@ function youdongLevel() {
 }
 
 
-
-
-// var clusterer = new daum.maps.MarkerClusterer({
-//   map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
-//   averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-//   minLevel: 6, // 클러스터 할 최소 지도 레벨
-// });
-// var styles = [{
-//         width : '53px', height : '52px',
-//         backgroundColor : 'rgba(255, 0, 54, 0.6)',
-//         color: '#fff',
-//         textAlign: 'center',
-//         lineHeight: '54px',
-//         fillOpacity: 0.5
-//     }, {
-//         width : '73px', height : '72px',
-//         backgroundColor : 'rgba(97, 0, 255, 0.62)',
-//         color: '#fff',
-//         textAlign: 'center',
-//         lineHeight: '74px',
-//         fillOpacity: 0.5
-//     }
-// ];
-//
-// clusterer.setStyles(styles);
-
 var currentAcode = ['',''];
 var currentAcircle = [];
 
@@ -1293,14 +1275,14 @@ var currentAcircle = [];
 function GM_test() {
   var level = map.getLevel();
   var center = map.getCenter();
-  if (level < 6) {
-    geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
-      if (status === daum.maps.services.Status.OK) {
+  geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
+    if (status === daum.maps.services.Status.OK) {
+      if (level < 6) {
         console.log(result);
 
-        customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
+        // customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
         if (result[0].code.substring(0,5) != result[1].code.substring(0,5)) {
-          customAjax($SITE_URL+'getStcs/gmtest',{code:result[1].code.substring(0,5)},GM_make);
+          customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
         }
         else {
           customAjax($SITE_URL+'getStcs/gmtest',{code:result[0].code.substring(0,5)},GM_make);
@@ -1308,11 +1290,15 @@ function GM_test() {
         }
         currentAcode[0] = result[0].code.substring(0,5);
         currentAcode[1] = result[1].code.substring(0,5);
+
+
       }
+      else if (level >= 6 && level < 9) {
 
-    });
+      }
+    }
 
-  }
+  });
   auction_start();
   // customAjax($SITE_URL+'getStcs/gmtest',0,GM_make);
 }
@@ -1322,7 +1308,7 @@ function GM_make(data) {
     return
   }
   // console.log(data);
-  var size = {5:25,4:15,3:8,2:6,1:6};
+  var size = {5:25,4:15,3:8,2:6,1:3};
   var sizeval = size[map.getLevel()];
   var comp = [];
   var AcircleFormat = {'code' : '','circle':[]};
@@ -1383,7 +1369,7 @@ function GM_make(data) {
 
   });
   currentAcircle.push(AcircleFormat);
-  console.log(currentAcircle);
+  // console.log(currentAcircle);
   // clusterer.addMarkers(comp);
 }
 
@@ -1391,7 +1377,10 @@ function GM_make_sig(data){
   if (data.length == 0) {
     return
   }
-  // console.log(data);
+
+  var size = {6:500,7:800,8:1600};
+  var sizeval = size[map.getLevel()];
+
   var comp = [];
   var AcircleFormat = {'code' : '','circle':[],'name':[]};
   AcircleFormat['code'] = data[0]['sigunguCd'].substring(0,2);
@@ -1403,7 +1392,7 @@ function GM_make_sig(data){
               var coords = new daum.maps.LatLng(result[0].y, result[0].x);
               var circle = new daum.maps.Circle({
                   // center : new daum.maps.LatLng(33.450701, 126.570667),  // 원의 중심좌표 입니다
-                  radius: 500, // 미터 단위의 원의 반지름입니다
+                  radius: sizeval, // 미터 단위의 원의 반지름입니다
                   strokeWeight: 8, // 선의 두께입니다
                   strokeColor: 'rgb(255, 255, 255)', // 선의 색깔입니다
                   strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
@@ -1427,7 +1416,7 @@ function GM_make_sig(data){
 
   });
   currentAcircle.push(AcircleFormat);
-  console.log(currentAcircle);
+  // console.log(currentAcircle);
   // clusterer.addMarkers(comp);
 }
 
@@ -1441,21 +1430,12 @@ function auction_start() {
     var center = map.getCenter();
 
     if(level < 6){
-        var size = {5:25,4:15,3:8,2:6,1:6};
+        var size = {5:25,4:15,3:8,2:6,1:3};
         var sizeval = size[level];
-
-        for (var i = 0; i < currentAcircle.length; i++) {
-          for (var j = 0; j < currentAcircle[i].circle.length; j++) {
-            currentAcircle[i].circle[j].setOptions({
-                radius: sizeval
-            });
-          }
-
-        }
         geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
           if (status === daum.maps.services.Status.OK) {
-            console.log(result[0].code);
-            console.log(currentAcode);
+            // console.log(result[0].code);
+            // console.log(currentAcode);
             var temp = [];
             var callcode = [];
             for (var i = 0; i < 2; i++) {
@@ -1482,8 +1462,18 @@ function auction_start() {
                 temp.push(i);
               }
             }
+
             for (var i = 0; i < temp.length; i++) {
               currentAcircle.splice(temp[i],1);
+            }
+            // change size
+            for (var i = 0; i < currentAcircle.length; i++) {
+              for (var j = 0; j < currentAcircle[i].circle.length; j++) {
+                currentAcircle[i].circle[j].setOptions({
+                    radius: sizeval
+                });
+              }
+
             }
             for (var i = 0; i < callcode.length; i++) {
               customAjax($SITE_URL+'getStcs/gmtest',{code:callcode[i]},GM_make);
@@ -1491,11 +1481,22 @@ function auction_start() {
           }
         });
     }
-    if (level >= 6 && level < 10) {
+    if (level >= 6 && level < 9) {
+        var size = {6:500,7:800,8:1600};
+        var sizeval = size[level];
+
+        for (var i = 0; i < currentAcircle.length; i++) {
+          for (var j = 0; j < currentAcircle[i].circle.length; j++) {
+            currentAcircle[i].circle[j].setOptions({
+                radius: sizeval
+            });
+          }
+        }
+
         geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
           if (status === daum.maps.services.Status.OK) {
-            console.log(result[0].code);
-            console.log(currentAcode);
+            // console.log(result[0].code);
+            // console.log(currentAcode);
             if (currentAcircle.length == 0) {
               return
             }

@@ -41,6 +41,17 @@
       </div>
     </div>
 
+    <script type="text/javascript">
+      $( ".carousel-inner .item > img" ).hover( function(e) {
+        $(this).css( 'cursor' , 'pointer' );
+      })
+      $( ".carousel-inner .item > img" ).click( function(e) {
+
+        document.location.href = ($SITE_URL + '/map');
+
+      });
+    </script>
+
     <!-- Left and right controls -->
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
       <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
