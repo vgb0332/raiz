@@ -234,7 +234,7 @@ function setPoly(type, polygon, data){
 
     polygon.setMap(map);
     var target = polygon.wc;
-    console.log('jwunwal', data);
+
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('toji-polygon').addClass('junwal-toji-polygon')
                       .attr('data-sigunguCd' , data['지역코드'])

@@ -76,6 +76,7 @@ Class Polygon extends CI_Model {
                 ");
 
       $result = $query->result_array();
+      // return json_encode($this->db->last_query(), JSON_UNESCAPED_UNICODE);
       return json_encode($result, JSON_UNESCAPED_UNICODE);
     }
     if($type === 'tojiSil'){

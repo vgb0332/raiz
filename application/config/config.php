@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $config['base_url'] = 'http://www.re-go.kr/raiz1.3';
-
+// $config['base_url'] = 'http://www.re-go.kr';
 /*
 |--------------------------------------------------------------------------
 | Index File

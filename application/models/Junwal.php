@@ -18,7 +18,7 @@ Class Junwal extends CI_Model {
     $last_time = date("Y-m", strtotime('-' . $filter_value . ' ' . $filter_type));
     $last_year = explode("-", $last_time)[0];
     $last_month = explode("-", $last_time)[1];
-
+    // return json_encode($last_year, JSON_UNESCAPED_UNICODE);
     if($type === 'aptJunwal'){
 
       $this->db->select('년, 월, 일, 아파트 as 이름, 지번, 전용면적, 층, 보증금액, 월세금액');

@@ -114,8 +114,8 @@ body {
   position: fixed;
   top: 15vh;
   right: 6vw;
-  width: 700px;
-  height: 700px;
+  width: 50vw;
+  height: 60vh;
   z-index: 15;
   /* background-color: #ffffffa8; */
   background-color: white;
@@ -1011,6 +1011,10 @@ body {
   float:right;
   padding: 0;
   /* background-color : #ffffff; */
+}
+
+.dropdown-backdrop {
+  position: inherit;
 }
 
 .list-mouseover {
