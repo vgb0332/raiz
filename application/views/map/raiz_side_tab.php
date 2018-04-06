@@ -413,7 +413,7 @@
           <button onclick="youdongStart();" style="width:115px" type="button" class="btn btn-pink">서울시 유동인구</button>
         </div>
         <div>
-          <button type="button" style="width:115px" class="btn btn-indigo">상권 정보</button>
+          <button onclick="bizStart();" type="button" style="width:115px" class="btn btn-indigo">상권 정보</button>
         </div>
         <div>
           <button onclick="GM_test();" type="button" style="width:115px" class="btn btn-brown">경매 매물(test)</button>

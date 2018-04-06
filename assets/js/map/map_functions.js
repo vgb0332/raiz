@@ -663,7 +663,7 @@ function setPoly(type, polygon, data){
     });
   }
 
-  if(type === 'youdong'){
+  if(type === 'subStcsYD'){
     // polygon.setOptions( toji_polygon_option );
     polygon.setMap(map);
 
@@ -677,13 +677,51 @@ function setPoly(type, polygon, data){
       $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
     });
 
-    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
-      // console.log('polygon mouseover activated! : ' , polygon );
-    });
+    // daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+    //   // console.log('polygon mouseover activated! : ' , polygon );
+    // });
     daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
       removeStcsPolygon();
       removeStcsLabel();
       customAjax($SITE_URL+'getStcs/youdongPoint',{sggcode:polygon.Bb[0]},setYoudongCircle);
+      // console.log(polygon.Bb[0].substring(2,4));
+      //
+      // customAjax($SITE_URL+'getStcs/youdongValue',{code:polygon.Bb[0]},youdongProcessing);
+    });
+  }
+
+  if(type === 'subStcsBIZ'){
+    // polygon.setOptions( toji_polygon_option );
+    polygon.setMap(map);
+
+    stcs_landPolygons.push(polygon);
+
+    polygon.Bb[0] = data['bjdongCd'];
+    polygon.Bb[1] = data['sigunguCd'];
+    polygon.Bb[2] = data['name'];
+    // console.log(polygon);
+    var target = polygon.wc;
+    $.each(target, function(index, path){
+      $("#" + path.id).removeAttr('style').addClass('stcs-polygon stcs-item');
+    });
+
+
+    var customOverlay = new daum.maps.CustomOverlay({});
+    daum.maps.event.addListener( polygon, 'mouseover', function(mouseEvent) {
+      customOverlay.setContent('<div class="stcs_ol">'+polygon.Bb[2]+'</div>');
+      customOverlay.setPosition(mouseEvent.latLng);
+      customOverlay.setMap(map);
+    });
+    daum.maps.event.addListener(polygon, 'mousemove', function(mouseEvent) {
+      customOverlay.setPosition(mouseEvent.latLng);
+    });
+    daum.maps.event.addListener(polygon, 'mouseout', function() {
+      customOverlay.setMap(null);
+    });
+    daum.maps.event.addListener( polygon, 'click', function(mouseEvent) {
+      removeStcsPolygon();
+      removeStcsLabel();
+      customAjax($SITE_URL+'getStcs/getParticBiz',{sggcode:polygon.Bb[1],bjdcode:polygon.Bb[0]},bizProcess);
       // console.log(polygon.Bb[0].substring(2,4));
       //
       // customAjax($SITE_URL+'getStcs/youdongValue',{code:polygon.Bb[0]},youdongProcessing);

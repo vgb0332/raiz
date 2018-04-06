@@ -156,5 +156,17 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->gmSig($code);
   }
 
+  public function getBJDongPoly() {
+    $this->load->model('Statistics');
+    $code = $this->input->post('code');
+    echo $this->Statistics->getBJDongPoly($code);
+  }
+
+  public function getParticBiz() {
+    $this->load->model('Statistics');
+    $bjdcode = $this->input->post('bjdcode');
+    $sggcode = $this->input->post('sggcode');
+    echo $this->Statistics->getParticBiz($bjdcode,$sggcode);
+  }
 
 }

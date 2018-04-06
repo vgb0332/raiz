@@ -386,5 +386,25 @@ Class Statistics extends CI_Model {
     return json_encode($result, JSON_UNESCAPED_UNICODE);
   }
 
+  function getBJDongPoly($code) {
+    // $code = substr($code, 0, 5);
+    $query = $this->db->query(
+              "SELECT name,sigunguCd,bjdongCd,polygon FROM getEMD
+              WHERE sigunguCd = $code;
+              ");
 
+    $result = $query->result_array();
+    return json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+
+function getParticBiz($bjdcode,$sggcode) {
+  // $code = substr($code, 0, 5);
+  $query = $this->db->query(
+            "SELECT 상호명,지점명,상권업종대분류명,상권업종중분류명,상권업종소분류명,지번주소,층정보,경도,위도 FROM raiz2.getParticBiz
+            WHERE 시군구코드 = $sggcode and RIGHT(법정동코드,5) = $bjdcode order by 지번주소;
+            ");
+
+  $result = $query->result_array();
+  return json_encode($result, JSON_UNESCAPED_UNICODE);
+}
 }

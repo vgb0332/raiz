@@ -28,6 +28,7 @@ Class Sil extends CI_Model {
       $this->db->where('년 >=', $last_year);
       $this->db->where('월 >=', $last_month);
       $this->db->order_by('년', 'DESC');
+      $this->db->order_by('월', 'ASC');
       $result = $this->db->get('getRTMSDataSvcAptTrade')->result_array();
       // $result = $query->result_array();
       return json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -41,6 +42,7 @@ Class Sil extends CI_Model {
       $this->db->where('년 >=', $last_year);
       $this->db->where('월 >=', $last_month);
       $this->db->order_by('년', 'DESC');
+      $this->db->order_by('월', 'ASC');
       $result = $this->db->get('getRTMSDataSvcRHTrade')->result_array();
       // $result = $query->result_array();
       return json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -58,6 +60,7 @@ Class Sil extends CI_Model {
       $this->db->where('substring(YM, 1, 4) >=', $last_year);
       $this->db->where('substring(YM, 5, 2) >=', $last_month);
       $this->db->order_by('substring(YM, 1, 4)', 'DESC');
+      $this->db->order_by('substring(YM, 5, 2)', 'ASC');
       $result = $this->db->get('getLandTrade')->result_array();
       // $result = $query->result_array();
       return json_encode($result, JSON_UNESCAPED_UNICODE);

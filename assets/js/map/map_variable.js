@@ -127,30 +127,53 @@ var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
 var distanceOverlay; // 선의 거리정보를 표시할 커스텀오버레이 입니다
 var dots = {}; // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
 
-var search_result = function(data){
-  var $container = $(document.createElement('li'));
-  $container.append(  "<h4 class='place_name'>"
-                    +   data['place_name']
-                    + "</h4>"
-                    + "<h5 class='road_address_name'>"
-                    +   data['road_address_name']
-                    + "</h5>"
-                    + "<h6 class='address_name'>"
-                    +   "지번: " + data['address_name']
-                    + "</h6>"
-                    + "<h6 class='phone'>"
-                    +   data['phone']
-                    + "</h6>"
-                    );
+var search_result = function(type, data){
+  console.log(type, data);
+  if(type === 'jibun'){
+    var $container = $(document.createElement('li'));
+    $container.append(  "<h5 class='place_name'>"
+                      +   data['address']['address_name'] + ' (' + data['address']['zip_code'] + ')'
+                      + "</h5>"
+                      + "<h6 class='address_name'>"
+                      +   "도로명: " + data['road_address']['address_name']
+                      + "</h6>"
+                      );
 
-  $container.attr('data-id', data['id']);
-  $container.attr('data-x', data['x']);
-  $container.attr('data-y', data['y']);
-  $container.on('click', function(e) {
+    $container.attr('data-id', data['id']);
+    $container.attr('data-x', data['x']);
+    $container.attr('data-y', data['y']);
+    $container.on('click', function(e) {
 
-      map.panTo(new daum.maps.LatLng(data['y'], data['x']));
+        map.panTo(new daum.maps.LatLng(data['y'], data['x']));
 
-  });
+    });
+  }
+  if(type === 'keyword'){
+    var $container = $(document.createElement('li'));
+    $container.append(  "<h4 class='place_name'>"
+                      +   data['place_name']
+                      + "</h4>"
+                      + "<h5 class='road_address_name'>"
+                      +   data['road_address_name']
+                      + "</h5>"
+                      + "<h6 class='address_name'>"
+                      +   "지번: " + data['address_name']
+                      + "</h6>"
+                      + "<h6 class='phone'>"
+                      +   data['phone']
+                      + "</h6>"
+                      );
+
+    $container.attr('data-id', data['id']);
+    $container.attr('data-x', data['x']);
+    $container.attr('data-y', data['y']);
+    $container.on('click', function(e) {
+
+        map.panTo(new daum.maps.LatLng(data['y'], data['x']));
+
+    });
+  }
+
   $container.removeAttr('style');
   return $container;
 };

@@ -968,7 +968,7 @@ function youdongStart() {
   for (var i = 0; i < youdong_circle.length; i++) {
     youdong_circle[i].setMap(null);
   }
-  ajax_type = "youdong";
+  ajax_type = "subStcsYD";
   customAjax($SITE_URL+'getStcs/statscSgg',{sggcode:11},processStcs);
 }
 
@@ -1527,4 +1527,48 @@ function auction_start() {
     // resultDiv.innerHTML = message;
 
   });
+}
+
+
+//////////////////////////////////// 상권
+
+function bizStart() {
+  var level = map.getLevel();
+  var center = map.getCenter();
+
+  geocoder.coord2RegionCode(center.getLng(), center.getLat(), function(result, status){
+    if (status === daum.maps.services.Status.OK) {
+      console.log(result[0].code);
+      console.log(result);
+      ajax_type = "subStcsBIZ";
+      var sgg = result[0].code.substring(0,5);
+      customAjax($SITE_URL+'getStcs/getBJDongPoly',{code:sgg},processStcs);
+      map.setLevel(7);
+    }
+  });
+}
+
+var bizMarker = [];
+
+function bizProcess(data) {
+  console.log(data);
+  var bef_index = 0;
+  var bef_addr = '';
+
+  for (var i = 0; i < data.length; i++) {
+    if (data[i]['지번주소'] == bef_addr) {
+      bizMarker[bef_index]['value'].push(data[i]);
+    }
+    else {
+        bef_addr = data[i]['지번주소'];
+        var markerPosition  = new daum.maps.LatLng(data[i]['위도'], data[i]['경도']);
+        var marker = new daum.maps.Marker({
+            position: markerPosition
+        });
+        marker.setMap(map);
+        bizMarker.push(['marker':marker,'value':[data[i]]]);
+        bef_index = bizMarker.length -1;
+    }
+  }
+
 }

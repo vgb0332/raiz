@@ -123,7 +123,7 @@ function fillKeywordSuggestions(data, status, pagination){
             $(this).remove();
           });
 
-          item = search_result(selected);
+          item = search_result('keyword', selected);
           $(".keyword-result-list-group li").remove();
           $(".keyword-result-list-group").append(item).show('slide', { direction: "left" }, 300);
 
@@ -164,7 +164,7 @@ function fillKeywordResult(data, status, pagination){
 
         $(".keyword-result-list-group li").remove();
 
-        item = search_result(data[0]);
+        item = search_result('keyword' , data);
         $(".keyword-suggestions-list-group li")
         .hide("slide", { direction: "up" }, 200, function(){
           $(this).remove();
@@ -244,7 +244,7 @@ $( "#jibun-input" ).on("focus change keyup",  function(e) {
 
       // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
       if(e.keyCode !== undefined){
-        ps.keywordSearch( q, fillJibunSuggestions);
+        geocoder.addressSearch( q, fillJibunSuggestions);
       }
 
       if(e.keyCode === 13){
@@ -255,7 +255,7 @@ $( "#jibun-input" ).on("focus change keyup",  function(e) {
 });
 
 function fillJibunSuggestions(data, status){
-
+  console.log(data);
   $(".jibun-result-list-group").hide();
   //first delete all previous lists
   $(".jibun-suggestions-list-group li")
@@ -299,7 +299,7 @@ function fillJibunSuggestions(data, status){
         $(this).remove();
       });
 
-      item = search_result(selected);
+      item = search_result('keyword' , selected);
 
       $(".jibun-result-list-group li").remove();
       $(".jibun-result-list-group").append(item).show('slide', { direction: "left" }, 300);
@@ -329,7 +329,7 @@ $("#jibun-submit").on('click', function(e){
         return false;
     }
 
-    ps.keywordSearch( q, fillJibunResult );
+    geocoder.addressSearch( q, fillJibunResult );
 
 });
 
@@ -339,7 +339,7 @@ function fillJibunResult(data, status){
     if (status === daum.maps.services.Status.OK) {
         $(".jibun-result-list-group li").remove();
 
-        item = search_result(data[0]);
+        item = search_result('jibun', data[0]);
         $(".jibun-suggestions-list-group li")
         .hide("slide", { direction: "up" }, 200, function(){
           $(this).remove();
@@ -733,7 +733,7 @@ function fillSilTab(result){
                   filter_value : filter_value
                 },
                 function(list){
-                  // console.log(list);
+                  console.log(list);
 
                   //일단 전용면적 선택버튼. canvas 먼저 부착해볼까
                   // var containment = "<div class=sil-result-item-content></div>";
@@ -771,9 +771,9 @@ function fillSilTab(result){
                       $(this).parent().siblings('.btn').text($(this).text());
                       // var target_index = $(this).attr('name');
                       var target_area = $(this).attr('data-area');
-
+                      console.log(list);
                       var data_object = {};
-                      for(var i = 0; i < list.length; i++){
+                      for(var i = 0; i < list.length; ++i){
                         // // console.log(lists[target_index][i]);
                         if(list[i]['전용면적'] === target_area){
                           // // console.log(i);
@@ -800,6 +800,8 @@ function fillSilTab(result){
 
                         data.push( (sum / data_object[key].length).toFixed(0) );
                       });
+
+                      console.log(data_object);
 
                       var ctx = $(this).parent().parent().parent().find('.sil-chart')[0].getContext('2d');
                       //beginning of chart
