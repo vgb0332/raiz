@@ -1358,7 +1358,7 @@ function GM_make(data) {
       });
       daum.maps.event.addListener(circle, 'mousemove', function(mouseEvent) {
         // customOverlay.setPosition(circle.getPosition());
-        customOverlay.setPosition(mouseEvent.latLng);
+        // customOverlay.setPosition(mouseEvent.latLng);
       });
       daum.maps.event.addListener(circle, 'mouseout', function() {
         circle.setOptions({
@@ -1554,21 +1554,104 @@ function bizProcess(data) {
   console.log(data);
   var bef_index = 0;
   var bef_addr = '';
+  var imageSrc = $SITE_URL+'assets/icon/stcs-pin04.png';
+  var imageSize = new daum.maps.Size(18, 18);
+  var ps = new daum.maps.services.Places();
 
-  for (var i = 0; i < data.length; i++) {
-    if (data[i]['지번주소'] == bef_addr) {
-      bizMarker[bef_index]['value'].push(data[i]);
+  var test_string = data[0]['상호명'] + ' ' + data[0]['지점명'];
+  console.log(test_string);
+  // ps.keywordSearch(test_string, placesSearchCB);
+
+  $.each(data, function(index, target){
+    if (target['지번주소'] == bef_addr) {
+      bizMarker[bef_index]['value'].push(target);
     }
     else {
-        bef_addr = data[i]['지번주소'];
-        var markerPosition  = new daum.maps.LatLng(data[i]['위도'], data[i]['경도']);
+        bef_addr = target['지번주소'];
+
+        var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize);
+
+        var markerPosition  = new daum.maps.LatLng(target['위도'], target['경도']);
         var marker = new daum.maps.Marker({
-            position: markerPosition
+            position: markerPosition,
+            image : markerImage
         });
         marker.setMap(map);
-        bizMarker.push(['marker':marker,'value':[data[i]]]);
-        bef_index = bizMarker.length -1;
-    }
-  }
+                        //[0]               [1]             [2]             [3]               [4]                         [5]                         [6]
+        marker.Bb = [target['지번주소'],target['상호명'],target['지점명'],target['층정보'],target['상권업종대분류명'],target['상권업종중분류명'],target['상권업종소분류명']]
 
+        // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
+        var overlay = new daum.maps.CustomOverlay({});
+        daum.maps.event.addListener(marker, 'click', function() {
+          var idx;
+          for (var i = 0; i < bizMarker.length; i++) {
+            if(bizMarker[i]['value'][0]['지번주소'] == marker.Bb[0])
+            {
+              idx = i;
+              break;
+            }
+          }
+
+          var txt = '<h4>'+bizMarker[idx]['value'][0]['지번주소'] + '</h4>';
+          for (var i = 0; i < bizMarker[idx]['value'].length; i++) {
+            txt += bizMarker[idx]['value'][i]['상호명'] + ' ' + bizMarker[idx]['value'][i]['지점명'];
+            if (marker.Bb[3] != '0') {
+              txt += ' '+marker.Bb[3]+'층</br>';
+            }
+            else {
+              txt += '</br>';
+            }
+          }
+          var content = '<div class="bizOverBox">'+txt+'<div id="bizOimg"></div></div>';
+          overlay.setContent(content);
+          overlay.setPosition(marker.getPosition());
+
+          overlay.setMap(map);
+
+          // ps.keywordSearch(marker.Bb[1]+' '+marker.Bb[2], placesSearchCB);
+        });
+
+
+
+        bizMarker.push(
+          {
+            'marker':marker,
+            'value':[target]
+          }
+        );
+        bef_index = bizMarker.length -1;
+
+
+    }
+  });
+  console.log(bizMarker);
+}
+
+
+function getBizimg(param) {
+  $.ajax
+}
+
+
+function placesSearchCB (data, status, pagination) {
+    if (status === daum.maps.services.Status.OK) {
+      console.log(data);
+        // // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // // LatLngBounds 객체에 좌표를 추가합니다
+        // var bounds = new daum.maps.LatLngBounds();
+        //
+        // for (var i=0; i<data.length; i++) {
+        //     displayMarker(data[i]);
+        //     bounds.extend(new daum.maps.LatLng(data[i].y, data[i].x));
+        // }
+        //
+        // // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+        // map.setBounds(bounds);
+    }
+}
+
+
+// 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
+function closeOverlay() {
+    overlay.setMap(null);
 }
