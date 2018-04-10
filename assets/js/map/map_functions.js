@@ -445,7 +445,7 @@ function setPoly(type, polygon, data){
 
   if(type === 'toji'){
     polygon.setMap(map);
-    console.log(polygon);
+    // console.log(polygon);
     var target = polygon.wc;
     $.each(target, function(index, path){
       $("#" + path.id).removeAttr('style').addClass('toji-polygon').attr('name', data['pnu']);

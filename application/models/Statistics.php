@@ -400,11 +400,40 @@ Class Statistics extends CI_Model {
 function getParticBiz($bjdcode,$sggcode) {
   // $code = substr($code, 0, 5);
   $query = $this->db->query(
-            "SELECT 상호명,지점명,상권업종대분류명,상권업종중분류명,상권업종소분류명,지번주소,층정보,경도,위도 FROM raiz2.getParticBiz
+            "SELECT 상호명,지점명,상권업종대분류명,상권업종중분류명,상권업종소분류명,지번주소,층정보,법정동코드,경도,위도 FROM raiz2.getParticBiz
             WHERE 시군구코드 = $sggcode and RIGHT(법정동코드,5) = $bjdcode order by 지번주소;
             ");
 
   $result = $query->result_array();
   return json_encode($result, JSON_UNESCAPED_UNICODE);
 }
+
+function getFindArea($code1,$code2,$poly) {
+
+  if ($code1 == $code2) {
+    $query = $this->db->query(
+              "SELECT a.polygon,a.sigunguCd,a.bjdongCd,a.bun,a.ji,b.lndcgrCodeNm,b.prposArea1Nm,b.tpgrphHgCodeNm,b.tpgrphFrmCodeNm,b.roadSideCodeNm,b.lndpclAr,b.pblntfPclnd from
+              (SELECT * FROM getLandPolygonText
+              WHERE sigunguCd = $code1 AND
+              st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly))) as a,
+              getLandCharacteristics as b
+              WHERE b.sigunguCd = $code1 and a.bjdongCd = b.bjdongCd and a.bun = b.bun and a.ji = b.ji group by a.bjdongCd,a.bun,a.ji
+              ");
+  }
+  else {
+    $query = $this->db->query(
+              "SELECT * FROM getLandPolygonText
+              WHERE sigunguCd = $code1 OR sigunguCd = $code2 AND
+              (st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly)));
+              ");
+  }
+
+  $result = $query->result_array();
+  return json_encode($result, JSON_UNESCAPED_UNICODE);
+}
+
+
+
+
+
 }

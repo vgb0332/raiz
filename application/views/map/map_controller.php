@@ -51,5 +51,8 @@
 
   <div class="btn control-btn btn-with-3chars"><span class="map-reset">초기화</span></div>
 
-  
+  <div class="btn control-btn btn-with-3chars"><span class="map-test" onclick="test01()">test</span></div>
+
+  <div class="btn control-btn btn-with-3chars"><span class="map-test" onclick="getDataTest01()">get</span></div>
+
 </div>

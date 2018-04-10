@@ -2,6 +2,9 @@ var beforeNm = '';
 var stcs_label = [];
 var youdong_circle = [];
 var youdong_val = [];
+
+
+var geocoder = new daum.maps.services.Geocoder();
 // var youdong_code = [];
 
 // $(function () {
@@ -118,7 +121,7 @@ function createOverlay(name) {
   var customOverlay = new daum.maps.CustomOverlay({});
   customOverlay.setContent('<div class="stcs_label">' + name + '</div>');
 
-  var geocoder = new daum.maps.services.Geocoder();
+  // var geocoder = new daum.maps.services.Geocoder();
 
   // 주소로 좌표를 검색합니다
   geocoder.addressSearch(name, function(result, status) {
@@ -1549,13 +1552,14 @@ function bizStart() {
 }
 
 var bizMarker = [];
+var bizOverlay = []
 
 function bizProcess(data) {
   console.log(data);
   var bef_index = 0;
   var bef_addr = '';
   var imageSrc = $SITE_URL+'assets/icon/stcs-pin04.png';
-  var imageSize = new daum.maps.Size(18, 18);
+  var imageSize = new daum.maps.Size(16, 16);
   var ps = new daum.maps.services.Places();
 
   var test_string = data[0]['상호명'] + ' ' + data[0]['지점명'];
@@ -1578,11 +1582,22 @@ function bizProcess(data) {
         });
         marker.setMap(map);
                         //[0]               [1]             [2]             [3]               [4]                         [5]                         [6]
-        marker.Bb = [target['지번주소'],target['상호명'],target['지점명'],target['층정보'],target['상권업종대분류명'],target['상권업종중분류명'],target['상권업종소분류명']]
+        // marker.Bb = [target['지번주소'],target['상호명'],target['지점명'],target['층정보'],target['상권업종대분류명'],target['상권업종중분류명'],target['상권업종소분류명']]
+        marker.Bb = [target['지번주소'],target['법정동코드'],target['위도'],target['경도']];
 
         // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
         var overlay = new daum.maps.CustomOverlay({});
         daum.maps.event.addListener(marker, 'click', function() {
+
+        // // console.log(marker);
+        // main_ajax = customAjax($SITE_URL+'get/singlePolygon',
+        //           {
+        //             bjdongCd : marker.Bb[1],
+        //             lat : marker.Bb[2],
+        //             lng : marker.Bb[3]
+        //           },
+        //           mainActivity);
+
           var idx;
           for (var i = 0; i < bizMarker.length; i++) {
             if(bizMarker[i]['value'][0]['지번주소'] == marker.Bb[0])
@@ -1592,7 +1607,7 @@ function bizProcess(data) {
             }
           }
 
-          var txt = '<h4>'+bizMarker[idx]['value'][0]['지번주소'] + '</h4>';
+          var txt = '<h4>'+bizMarker[idx]['value'][0]['지번주소'] + '<a class="ti-close" onclick="closeOverlay(\''+bizMarker[idx]['value'][0]['지번주소'] +'\')" style="margin:10px;"></a></h4>';
           for (var i = 0; i < bizMarker[idx]['value'].length; i++) {
             txt += bizMarker[idx]['value'][i]['상호명'] + ' ' + bizMarker[idx]['value'][i]['지점명'];
             if (marker.Bb[3] != '0') {
@@ -1608,6 +1623,8 @@ function bizProcess(data) {
 
           overlay.setMap(map);
 
+          overlay.Bb = [marker.Bb[0]];
+          bizOverlay.push(overlay);
           // ps.keywordSearch(marker.Bb[1]+' '+marker.Bb[2], placesSearchCB);
         });
 
@@ -1652,6 +1669,204 @@ function placesSearchCB (data, status, pagination) {
 
 
 // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
-function closeOverlay() {
-    overlay.setMap(null);
+function closeOverlay(addr) {
+    for (var i = 0; i < bizOverlay.length; i++) {
+      if(bizOverlay[i].Bb[0] == addr){
+        bizOverlay[i].setMap(null);
+        bizOverlay.slice(i,1);
+        break;
+      }
+    }
+}
+
+
+var manager;
+
+function test01() {
+  var strokeColor = '#39f',
+	fillColor = '#cce6ff',
+	fillOpacity = 0.5,
+	hintStrokeStyle = 'dash';
+
+  var options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
+      map: map, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
+      drawingMode: [
+          // daum.maps.Drawing.OverlayType.MARKER,
+          // daum.maps.Drawing.OverlayType.ARROW,
+          // daum.maps.Drawing.OverlayType.POLYLINE,
+          // daum.maps.Drawing.OverlayType.RECTANGLE,
+          daum.maps.Drawing.OverlayType.CIRCLE
+          // daum.maps.Drawing.OverlayType.ELLIPSE,
+          // daum.maps.Drawing.OverlayType.POLYGON
+      ],
+      // 사용자에게 제공할 그리기 가이드 툴팁입니다
+      // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
+      guideTooltip: ['draw', 'drag', 'edit'],
+      markerOptions: {
+          draggable: true,
+          removable: true
+      },
+      // arrowOptions: {
+      //     draggable: true,
+      //     removable: true,
+      //     strokeColor: strokeColor,
+      //     hintStrokeStyle: hintStrokeStyle
+      // },
+      // polylineOptions: {
+      //     draggable: true,
+      //     removable: true,
+      //     strokeColor: strokeColor,
+      //     hintStrokeStyle: hintStrokeStyle
+      // },
+      // rectangleOptions: {
+      //     draggable: true,
+      //     removable: true,
+      //     strokeColor: strokeColor,
+      //     fillColor: fillColor,
+      //     fillOpacity: fillOpacity
+      // },
+      circleOptions: {
+          draggable: true,
+          removable: true,
+          strokeColor: strokeColor,
+          fillColor: fillColor,
+          fillOpacity: fillOpacity
+      }
+      // ellipseOptions: {
+      //     draggable: true,
+      //     removable: true,
+      //     strokeColor: strokeColor,
+      //     fillColor: fillColor,
+      //     fillOpacity: fillOpacity
+      // },
+      // polygonOptions: {
+      //     draggable: true,
+      //     removable: true,
+      //     strokeColor: strokeColor,
+      //     fillColor: fillColor,
+      //     fillOpacity: fillOpacity
+      // }
+  };
+
+  // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
+  manager = new daum.maps.Drawing.DrawingManager(options);
+
+  // Toolbox를 생성합니다.
+  // Toolbox 생성 시 위에서 생성한 DrawingManager 객체를 설정합니다.
+  // DrawingManager 객체를 꼭 설정해야만 그리기 모드와 매니저의 상태를 툴박스에 설정할 수 있습니다.
+  var toolbox = new daum.maps.Drawing.Toolbox({drawingManager: manager});
+
+  // 지도 위에 Toolbox를 표시합니다
+  // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOP은 위 가운데를 의미합니다.
+  map.addControl(toolbox.getElement(), daum.maps.ControlPosition.TOP);
+}
+
+
+function getDataTest01() {
+  var data = manager.getData();
+
+  var circles = data[daum.maps.drawing.OverlayType.CIRCLE];
+  console.log(circles[0]);
+
+  console.log(circles[0].center['y']);
+  console.log(circles[0].center['x']);
+
+  var center = map.getCenter();
+  console.log(center);
+
+  geocoder.coord2RegionCode(circles[0].center['x'], circles[0].center['y'], function(result, status){
+    if (status === daum.maps.services.Status.OK) {
+      console.log(result[0].code.substring(0,5));
+      console.log(result[1].code.substring(0,5));
+
+      var cd1 = result[0].code.substring(0,5);
+      var cd2 = result[1].code.substring(0,5)
+
+      var syline = Math.abs(parseFloat(circles[0].center['y']) - parseFloat(circles[0].sPoint['y']))/4 + circles[0].sPoint['y'];
+      var sxline = Math.abs(parseFloat(circles[0].center['x']) - parseFloat(circles[0].sPoint['x']))/4 + circles[0].sPoint['x'];
+      var eyline = circles[0].ePoint['y'] - Math.abs(parseFloat(circles[0].center['y']) - parseFloat(circles[0].ePoint['y']))/4;
+      var exline = circles[0].ePoint['x'] - Math.abs(parseFloat(circles[0].center['x']) - parseFloat(circles[0].ePoint['x']))/4;
+
+      // console.log(syline,sxline);
+      //
+      // var marker = new daum.maps.Marker({
+      //     position: new daum.maps.LatLng(syline, sxline),
+      //     title : 'sysx'
+      // });
+      // var marker2 = new daum.maps.Marker({
+      //     position: new daum.maps.LatLng(eyline, exline),
+      //     title : 'eyex'
+      // });
+      // var marker3 = new daum.maps.Marker({
+      //     position: new daum.maps.LatLng(eyline, sxline),
+      //     title : 'eysx'
+      // });
+      // var marker4 = new daum.maps.Marker({
+      //     position: new daum.maps.LatLng(syline, exline),
+      //     title : 'syex'
+      // });
+      // // 마커가 지도 위에 표시되도록 설정합니다
+      // marker.setMap(map);
+      // marker2.setMap(map);
+      // marker3.setMap(map);
+      // marker4.setMap(map);
+
+      // var markerPosition1  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].ePoint['x']);
+      // var markerPosition2  = new daum.maps.LatLng(circles[0].sPoint['y'],circles[0].sPoint['x']);
+      // var markerPosition3  = new daum.maps.LatLng(circles[0].sPoint['y'],circles[0].ePoint['x']);
+      // var markerPosition4  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].sPoint['x']);
+      //
+      // var polygonPath = [
+      //     markerPosition1,
+      //     markerPosition3,
+      //     markerPosition2,
+      //     markerPosition4,
+      //     markerPosition1
+      // ];
+
+      var Pos1  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].center['x']);
+      var Pos2  = new daum.maps.LatLng(eyline, exline);
+      var Pos3  = new daum.maps.LatLng(circles[0].center['y'],circles[0].ePoint['x']);
+      var Pos4  = new daum.maps.LatLng(syline, exline);
+      var Pos5  = new daum.maps.LatLng(circles[0].sPoint['y'],circles[0].center['x']);
+      var Pos6  = new daum.maps.LatLng(syline, sxline);
+      var Pos7  = new daum.maps.LatLng(circles[0].center['y'],circles[0].sPoint['x']);
+      var Pos8  = new daum.maps.LatLng(eyline, sxline);
+      var Pos9  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].center['x']);
+
+      var polygonPath = [Pos1,Pos2,Pos3,Pos4,Pos5,Pos6,Pos7,Pos8,Pos9];
+
+      // var polygon = new daum.maps.Polygon({
+      //     path:polygonPath2, // 그려질 다각형의 좌표 배열입니다
+      //     strokeWeight: 3, // 선의 두께입니다
+      //     strokeColor: '#39DE2A', // 선의 색깔입니다
+      //     strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+      //     strokeStyle: 'longdash', // 선의 스타일입니다
+      //     fillColor: '#A2FF99', // 채우기 색깔입니다
+      //     fillOpacity: 0.7 // 채우기 불투명도 입니다
+      // });
+      //
+      // // 지도에 다각형을 표시합니다
+      // polygon.setMap(map);
+
+      var reparse = '"polygon((';
+      for (var i = 0; i < polygonPath.length; i++) {
+        reparse += polygonPath[i].jb + ' ' + polygonPath[i].ib + ', ';
+      }
+      var aft = reparse.substring(0,reparse.length-2) + '))"';
+
+      console.log(aft);
+
+      customAjax($SITE_URL+'getStcs/getFindArea',{code1:cd1,code2:cd2,poly:aft},getFindArea);
+
+    }
+  });
+
+
+}
+
+function getFindArea(data){
+  ajax_type = 'toji';
+  console.log(data);
+  drawPoly(data);
 }

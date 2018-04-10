@@ -169,4 +169,13 @@ class GetStcs extends CI_Controller {
     echo $this->Statistics->getParticBiz($bjdcode,$sggcode);
   }
 
+  public function getFindArea() {
+    $this->load->model('Statistics');
+    $code1 = $this->input->post('code1');
+    $code2 = $this->input->post('code2');
+    $poly = $this->input->post('poly');
+    echo $this->Statistics->getFindArea($code1,$code2,$poly);
+  }
+
+
 }
