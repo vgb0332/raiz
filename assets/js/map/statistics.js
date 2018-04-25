@@ -1751,14 +1751,16 @@ function test01() {
   // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
   manager = new daum.maps.Drawing.DrawingManager(options);
 
-  // Toolbox를 생성합니다.
-  // Toolbox 생성 시 위에서 생성한 DrawingManager 객체를 설정합니다.
-  // DrawingManager 객체를 꼭 설정해야만 그리기 모드와 매니저의 상태를 툴박스에 설정할 수 있습니다.
-  var toolbox = new daum.maps.Drawing.Toolbox({drawingManager: manager});
+  manager.cancel();
 
-  // 지도 위에 Toolbox를 표시합니다
-  // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOP은 위 가운데를 의미합니다.
-  map.addControl(toolbox.getElement(), daum.maps.ControlPosition.TOP);
+  // 클릭한 그리기 요소 타입을 선택합니다
+  manager.select(daum.maps.drawing.OverlayType['CIRCLE']);
+
+  // var toolbox = new daum.maps.Drawing.Toolbox({drawingManager: manager});
+  //
+  // // 지도 위에 Toolbox를 표시합니다
+  // // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOP은 위 가운데를 의미합니다.
+  // map.addControl(toolbox.getElement(), daum.maps.ControlPosition.TOP);
 }
 
 
@@ -1790,43 +1792,6 @@ function getDataTest01() {
       var eyline = circles[0].ePoint['y'] - Math.abs(parseFloat(circles[0].center['y']) - parseFloat(circles[0].ePoint['y']))/4;
       var exline = circles[0].ePoint['x'] - Math.abs(parseFloat(circles[0].center['x']) - parseFloat(circles[0].ePoint['x']))/4;
 
-      // console.log(syline,sxline);
-      //
-      // var marker = new daum.maps.Marker({
-      //     position: new daum.maps.LatLng(syline, sxline),
-      //     title : 'sysx'
-      // });
-      // var marker2 = new daum.maps.Marker({
-      //     position: new daum.maps.LatLng(eyline, exline),
-      //     title : 'eyex'
-      // });
-      // var marker3 = new daum.maps.Marker({
-      //     position: new daum.maps.LatLng(eyline, sxline),
-      //     title : 'eysx'
-      // });
-      // var marker4 = new daum.maps.Marker({
-      //     position: new daum.maps.LatLng(syline, exline),
-      //     title : 'syex'
-      // });
-      // // 마커가 지도 위에 표시되도록 설정합니다
-      // marker.setMap(map);
-      // marker2.setMap(map);
-      // marker3.setMap(map);
-      // marker4.setMap(map);
-
-      // var markerPosition1  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].ePoint['x']);
-      // var markerPosition2  = new daum.maps.LatLng(circles[0].sPoint['y'],circles[0].sPoint['x']);
-      // var markerPosition3  = new daum.maps.LatLng(circles[0].sPoint['y'],circles[0].ePoint['x']);
-      // var markerPosition4  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].sPoint['x']);
-      //
-      // var polygonPath = [
-      //     markerPosition1,
-      //     markerPosition3,
-      //     markerPosition2,
-      //     markerPosition4,
-      //     markerPosition1
-      // ];
-
       var Pos1  = new daum.maps.LatLng(circles[0].ePoint['y'],circles[0].center['x']);
       var Pos2  = new daum.maps.LatLng(eyline, exline);
       var Pos3  = new daum.maps.LatLng(circles[0].center['y'],circles[0].ePoint['x']);
@@ -1840,24 +1805,11 @@ function getDataTest01() {
       var polygonPath = [Pos1,Pos2,Pos3,Pos4,Pos5,Pos6,Pos7,Pos8,Pos9];
 
       var overlay = new daum.maps.CustomOverlay({});
-      var content = '<button type="button" class="btn btn-primary" style="width:70px;display:none;" id="btnExport">엑셀</button>';
+      var content = '<button type="button" class="btn btn-primary" style="width:120px;display:none;" id="btnExport">개별공시지가 엑셀</button>';
+      content += '<button type="button" class="btn btn-primary" style="width:120px;display:none;" id="btnExport2">실거래가 엑셀</button>';
       overlay.setContent(content);
       overlay.setPosition(Pos2);
       overlay.setMap(map);
-
-
-      // var polygon = new daum.maps.Polygon({
-      //     path:polygonPath2, // 그려질 다각형의 좌표 배열입니다
-      //     strokeWeight: 3, // 선의 두께입니다
-      //     strokeColor: '#39DE2A', // 선의 색깔입니다
-      //     strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-      //     strokeStyle: 'longdash', // 선의 스타일입니다
-      //     fillColor: '#A2FF99', // 채우기 색깔입니다
-      //     fillOpacity: 0.7 // 채우기 불투명도 입니다
-      // });
-      //
-      // // 지도에 다각형을 표시합니다
-      // polygon.setMap(map);
 
       var reparse = '"polygon((';
       for (var i = 0; i < polygonPath.length; i++) {
@@ -1869,6 +1821,7 @@ function getDataTest01() {
 
       customAjax($SITE_URL+'getStcs/getFindArea',{code1:cd1,code2:cd2,poly:aft},getFindArea);
       customAjax($SITE_URL+'getStcs/getFindArea2',{code1:cd1,code2:cd2,poly:aft},getFindArea2);
+      customAjax($SITE_URL+'getStcs/getFindArea3',{code1:cd1,code2:cd2,poly:aft},getFindArea3);
 
     }
   });
@@ -1887,42 +1840,64 @@ function getFindArea2(data){
   console.log(data);
 
   var $container = $(document.createElement('div')).attr('id', 'tblExport');
-  // var $container = $(document.createElement('table')).attr('id', 'tblExport');
-  // $container.append("<thead>"
-  // +      "<tr>"
-  // +          "<th>주소</th>"            //2
-  // +          "<th>번</th>"             //3
-  // +          "<th>지</th>"              //4
-  // +          "<th>면적</th>"            //5
-  // +          "<th>지목</th>"            //6
-  // +          "<th>용도지역 1</th>"  //7
-  // +          "<th>용도지역 2</th>"  //8
-  // +          "<th>지형높이</th>"  //9
-  // +          "<th>지형형상</th>"  //10
-  // +          "<th>도로접면</th>"  //11
-  // +          "<th>공시지가</th>"  //12
-  // +          "<th>공시일</th>"     //13
-  // +          "<th>실거래가</th>"     //14
-  // +          "<th>거래년도</th>"     //15
-  // +          "<th>거래일</th>"       //16
-  // +      "</tr>"
-  // +   "</thead>"
-  // +   "<tbody>"
-  // );
-  //
-  // for (var i = 0; i < data.length; i++) {
-  //   $container.append("<tr>");
-  //   var temp = Object.values(data[i]);
-  //   for (var j = 0; j < 15; j++) {
-  //     $container.append("<td>"+temp[j+2]+"</td>");
-  //   }
-  //   $container.append("</tr>");
-  // }
-  //
-  // $container.append("</tbody>");
 
   $("#btnExport").css('display','block');
   $("#btnExport").click(function (e) {
+
+    var exdata = [];
+    var ch_bun = ''
+    var ch_ji = ''
+    var smindex = 0;
+    for (var i = 0; i < data.length; i++) {
+      if(ch_bun == data[i]['번'] && ch_ji == data[i]['지']) {
+          exdata[smindex][data[i]['공시일']] = data[i]['공시지가'];
+        }
+      else {
+        var dataform = {
+          '주소':'', '번':'', '지':'', '면적':'', '지목':'', '용도지역 1':'', '용도지역 2':'', '지형높이':'', '지형형상':'', '도로접면':'',
+          '2007':'','2008':'','2009':'','2010':'','2011':'','2012':'','2013':'','2014':'','2015':'','2016':'','2017':''
+        };
+        dataform['주소'] = data[i]['주소'];
+        dataform['번'] = data[i]['번'];
+        dataform['지'] = data[i]['지'];
+        dataform['면적'] = data[i]['면적'];
+        dataform['지목'] = data[i]['지목'];
+        dataform['용도지역 1'] = data[i]['용도지역 1'];
+        dataform['용도지역 2'] = data[i]['용도지역 2'];
+        dataform['지형높이'] = data[i]['지형높이'];
+        dataform['지형형상'] = data[i]['지형형상'];
+        dataform['도로접면'] = data[i]['도로접면'];
+
+        dataform[data[i]['공시일']] = data[i]['공시지가'];
+
+        ch_bun = data[i]['번'];
+        ch_ji = data[i]['지'];
+        exdata.push(dataform);
+        smindex = exdata.length - 1;
+      }
+    }
+
+    console.log(exdata);
+
+    $container.excelexportjs({
+      containerid: "dvjson",
+      datatype: 'json',
+      dataset: exdata,
+      columns: getColumns(exdata)
+    });
+
+  });
+}
+
+function getFindArea3(data){
+  ajax_type = 'toji';
+  console.log(data);
+
+  var $container = $(document.createElement('div')).attr('id', 'tblExport');
+
+  $("#btnExport2").css('display','block');
+  $("#btnExport2").click(function (e) {
+
     $container.excelexportjs({
       containerid: "dvjson",
       datatype: 'json',

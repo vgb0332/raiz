@@ -1162,7 +1162,8 @@ body {
 }
 
 .map-filter-list,
-.map-around-list{
+.map-around-list,
+.map-roundtoji-list{
   z-index: 10;
   position: absolute;
   display: grid;
@@ -1171,17 +1172,18 @@ body {
 }
 
 .map-filter-list .btn,
-.map-around-list .btn{
+.map-around-list .btn,
+.map-roundtoji-list .btn{
   background-color: #f8f1f1;
   -webkit-transition: background-color 0.35s ease;
   -moz-transition: background-color 0.35s ease;
   -o-transition: background-color 0.35s ease;
   transition: background-color 0.35s ease;
-
 }
 
 .map-filter-list .btn > span,
-.map-around-list .btn > span {
+.map-around-list .btn > span,
+.map-roundtoji-list .btn > span{
   color: #000000;
 }
 

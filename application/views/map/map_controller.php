@@ -51,8 +51,19 @@
 
   <div class="btn control-btn btn-with-3chars"><span class="map-reset">초기화</span></div>
 
-  <div class="btn control-btn btn-with-3chars"><span class="map-test" onclick="test01()">test</span></div>
+  <div class="map-roundtoji-list" style="display:none;">
+    <div class="btn btn-with-2chars" onclick="test01()">
+      <span>범위 검색</span>
+    </div>
+    <div class="btn btn-with-2chars" onclick="getDataTest01()">
+      <span>가져오기</span>
+    </div>
+  </div>
 
-  <div class="btn control-btn btn-with-3chars"><span class="map-test" onclick="getDataTest01()">get</span></div>
+  <div class="btn control-btn btn-with-3chars"><span class="map-roundtoji">토 지</span></div>
+
+
+
+  <!-- <div class="btn control-btn btn-with-3chars"><span class="map-test" onclick="getDataTest01()">get</span></div> -->
 
 </div>

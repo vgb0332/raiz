@@ -37,6 +37,7 @@ $(".map-controller .control-btn").on("click", function(e){
 
       $(".map-controller .map-filter-list").toggle('normal');
       $(".map-controller .map-around-list").hide('normal');
+      $(".map-controller .map-roundtoji-list").hide('normal');
 
   }
 
@@ -44,6 +45,15 @@ $(".map-controller .control-btn").on("click", function(e){
 
       $(".map-controller .map-around-list").toggle('normal');
       $(".map-controller .map-filter-list").hide('normal');
+      $(".map-controller .map-roundtoji-list").hide('normal');
+
+  }
+
+  else if( $(this).has(".map-roundtoji").length ){
+
+      $(".map-controller .map-roundtoji-list").toggle('normal');
+      $(".map-controller .map-filter-list").hide('normal');
+      $(".map-controller .map-around-list").hide('normal');
 
   }
 
