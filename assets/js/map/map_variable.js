@@ -135,7 +135,7 @@ var search_result = function(type, data){
                       +   data['address']['address_name'] + ' (' + data['address']['zip_code'] + ')'
                       + "</h5>"
                       + "<h6 class='address_name'>"
-                      +   "도로명: " + data['road_address']['address_name']
+                      +   "도로명: " + (data['road_address'] == null ? '-' : data['road_address'])
                       + "</h6>"
                       );
 
@@ -241,6 +241,9 @@ var raiz_window = function(title){
   $container.find('.raiz-window-body').append(raiz_window_info($container));
   $container.find('.raiz-window-body').append(toji_info_icon($container));
   $container.find('.raiz-window-body').append(building_info_icon($container));
+  $container.find('.raiz-window-body').append(paticBiz_info_icon($container));
+
+
   lifeToWindow($container);
   $container.trigger('resize');
   $container.removeAttr('style');
@@ -299,6 +302,7 @@ var toji_info_icon = function(Rwindow){
 
     Rwindow.find('.toji-info').fadeIn();
     Rwindow.find('.building-info').hide();
+    Rwindow.find('.biz-info').hide();
 
   });
 
@@ -329,11 +333,87 @@ var building_info_icon = function(Rwindow){
           .text(title);
 
     Rwindow.find('.toji-info').hide();
+    Rwindow.find('.biz-info').hide();
     Rwindow.find('.building-info').fadeIn();
   });
 
   return $container;
 };
+
+var paticBiz_info_icon = function(Rwindow){
+  var $container = $(document.createElement('div'))
+                  .addClass("raiz-info-icon")
+                  .addClass("biz-info-icon")
+                  .addClass("ti-layers");
+
+  $container.tooltip({
+    'animation': true,
+    'title' : '상권정보',
+    'placement' : 'left'
+  });
+
+  $container.on("mouseover", function(e){
+    $(this).tooltip();
+  });
+
+  $container.on("click", function(e){
+    var title = '상권정보';
+    Rwindow.find(".raiz-window-info")
+          .find(".raiz-window-info-header")
+          .find(".raiz-window-info-title")
+          .text(title);
+
+    Rwindow.find('.toji-info').hide();
+    Rwindow.find('.building-info').hide();
+    Rwindow.find('.biz-info').fadeIn();
+  });
+
+  return $container;
+};
+
+var paticBiz_info = function(data){
+  var $container = $(document.createElement('div'))
+                  .addClass("biz-titleInfo")
+                  .addClass("biz-info")
+                  .css('display', 'none');
+
+  $container.append(
+                      "<div class='biz-titleInfo-header' sytle='display:none;'>"
+                    // +   '표제부  ' + "<span class='ti-angle-down'></span>"
+                    + "</div>"
+                    + "<div class='biz-titleInfo-body'>"
+                    + "</div>"
+                  );
+
+  var data_key = Object.keys(data[0]);
+
+  let flr = [];
+
+  for (var i = 0; i < data.length; i++) {
+    flr.push(data[i]['층정보']);
+  }
+
+  flr = flr.slice().sort(function(a,b){return a - b}).reduce(function(a,b){if (a.slice(-1)[0] !== b) a.push(b);return a;},[]);
+
+  var inhtml = '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">';
+
+  // inhtml += '<button type="button" class="btn btn-amber ml-0">Button</button>';
+  // +  '<button type="button" class="btn btn-amber">Button</button>'
+  // +  '<button type="button" class="btn btn-amber">Button</button>'
+  // +  '<button type="button" class="btn btn-amber">Button</button>'
+  // +  '<button type="button" class="btn btn-amber">Button</button>'
+  // +  '<button type="button" class="btn btn-amber">Button</button>'
+  // +'</div>');
+
+  for (var i = flr.length-1; i >= 0; i--) {
+    inhtml += '<button type="button" class="btn btn-indigo  ml-0">'+flr[i]+'층</button>';
+  }
+  inhtml += '</div>';
+  $container.find(".biz-titleInfo-body").append(inhtml);
+
+  return $container;
+
+}
 
 var building_titleInfo = function(data){
   var $container = $(document.createElement('div'))

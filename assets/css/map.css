@@ -402,6 +402,16 @@ body {
   cursor: pointer;
 }
 
+.biz-info-icon{
+  position: absolute;
+  z-index: 2;
+  top: 120px;
+  right: 30px;
+  color: #333;
+  font-size: 22px;
+  cursor: pointer;
+}
+
 .raiz-info-icon {
   -webkit-transition: right 0.1s;
    -moz-transition: right 0.1s;
@@ -541,6 +551,7 @@ body {
 .toji-possession-body,
 .toji-usage-body,
 .building-titleInfo-body,
+.biz-titleInfo-body,
 .building-recapTitleInfo-body {
   width: 100%;
   color: black;

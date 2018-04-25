@@ -8,7 +8,9 @@ class Get extends CI_Controller {
 	 *
 	 */
   public function __construct() {
-   parent::__construct();
+     parent::__construct();
+     header('Access-Control-Allow-Origin: *');
+     header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
   }
 
   public function aptJunwal() {
@@ -237,6 +239,19 @@ class Get extends CI_Controller {
     $this->load->model('Building');
     $data = array (
       'type' => 'brTitleInfo',
+      'sigunguCd' => $this->input->post('sigunguCd'),
+      'bjdongCd' => $this->input->post('bjdongCd'),
+      'bun' => $this->input->post('bun'),
+      'ji' => $this->input->post('ji'),
+    );
+
+    echo $this->Building->getBuildingInfo($data);
+  }
+
+  public function getParticBiz(){
+    $this->load->model('Building');
+    $data = array (
+      'type' => 'particBiz',
       'sigunguCd' => $this->input->post('sigunguCd'),
       'bjdongCd' => $this->input->post('bjdongCd'),
       'bun' => $this->input->post('bun'),

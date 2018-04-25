@@ -21,6 +21,7 @@ function mainFunction(mouseEvent){
   coord2RegionCode(mouseEvent.latLng, function(address, status) {
       if (status === daum.maps.services.Status.OK) {
         console.log(address);
+        console.log($SITE_URL+'get/singlePolygon');
         main_ajax = customAjax($SITE_URL+'get/singlePolygon',
                   {
                     bjdongCd : address[0]['code'],

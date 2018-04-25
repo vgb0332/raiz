@@ -88,6 +88,17 @@ Class Building extends CI_Model {
 
     }
 
+    if($type === 'particBiz'){
+      $query = $this->db->query(
+                "SELECT 상호명,지점명,상권업종대분류명,상권업종중분류명,상권업종소분류명,지번주소,층정보 FROM raiz2.getParticBiz
+                WHERE sigunguCd = $sigunguCd and bjdongCd = $bjdongCd and 지번본번지 = $bun and 지번부번지 = $ji order by 지번주소;
+                ");
+
+      $result = $query->result_array();
+      return json_encode($result, JSON_UNESCAPED_UNICODE);
+
+    }
+
     // if($type === 'brTitleInfo'){
     //   $buildingID = $values['buildingID'];
     //   $this->db->start_cache();

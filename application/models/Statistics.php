@@ -412,17 +412,14 @@ function getFindArea($code1,$code2,$poly) {
 
   if ($code1 == $code2) {
     $query = $this->db->query(
-              "SELECT a.polygon,a.sigunguCd,a.bjdongCd,a.bun,a.ji,b.lndcgrCodeNm,b.prposArea1Nm,b.tpgrphHgCodeNm,b.tpgrphFrmCodeNm,b.roadSideCodeNm,b.lndpclAr,b.pblntfPclnd from
-              (SELECT * FROM getLandPolygonText
+              "SELECT polygon FROM getLandPolygonText
               WHERE sigunguCd = $code1 AND
-              st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly))) as a,
-              getLandCharacteristics as b
-              WHERE b.sigunguCd = $code1 and a.bjdongCd = b.bjdongCd and a.bun = b.bun and a.ji = b.ji group by a.bjdongCd,a.bun,a.ji
+              (st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly)));
               ");
   }
   else {
     $query = $this->db->query(
-              "SELECT * FROM getLandPolygonText
+              "SELECT polygon FROM getLandPolygonText
               WHERE sigunguCd = $code1 OR sigunguCd = $code2 AND
               (st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly)));
               ");
@@ -433,7 +430,44 @@ function getFindArea($code1,$code2,$poly) {
 }
 
 
+function getFindArea2($code1,$code2,$poly) {
 
+  if ($code1 == $code2) {
+    $query = $this->db->query(
+              "SELECT m1.sigunguCd, m1.bjdongCd,m1.ldCodeNm as '주소', m1.bun as '번', m1.ji as '지', m1.lndpclAr as '면적', m1.lndcgrCodeNm as '지목', m1.prposArea1Nm as '용도지역 1', m1.prposArea2Nm as '용도지역 2', m1.tpgrphHgCodeNm as '지형높이', m1.tpgrphFrmCodeNm as '지형형상', m1.roadSideCodeNm as '도로접면' , m2.pblntfPclnd as '공시지가', m2.pblntfDe as '공시일', m1.PRICE as '실거래가', m1.YM as '거래년도', m1.DAY as '거래일' from
+              (select c.sigunguCd,c.bjdongCd,c.ldCodeNm,c.bun,c.ji,c.lndcgrCodeNm,c.prposArea1Nm,c.prposArea2Nm,c.tpgrphHgCodeNm,c.tpgrphFrmCodeNm,c.roadSideCodeNm,c.lndpclAr,d.PRICE,d.YM,d.DAY from
+              (select a.sigunguCd,a.bjdongCd,b.ldCodeNm,a.bun,a.ji,b.lndcgrCodeNm,b.prposArea1Nm,b.prposArea2Nm,b.tpgrphHgCodeNm,b.tpgrphFrmCodeNm,b.roadSideCodeNm,b.lndpclAr from
+              (SELECT sigunguCd, bjdongCd, bun, ji FROM getLandPolygonText
+              WHERE sigunguCd = $code1 AND
+              st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly))) as a,
+              getLandCharacteristics as b
+              WHERE b.sigunguCd = $code1 and a.bjdongCd = b.bjdongCd and a.bun = b.bun and a.ji = b.ji group by a.bjdongCd,a.bun,a.ji) as c
+              LEFT JOIN (select * from (select * from getLandTrade where sigunguCd = $code1 order by YM desc) as tmp group by tmp.bjdongCd,tmp.bun_1,tmp.ji_1) as d
+              on c.bjdongCd = d.bjdongCd and c.bun = d.bun_1 and c.ji = d.ji_1 order by bjdongCd,bun,ji,YM,DAY asc) as m1,
+              (select bjdongCd,bun,ji,pblntfPclnd,pblntfDe from IndvdLandPriceService where sigunguCd = $code1) as m2
+              WHERE m1.bjdongCd = m2.bjdongCd and m1.bun = m2.bun and m1.ji = m2.ji;
+              ");
+  }
+  else {
+    $query = $this->db->query(
+              "SELECT m1.sigunguCd, m1.bjdongCd,m1.ldCodeNm as '주소', m1.bun as '번', m1.ji as '지', m1.lndpclAr as '면적', m1.lndcgrCodeNm as '지목', m1.prposArea1Nm as '용도지역 1', m1.prposArea2Nm as '용도지역 2', m1.tpgrphHgCodeNm as '지형높이', m1.tpgrphFrmCodeNm as '지형형상', m1.roadSideCodeNm as '도로접면' , m2.pblntfPclnd as '공시지가', m2.pblntfDe as '공시일', m1.PRICE as '실거래가', m1.YM as '거래년도', m1.DAY as '거래일' from
+              (select c.sigunguCd,c.bjdongCd,c.ldCodeNm,c.bun,c.ji,c.lndcgrCodeNm,c.prposArea1Nm,c.prposArea2Nm,c.tpgrphHgCodeNm,c.tpgrphFrmCodeNm,c.roadSideCodeNm,c.lndpclAr,d.PRICE,d.YM,d.DAY from
+              (select a.sigunguCd,a.bjdongCd,b.ldCodeNm,a.bun,a.ji,b.lndcgrCodeNm,b.prposArea1Nm,b.prposArea2Nm,b.tpgrphHgCodeNm,b.tpgrphFrmCodeNm,b.roadSideCodeNm,b.lndpclAr from
+              (SELECT sigunguCd, bjdongCd, bun, ji FROM getLandPolygonText
+              WHERE sigunguCd = $code1 AND
+              st_within(ST_GeomFromText(polygon),ST_GeomFromText($poly))) as a,
+              getLandCharacteristics as b
+              WHERE b.sigunguCd = $code1 and a.bjdongCd = b.bjdongCd and a.bun = b.bun and a.ji = b.ji group by a.bjdongCd,a.bun,a.ji) as c
+              LEFT JOIN (select * from (select * from getLandTrade where sigunguCd = $code1 order by YM desc) as tmp group by tmp.bjdongCd,tmp.bun_1,tmp.ji_1) as d
+              on c.bjdongCd = d.bjdongCd and c.bun = d.bun_1 and c.ji = d.ji_1 order by bjdongCd,bun,ji,YM,DAY asc) as m1,
+              (select bjdongCd,bun,ji,pblntfPclnd,pblntfDe from IndvdLandPriceService where sigunguCd = $code1) as m2
+              WHERE m1.bjdongCd = m2.bjdongCd and m1.bun = m2.bun and m1.ji = m2.ji;
+              ");
+  }
+
+  $result = $query->result_array();
+  return json_encode($result, JSON_UNESCAPED_UNICODE);
+}
 
 
 }

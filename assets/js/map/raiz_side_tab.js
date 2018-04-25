@@ -298,8 +298,8 @@ function fillJibunSuggestions(data, status){
       .hide("slide", { direction: "up" }, 200, function(){
         $(this).remove();
       });
-
-      item = search_result('keyword' , selected);
+      console.log(selected);
+      item = search_result('jibun' , selected);
 
       $(".jibun-result-list-group li").remove();
       $(".jibun-result-list-group").append(item).show('slide', { direction: "left" }, 300);

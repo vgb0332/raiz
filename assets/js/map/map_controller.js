@@ -632,8 +632,9 @@ function roadviewClick(mouseEvent){
       // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
       mapWalker.setMap(map); // map walker를 지도에 설정한다.
       mapWalker.setPosition(mouseEvent.latLng);
-      map.relayout();
+
       map.panTo(mouseEvent.latLng);
+      map.relayout();
       console.log(mapWalker);
       // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
       // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.

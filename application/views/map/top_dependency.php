@@ -31,6 +31,7 @@
   <script src="<?php echo base_url();?>assets/vendor/three/controls/OrbitControls.js"></script>
   <script src="<?php echo base_url();?>assets/vendor/three/libs/stats.min.js"></script>
   <script src="<?php echo base_url();?>assets/vendor/three/renderers/Projector.js"></script>
+  <script src="<?php echo base_url();?>assets/vendor/jquery/excelexportjs.js"></script>
 
   <!-- THREEX JS -->
   <script src="<?php echo base_url();?>assets/vendor/three/threex.domevents.js"></script>

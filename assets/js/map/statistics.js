@@ -580,9 +580,9 @@ var stcs_additag = function(target,data,addiType,code){
       'options': {
         "tooltips": {
           "callbacks": {
-            label: function(tooltipItem, data) {
+            label: function(tooltipItem, data, name) {
               var dataset = data.datasets[tooltipItem.datasetIndex];
-              var labelset = data.labels[tooltipItem.datasetIndex];
+              var labelset = data.labels[tooltipItem.index];
               var currentValue = dataset.data[tooltipItem.index];
               return labelset+':'+comma(currentValue) + '개';
             }}
@@ -686,7 +686,7 @@ var stcs_additag = function(target,data,addiType,code){
           "callbacks": {
             label: function(tooltipItem, data) {
               var dataset = data.datasets[tooltipItem.datasetIndex];
-              var labelset = data.labels[tooltipItem.datasetIndex];
+              var labelset = data.labels[tooltipItem.index];
               var currentValue = dataset.data[tooltipItem.index];
               return labelset+':'+comma(currentValue) + '개';
             }}
@@ -1583,7 +1583,7 @@ function bizProcess(data) {
         marker.setMap(map);
                         //[0]               [1]             [2]             [3]               [4]                         [5]                         [6]
         // marker.Bb = [target['지번주소'],target['상호명'],target['지점명'],target['층정보'],target['상권업종대분류명'],target['상권업종중분류명'],target['상권업종소분류명']]
-        marker.Bb = [target['지번주소'],target['법정동코드'],target['위도'],target['경도']];
+        marker.Bb = [target['지번주소'],target['법정동코드'],target['위도'],target['경도'],target['층정보']];
 
         // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
         var overlay = new daum.maps.CustomOverlay({});
@@ -1610,8 +1610,8 @@ function bizProcess(data) {
           var txt = '<h4>'+bizMarker[idx]['value'][0]['지번주소'] + '<a class="ti-close" onclick="closeOverlay(\''+bizMarker[idx]['value'][0]['지번주소'] +'\')" style="margin:10px;"></a></h4>';
           for (var i = 0; i < bizMarker[idx]['value'].length; i++) {
             txt += bizMarker[idx]['value'][i]['상호명'] + ' ' + bizMarker[idx]['value'][i]['지점명'];
-            if (marker.Bb[3] != '0') {
-              txt += ' '+marker.Bb[3]+'층</br>';
+            if (marker.Bb[4] != '0') {
+              txt += ' '+marker.Bb[4]+'층</br>';
             }
             else {
               txt += '</br>';
@@ -1763,6 +1763,7 @@ function test01() {
 
 
 function getDataTest01() {
+  $("#btnExport").remove();
   var data = manager.getData();
 
   var circles = data[daum.maps.drawing.OverlayType.CIRCLE];
@@ -1773,6 +1774,8 @@ function getDataTest01() {
 
   var center = map.getCenter();
   console.log(center);
+
+
 
   geocoder.coord2RegionCode(circles[0].center['x'], circles[0].center['y'], function(result, status){
     if (status === daum.maps.services.Status.OK) {
@@ -1836,6 +1839,13 @@ function getDataTest01() {
 
       var polygonPath = [Pos1,Pos2,Pos3,Pos4,Pos5,Pos6,Pos7,Pos8,Pos9];
 
+      var overlay = new daum.maps.CustomOverlay({});
+      var content = '<button type="button" class="btn btn-primary" style="width:70px;display:none;" id="btnExport">엑셀</button>';
+      overlay.setContent(content);
+      overlay.setPosition(Pos2);
+      overlay.setMap(map);
+
+
       // var polygon = new daum.maps.Polygon({
       //     path:polygonPath2, // 그려질 다각형의 좌표 배열입니다
       //     strokeWeight: 3, // 선의 두께입니다
@@ -1858,6 +1868,7 @@ function getDataTest01() {
       console.log(aft);
 
       customAjax($SITE_URL+'getStcs/getFindArea',{code1:cd1,code2:cd2,poly:aft},getFindArea);
+      customAjax($SITE_URL+'getStcs/getFindArea2',{code1:cd1,code2:cd2,poly:aft},getFindArea2);
 
     }
   });
@@ -1869,4 +1880,62 @@ function getFindArea(data){
   ajax_type = 'toji';
   console.log(data);
   drawPoly(data);
+}
+
+function getFindArea2(data){
+  ajax_type = 'toji';
+  console.log(data);
+
+  var $container = $(document.createElement('div')).attr('id', 'tblExport');
+  // var $container = $(document.createElement('table')).attr('id', 'tblExport');
+  // $container.append("<thead>"
+  // +      "<tr>"
+  // +          "<th>주소</th>"            //2
+  // +          "<th>번</th>"             //3
+  // +          "<th>지</th>"              //4
+  // +          "<th>면적</th>"            //5
+  // +          "<th>지목</th>"            //6
+  // +          "<th>용도지역 1</th>"  //7
+  // +          "<th>용도지역 2</th>"  //8
+  // +          "<th>지형높이</th>"  //9
+  // +          "<th>지형형상</th>"  //10
+  // +          "<th>도로접면</th>"  //11
+  // +          "<th>공시지가</th>"  //12
+  // +          "<th>공시일</th>"     //13
+  // +          "<th>실거래가</th>"     //14
+  // +          "<th>거래년도</th>"     //15
+  // +          "<th>거래일</th>"       //16
+  // +      "</tr>"
+  // +   "</thead>"
+  // +   "<tbody>"
+  // );
+  //
+  // for (var i = 0; i < data.length; i++) {
+  //   $container.append("<tr>");
+  //   var temp = Object.values(data[i]);
+  //   for (var j = 0; j < 15; j++) {
+  //     $container.append("<td>"+temp[j+2]+"</td>");
+  //   }
+  //   $container.append("</tr>");
+  // }
+  //
+  // $container.append("</tbody>");
+
+  $("#btnExport").css('display','block');
+  $("#btnExport").click(function (e) {
+    $container.excelexportjs({
+      containerid: "dvjson",
+      datatype: 'json',
+      dataset: data,
+      columns: getColumns(data)
+    });
+
+    // $container.excelexportjs({
+    //             containerid: "tblExport"
+    //            , datatype: 'table'
+    //         });
+      // window.open('data:application/vnd.ms-excel,' + $container.html());
+      // e.preventDefault();
+  });
+
 }

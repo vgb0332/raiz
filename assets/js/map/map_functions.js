@@ -121,6 +121,7 @@ function setRWindow(polygons, data){
       ji : data['ji']
   };
 
+
   Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(toji_characteristics(data));
 
   customAjax($SITE_URL+'get/tojiPossession', values, function(data){
@@ -141,6 +142,12 @@ function setRWindow(polygons, data){
   customAjax($SITE_URL+'get/buildingTitleInfo', values, function(data){
     if(data.length === 0) return false;
     Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(building_titleInfo(data));
+  });
+
+  customAjax($SITE_URL+'get/getParticBiz', values, function(data){
+    if(data.length === 0) return false;
+    Rwindow.find('.raiz-window-info').find('.raiz-window-info-body').append(paticBiz_info(data));
+
   });
 
 
